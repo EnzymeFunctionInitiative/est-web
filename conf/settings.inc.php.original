@@ -1,0 +1,55 @@
+<?php
+////////////////////////////////////
+//                                              
+//      EFI Quest                         
+//      settings.inc.php                        
+//                                              
+//      Settings for the scripts.               
+//                                              
+//      David Slater                            
+//      Sep 2013                                
+//                                              
+////////////////////////////////////
+
+
+////////System Settings///////////
+define("__ENABLE_WEBSITE__",True);
+define("__ENABLE_EMAILS__",True);
+define("__TITLE__","EFI-EST");
+define("__VERSION__","Beta");
+define("__TIMEZONE__","America/Chicago");
+define("__ADMIN_EMAIL__","");
+define("__WEB_ROOT__","");
+define("__ENABLE_LOG__",true);
+define("__LOG_FILE__","");
+////////MySQL Settings///////////
+define("__MYSQL_HOST__","");
+define("__MYSQL_USER__","");
+define("__MYSQL_PASSWORD__","");
+define("__MYSQL_DATABASE__",");
+
+////////Cluster Settings////////////
+define("__CLUSTER_USER__","");
+define("__CLUSTER_QUEUE__","default");
+define("__CLUSTER_PROCS__","24");
+define("__RESULTS_DIR__","");
+define("__EFI_MODULE__","");
+
+//////Blast Settings//////
+define("__EVALUE__","5");
+
+///////Status/////////////
+define("__NEW__","NEW");
+define("__RUNNING__","RUNNING");
+define("__FINISH__","FINISH");
+define("__FAILED__","FAILED");
+
+define("__MINIMUM__",0);
+define("__MAXIMUM__",50000);
+
+define("__MAX_SEQ__",50000);
+define("__MAX_BLAST_SEQ__",5000);
+
+define("__RETENTION_DAYS__",14);
+define("__EMAIL_FOOTER__","");
+?>

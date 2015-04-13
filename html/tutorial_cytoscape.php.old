@@ -1,0 +1,104 @@
+<?php 
+header('Location: http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3');
+include_once 'includes/header.inc.php'; 
+include_once 'includes/quest_tutorial.inc';
+?>
+
+<h3>An Introduction to Using Cytoscape for EFI Networks</h3>
+
+<p>The following tutorial has been modified from the Cytoscape Wiki to specifically address working with networks created by the Enzyme Function Initative (EFI).  To view Cytoscape’s extensive tutorial pages, please go <a href='http://opentutorials.cgl.ucsf.edu/index.php/Portal:Cytoscape'>here</a>.</p>
+
+<p><b>Contents of this Tutorial</b></p>
+<br>1) <a href='tutorial_cytoscape.php#ex1'>Download Cytoscape</a>
+<br>2) <a href='tutorial_cytoscape.php#ex2'>Initial Steps</a>
+<br>3) <a href='tutorial_cytoscape.php#ex3'>Selecting Nodes</a>
+<br>4) <a href='tutorial_cytoscape.php#ex4'>Node Attributes Data Panel</a>
+<br>5) <a href='tutorial_cytoscape.php#ex5'>Searching</a>
+<br>6) <a href='tutorial_cytoscape.php#ex6'>Changing Visual Styles</a>
+<br>7) <a href='tutorial_cytoscape.php#ex7'>Filtering Network</a>
+<br>8) <a href='tutorial_cytoscape.php#ex8'>Saving Sessions</a>
+<br>9) <a href='tutorial_cytoscape.php#ex9'>Opening a Session File</a>
+<p><a id='ex1'></a><b>1.  Download Cytoscape</b></p>
+
+Go to http://www.cytoscape.org/download.html and download a copy of Cytoscape.  We recommend you use version 2.8.2. In order to open files, you may need to adjust the memory allocations on your computer.  View a guide for this <a href='http://enzymefunction.org/sites/enzymefunction.org/files/upload/EFI%20Quick%20Help%20Cytoscape%20-%20Change%20Memory.pdf'>here</a>.  
+
+<p><a id='ex2'></a><b>2.  Initial steps</b></p>
+
+Before starting, you will need a dataset in the form of a xgmml file.  <a href='http://enzymefunction.org/system/files/upload/EXAMPLE.xgmml'>Here</a> is an example file for you to begin with if you do not have one already.
+
+Launch Cytoscape. You should see a window that looks like this:
+
+<p><img src='images/cytoscape_1.jpg' width='600'></p>
+
+<p>Load your network file into Cytoscape by selecting File → Import → Network(Multiple File Types)... , then click the Select button and specify the location of your .xgmml file.  Once loaded, click close on the Loading Network popup window.  The example file consists of 497 edges observed between 60 proteins, which you can see in the left-hand pane.</p>
+
+Now your screen should look like this:
+<p><img src='images/cytoscape_2.jpg' width='600'></p>
+The initial view is not informative, but this is normal.  Under the Layout menu, select Cytoscape Layouts → yFiles→ Organic. After a brief calculation, your screen should look like this:
+<p><img src='images/cytoscape_3.jpg' width='600'></p>
+<p><a id='ex3'></a><b>3.  Node Selection</b></p>
+
+On the Cytoscape canvas (the blue window showing the network graphic), you can select single nodes by clicking with the mouse or multiple nodes by holding shift and clicking.  You may also click and hold in the white space to drag out a rectangle which will select multiple nodes within a given area. 
+
+Notice that if you right click (control+click on Mac) on any node, you will get a sub-menu to carry out node-specific actions or access external links via LinkOut, such as to UniProtKB. 
+
+<p><a id='ex4'></a><b>4.  Node Attribute Data Panel</b></p>
+
+Notice that at the very bottom of this window is the Data Panel.  It looks like this:
+<p><img src='images/cytoscape_4.jpg' width='600'></p>
+Select a few nodes and you will see protein-specific information (“Node Attributes”) appear in the data table. You can use the icons on the upper left to choose which attributes to display.  As sortcuts, the third icon and the fourth icon will display all or none of the attributes, respectively.  Double click the top of any column to sort the attributes in numerical or alphabetically order.  You may also detach the data panel by clicking the icon in the upper right hand corner.  
+
+To load and map your own Node Attributes, see this <a href=' http://enzymefunction.org/system/files/upload/EFI_Quick_Help_Cytoscape-Apply_Node_Attribute.pdf' target='_blank'>tutorial</a>. 
+
+<p><a id='ex5'></a><b>5.  Searching</b></p>
+
+You can search Node Attributes using the search field at the top of the window, but you must make sure the search is configured to the appropriate attribute.  Click the icon to the right of the field and select the appropriate attribute in the pop-up window. 
+<p><img src='images/cytoscape_5.jpg' width='600'></p>
+As you enter in your search, the field will autofill and provide the number of hits for that search.  If the search is not working, the field will turn red and “0 hits” will be displayed.  A node that matches the search will be highlighted in the network and also appear in Data Panel.
+
+<p><a id='ex6'></a><b>6. Changing Visual Styles</b></p>
+
+There are many options for changing the network graphically.  Begin by opening the VizMapper left-hand panel.  Double clicking in the “Defaults” pane will allow you to change basic parameters such as node shape, line thickness, and backgroud color.  To appy a visual style to a subset of nodes, use the Visual Mapping Browser (in the Control Panel just under the camera icon).  While you can adjust the visual properties of any feature, below is the basic process of changing node color.
+
+<br>1. Under the Visual Mapping Browser, double click on Node Color to activate it.
+<br>2. In the Node Color dropdown list, select the Node Attribute that you want to color by (e.g. cluster size).  A list should now appear with the values possible (e.g. 1, 147, 1029 and so on).   
+<br>3. Go to the dropdown list for Mapping Type and select, for example, Discrete Mapping. Discrete mapping will allow you to select a different color for each node. 
+<br>4. Click the space next to each value and then click the small icon with the ellipsis that appears.  Select the color your prefer for the value.   For example, all nodes with a cluster size > 100 are colored in the example network below.  
+<p><img src='images/cytoscape_6.jpg' width='600'></p>
+<br>For more information on changing visual styles in Cytoscape, view tutorial <a href='http://wiki.cytoscape.org/Cytoscape_User_Manual/Visual_Styles'>here</a>.. 
+
+<p><a id='ex7'></a><b>7.  Filter Network</b></p>
+
+<p>There maybe times when you want to view a network at an alignment score more stringent than the one you used to generate the network.  This can be done within Cytoscape instead of having to redo the network altogether.</p>
+
+<p>1) Open network in Cytoscape and make a copy of the network: File -> New -> Network -> Clone Current Network (may take a minute) 
+<br>2) Open Filters dialogue box: Select -> Use Old Filters 
+<br>3) In the Use Filters window (below), select Create New Filter and choose Numeric Filter (default will be "Node : null=0.0") 
+<br>4) Configure filter by setting "Select graph objects of type" to Edge from dropdown menu, setting "with a value of numeric attribute" as -log 10(E) from dropdown menu, setting "that is" as < from dropdown menu and entering desired stringency as an integer X where X is the exponent in the form of 10<sup>-X</sup>, and hit return (the filter name should change automatically) 
+<br>5) Hit the Apply Selected Filter button and the edges > than the set Evalue will turn red (may take a minute) 
+<br>6) Delete red edges: Edit -> Delete Selected Nodes and Edges 
+<br>7) Re-do the layout: Layout -> yFiles -> Organic
+<br>Or click <a href='http://enzymefunction.org/sites/enzymefunction.org/files/upload/EFI_Quick_Help_Cytoscape_More_Stringent_Evalues2.pdf' target='_blank'>here</a> to view a detailed tutorial.
+<p><a id='ex8'></a><b>8.  Save Current Session</b></p>
+
+	<p>Cytoscape can save all workspace states, including networks, attributes, visual styles, properties, and window sizes, into a session file (.cys).  To save as a session, click the Save icon on the toolbar and a .cys file will be saved.</p>
+
+<p><a id='ex9'></a><b>9.  Open a Session File</b></p>
+
+<p>To open the session file, click the Open Session File... icon on the toolbar.  A warning pop-up window will be shown. Click Yes and select a session file.  Then everything will be restored automatically from the file.
+
+
+<div>
+  <div> </div>
+    </div>
+<h4>&nbsp;</h4>
+<form action='tutorial_references.php' method='post'>
+        <button type='submit' class='css_btn_class'>CONTINUE WITH THE TUTORIAL</button>
+</form>
+
+<?php require('includes/gobackto_quest.php'); ?>
+    </div>
+
+</div>
+<?php include_once 'includes/footer.inc.php'; ?>
+
