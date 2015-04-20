@@ -63,10 +63,10 @@ if (isset($_POST['submit'])) {
 
 <h3>Start With...    </h3>
 <h4>An Introduction</h4>
-<p>Start here if you are new to the &quot;Sequence Similarity Networks Tool&quot;.</p>
-<form name="Introduction" action="tutorial.php" method="post">
-<input type="submit" name="submit" value="GO" class="css_btn_class">
-</form>
+<p>Start here if you are new to the &quot;Enzyme Similarity Tool&quot;.</p>
+<center><a href='index.php'><button type='button' class='css_btn_class'>Web Tutorial</button></a>
+<a href='http://dx.doi.org/10.1016/j.bbapap.2015.04.015'><button type='button' class='css_btn_class'>Review Article</button></a></center>
+
 <hr>
 <img src="images/quest_stages_a.jpg" width="990" height="119" alt="stage 1">
 <hr>

@@ -14,6 +14,9 @@ include_once 'includes/quest_tutorial.inc';
           <p>4. Cd-hit: a fast program for clustering and comparing large sets of protein or nucleotide sequences. Weizhong L, Godzik A (2006) <em>Bioinformatics</em> 22, 1658-9.&nbsp;</p>
            
           <p>5. CD-HIT: accelerated for clustering the next generation sequencing data. Fu L, Niu B, Zhu Z, Wu S, Li W (2012) <em>Bioinformatics </em>28, 3150-2.</p>
+
+	  <p>6. Enzyme Function Initiative-Enzyme Similarity Tool (EFI-EST): A web tool for generating protein sequence similarity networks. Gerlt JA, Bouvier JT, Davidson DB, Imker HJ, Sadkhin B, Slater DR, Whalen KL. (2015) Biochimica et Biophysica Acta (BBA) - Proteins and Proteomics 
+doi:10.1016/j.bbapap.2015.04.015"</p>
         
 <div>
   <div> </div>
