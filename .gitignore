@@ -2,4 +2,4 @@
 /html/results/*
 /conf/settings.inc.php
 /html/example/*
-
+/home/admin/.htaccess
