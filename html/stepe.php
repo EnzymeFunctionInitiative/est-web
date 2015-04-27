@@ -79,6 +79,8 @@ else {
 		
 <h3>Download Network Files</h3>
 	<p>&nbsp;</p>
+	<p><b>If you use an SSN from EFI-EST, please cite <a href='tutorial_references.php'>Reference #6 Gerlt <i>et al.</i></a></b></p>
+	<p>&nbsp;</p>
 	<h4>Network Information</h4>
 	    <table width="100%" border="1">
 	<tr>
