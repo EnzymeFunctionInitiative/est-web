@@ -25,14 +25,14 @@ foreach ($analysis_jobs as $job) {
 		$analysis_html .= "<td>&nbsp</td>\n";
 	}
 	else {
-		$analysis_html .= "<td><a href='" . $url . "'><i class='icon-share'></i></a></td>\n";
+		$analysis_html .= "<td><a href='" . $url . "'><span class='glyphicon glyphicon-share'></span></a></td>\n";
 	}
 	$analysis_html .= "<td>" . $job['Generate ID'] . "</td>\n";
 	$analysis_html .= "<td>" . $job['Analysis ID'] . "</td>\n";
 	$analysis_html .= "<td>" . $job['Email'] . "</td>\n";
 	$analysis_html .= "<td>" . $job['Minimum Length'] . "</td>\n";
 	$analysis_html .= "<td>" . $job['Maximum Length'] . "</td>\n";
-	$analysis_html .= "<td>" . $job['E-Value'] . "</td>\n";
+	$analysis_html .= "<td>" . $job['Alignment Score'] . "</td>\n";
 	$analysis_html .= "<td>" . $job['Name'] . "</td>\n";
 	$analysis_html .= "<td>" . $job['Time Submitted'] . "</td>\n";
 	$analysis_html .= "<td>" . $job['Time Started'] . "</td>\n";
@@ -44,7 +44,7 @@ foreach ($analysis_jobs as $job) {
 
 
 
-$month_html = "<select class='input-small' name='month'>";
+$month_html = "<select class='form-control' name='month'>";
 for ($i=1;$i<=12;$i++) {
         if ($month == $i) {
                 $month_html .= "<option value='" . $i . "' selected='selected'>" . date("F", mktime(0, 0, 0, $i, 10)) . "</option>\n";
@@ -55,7 +55,7 @@ for ($i=1;$i<=12;$i++) {
 }
 $month_html .= "</select>";
 
-$year_html = "<select class='input-small' name='year'>";
+$year_html = "<select class='form-control' name='year'>";
 for ($i=2014;$i<=date('Y');$i++) {
         if ($year = $i) {
                 $year_html .= "<option selected='selected' value='" . $i . "'>". $i . "</option>\n";
@@ -89,7 +89,7 @@ $monthName = date("F", mktime(0, 0, 0, $month, 10));
 	<th>Email</th>
 	<th>Min Length</th>
 	<th>Max Length</th>
-	<th>E-Value</th>
+	<th>Alignment Score</th>
 	<th>Network Name</th>
 	<th>Time Submitted</th>
 	<th>Time Started</th>

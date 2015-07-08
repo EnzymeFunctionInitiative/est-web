@@ -3,22 +3,24 @@
 <header>
 <title>EFI-EST Statistics</title>
 <link rel="stylesheet" type="text/css"
-	<?php if (file_exists("../includes/bootstrap/css/bootstrap.min.css")) {
-		echo "href='../includes/bootstrap/css/bootstrap.min.css'>";
-	}
-	elseif (file_exists("includes/bootstrap/css/bootstrap.min.css")) {
-		echo "href='includes/bootstrap/css/bootstrap.min.css'>";
-	}
-	?>
+        <?php if (file_exists("../includes/bootstrap-3.3.5-dist/css/bootstrap.min.css")) {
+                echo "href='../includes/bootstrap-3.3.5-dist/css/bootstrap.min.css'>";
+        }
+        elseif (file_exists("includes/bootstrap-3.3.5-dist/css/bootstrap.min.css")) {
+                echo "href='includes/bootstrap-3.3.5-dist/css/bootstrap.min.css'>";
+        }
+        ?>
+
 </header>
 
 <body>
-<div class='navbar navbar-inverse'>
-                <div class='navbar-inner'>
-			<a class='brand' href='#'><?php echo __TITLE__; ?></a>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class='container'>
+
+                <div class='navbar-header'>
+                        <a class='navbar-brand' href='#'><?php echo __TITLE__; ?> Statistics</a>
                 </div>
-</div>
+        </div>
+</nav>
 
-<div class='container-fluid'>
-<div class='span12'>
-
+<div class='container'>

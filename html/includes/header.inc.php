@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="css/efi_tool.css">
 <link rel="shortcut icon" href="images/favicon_efi.ico" type="image/x-icon">
 <script src='includes/main.inc.js' type='text/javascript'></script>
+<script src='includes/upload.inc.js' type='text/javascript'></script>
 <title>EFI - Enzyme Similarity Tool</title>
 
 </head>

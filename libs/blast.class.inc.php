@@ -6,7 +6,6 @@ class blast extends stepa {
 
 	private $blast_input;
 	private $sequence_max;
-	public $accession_file = "accessions.txt";        
 	public $fail_file = "1.out.failed";
 	private $num_pbs_jobs = 1;
 	///////////////Public Functions///////////
@@ -70,7 +69,7 @@ class blast extends stepa {
 			);
 			$result = $this->db->build_insert("generate",$insert_array);
                         if ($result) {
-                                return array('RESULT'=>true,'id'=>$result);
+                                return array('RESULT'=>true,'id'=>$result,'MESSAGE'=>'Job successfully created');
                         }
                 }
                 return array('RESULT'=>false,'MESSAGE'=>$message);

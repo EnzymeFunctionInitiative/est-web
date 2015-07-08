@@ -18,7 +18,7 @@ class stepa {
 	protected $output_dir = "output";
 	protected $type;
 	protected $num_sequences;
-	public $accession_file;
+	protected $accession_file = "allsequences.fa";
 	private $num_pbs_jobs = 1;
 
 	//private $alignment_length = "r_quartile_align.png";
@@ -129,16 +129,16 @@ class stepa {
 	public function get_num_sequence_from_file() {
                 $results_path = functions::get_results_dir();
                 $full_path = $results_path . "/" . $this->get_accession_file();
+		$num_seq = 0;
                 if (file_exists($full_path)) {
 
-                        $exec = "grep -v '-' " . $full_path . " | wc -l ";
+                        $exec = "grep '>' " . $full_path . " | wc -l ";
                         $output = exec($exec);
                         $output = trim(rtrim($output));
                         list($num_seq,) = explode(" ",$output);
-                        return $num_seq;
 
                 }
-                return false;
+                return $num_seq;
         }
 
         public function set_num_sequences($num_seq) {

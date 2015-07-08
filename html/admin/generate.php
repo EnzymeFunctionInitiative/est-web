@@ -23,14 +23,19 @@ foreach ($jobs as $job) {
 		$generate_html .= "<td>&nbsp</td>";
 	}
 	else {
-		$generate_html .= "<td><a href='" . $url ."'><i class='icon-share'></i></a></td>";
+		$generate_html .= "<td><a href='" . $url ."'><span class='glyphicon glyphicon-search'></span></a></td>";
 	}
 	$generate_html .= "<td>" . $job['Generate ID'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Email'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Option Selected'] . "</td>\n";
-	if ($job['Blast']) { 
-		$generate_html .= "<td><a href='blast.php?blast=" . $job['Blast'] . "' target='_blank' ><i class='icon-pencil'></i></a>";
+	if ($job['Option Selected'] == 'BLAST') { 
+		$generate_html .= "<td><a href='blast.php?blast=" . $job['Blast'] . "' target='_blank' ><span class='glyphicon glyphicon-ok'></span></a>";
 		$generate_html .= "</td>\n";
+	}
+	elseif ($job['Option Selected'] == 'FASTA') {
+                $generate_html .= "<td><a href='fasta.php?id=" . $job['Generate ID'] . "' target='_blank' ><span class='glyphicon glyphicon-ok'></span></a>";
+                $generate_html .= "</td>\n";
+
 	}
 	else {
 		$generate_html .= "<td>&nbsp</td>\n";
@@ -44,7 +49,7 @@ foreach ($jobs as $job) {
 
 }
 
-$month_html = "<select class='input-small' name='month'>";
+$month_html = "<select class='form-control' name='month'>";
 for ($i=1;$i<=12;$i++) {
         if ($month == $i) {
                 $month_html .= "<option value='" . $i . "' selected='selected'>" . date("F", mktime(0, 0, 0, $i, 10)) . "</option>\n";
@@ -55,7 +60,7 @@ for ($i=1;$i<=12;$i++) {
 }
 $month_html .= "</select>";
 
-$year_html = "<select class='input-small' name='year'>";
+$year_html = "<select class='form-control' name='year'>";
 for ($i=2014;$i<=date('Y');$i++) {
         if ($year = $i) {
                 $year_html .= "<option selected='selected' value='" . $i . "'>". $i . "</option>\n";

@@ -22,6 +22,7 @@ class analysis {
 	private $sequence_file = "sequences.fa";
 	protected $output_dir = "output";
 	private $num_pbs_jobs = 16;
+	private $filter_sequences;
         ///////////////Public Functions///////////
 
         public function __construct($db,$id = 0) {
@@ -51,6 +52,7 @@ class analysis {
 	public function get_time_completed() { return $this->time_completed; }
 	public function get_unixtime_completed() { return strtotime($this->time_completed); }
 	public function get_finish_file() { return $this->finish_file; }
+	public function get_filter_sequences() { return $filter_sequences; }
         public function get_sequence_file() {
                 return $this->sequence_file;
         }
@@ -59,21 +61,37 @@ class analysis {
                 return $this->get_generate_id() . "/" . $this->output_dir;
         }
 
+	public function set_num_sequences_post_filter() {
+		$num_seq = $this->get_num_sequences_post_filter();
 
+		$sql = "UPDATE analysis ";
+		$sql .= "SET analysis_filter_sequences='" . $num_seq . "' ";
+		$sql .= "WHERE analysis_id='" . $this->get_id() . " LIMIT 1";
+		$result = $this->db->non_select_query($sql);
+                if ($result) {
+                        $this->filter_sequences = $num_seq;
+                        return true;
+                }
+                return false;
+
+	}		
+
+
+	
         public function get_num_sequences_post_filter() {
 		$root_dir = functions::get_results_dir();
 		$directory = $root_dir . "/" . $this->get_output_dir() . "/" . $this->get_network_dir();
 		$full_path = $directory . "/" . $this->get_sequence_file();
+		$num_seq = 0;
                 if (file_exists($full_path)) {
 
                         $exec = "cat " . $full_path . " | grep '>' | wc -l";
                         $output = exec($exec);
                         $output = trim(rtrim($output));
                         list($num_seq,) = explode(" ",$output);
-                        return $num_seq;
 
                 }
-                return false;
+                return $num_seq;
 
 
 
@@ -94,7 +112,7 @@ class analysis {
 			$errors = true;
 		}
 		if (!$this->verify_evalue($evalue)) {
-			$message .= "<br><b>Please verify the e-value.</b>";
+			$message .= "<br><b>Please verify the alignment score.</b>";
 			$errors = true;	
 		}
 		if (!$errors) {
@@ -239,6 +257,16 @@ class analysis {
 			$input_message = "<br>PFAM/Interpro Families: ";
 			$input_message .= implode(", ", $stepa->get_families());
 		}
+		elseif ($stepa->get_type() == "FASTA") {
+                        $stepa = new fasta($this->db,$this->get_generate_id());
+			$input_message = "<br>Uploaded Fasta File: " . $stepa->get_uploaded_filename() . "\r\n";
+                        if ($stepa->get_families() != "") {
+				$input_message .= "<br>PFAM/Interpro Families: ";
+	                        $input_message .= implode(", ", $stepa->get_families());
+			}
+
+
+		}
 
                 $subject = "EFI-EST PFAM/Interpro Analysis Complete";
 		$from = functions::get_admin_email();
@@ -253,7 +281,7 @@ class analysis {
 		$message .= $input_message;	
 		$message .= "<br>Minimum Length: " . $this->get_min_length();
 		$message .= "<br>Maximum Length: " . $this->get_max_length();
-		$message .= "<br>E-Value: " . $this->get_evalue();
+		$message .= "<br>Alignment Score: " . $this->get_evalue();
 		$message .= "<br>Network Name: " . $this->get_name();
 		$message .= "<br><br>";
 		$message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
@@ -286,7 +314,7 @@ class analysis {
 
                 $message .= "<br>Minimum Length: " . $this->get_min_length();
                 $message .= "<br>Maximum Length: " . $this->get_max_length();
-                $message .= "<br>E-Value: " . $this->get_evalue();
+                $message .= "<br>Alignment Score: " . $this->get_evalue();
 		$message .= "<br>Network Name: " . $this->get_name();
 		$message .= "<br><br>";
                 $message .= $footer;
@@ -312,6 +340,16 @@ class analysis {
                         $input_message = "<br>PFAM/Interpro Families: ";
                         $input_message .= implode(", ", $stepa->get_families());
                 }
+                elseif ($stepa->get_type() == "FASTA") {
+                        $stepa = new fasta($this->db,$this->get_generate_id());
+			$input_message = "<br>Uploaded Fasta File: " . $this->get_uploaded_filename() . "\r\n";
+                        if ($stepa->get_families() != "") {
+                                $input_message .= "<br>PFAM/Interpro Families: ";
+                                $input_message .= implode(", ", $stepa->get_families());
+                        }
+
+
+                }
 
                 $subject = "EFI-EST PFAM/Interpro Analysis Started";
                 $from = functions::get_admin_email();
@@ -322,7 +360,7 @@ class analysis {
 		$message .= $input_message;
                 $message .= "<br>Minimum Length: " . $this->get_min_length();
                 $message .= "<br>Maximum Length: " . $this->get_max_length();
-                $message .= "<br>E-Value: " . $this->get_evalue();
+                $message .= "<br>Alignment Score: " . $this->get_evalue();
 		$message .= "<br>Network Name: " . $this->get_name();
                 $message .= "<br><br>";
                 $message .= functions::get_email_footer();
@@ -409,6 +447,7 @@ class analysis {
 			$this->filter = $result[0]['analysis_filter'];
 			$this->time_started = $result[0]['analysis_time_started'];
 			$this->time_completed = $result[0]['analysis_time_completed'];
+			$this->filter_sequences = $result[0]['analysis_filter_sequences'];
 		}
 
 	}

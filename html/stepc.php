@@ -12,13 +12,24 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 	$net_info_html = "";
 	if ($generate->get_type() == "BLAST") {
                 $generate = new blast($db,$_GET['id']);
-                $net_info_html = "<td>Blast Sequence</td>";
-                $net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td>";
+                $net_info_html = "<tr><td>Blast Sequence</td>";
+                $net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td></tr>";
         }
         elseif ($generate->get_type() == "FAMILIES") {
                 $generate = new generate($db,$_GET['id']);
-                $net_info_html = "<td>PFam/Interpro Families</td>";
-                $net_info_html .= "<td>" . $generate->get_families_comma() . "</td>";
+                $net_info_html = "<tr><td>PFam/Interpro Families</td>";
+                $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
+        }
+	elseif ($generate->get_type() == "FASTA") {
+                $generate = new fasta($db,$_GET['id']);
+                $net_info_html = "<td>Uploaded Fasta File</td>";
+                $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td>";
+		if ($generate->get_families_comma() != "") {
+			$net_info_html .= "<tr><td>PFam/Interpro Families</td>";
+	                $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
+
+		}
+
         }
 
 	if (time() > $generate->get_unixtime_completed() + functions::get_retention_secs()) {
@@ -72,9 +83,7 @@ else {
 	<p>&nbsp;</p>
 	        <h4>Network Information</h4>
             <table width="100%" border="1">
-        <tr>
                 <?php echo $net_info_html; ?>
-        </tr>
 	<tr>
 		<td>Total Number of Sequences</td>
 		<td><?php echo number_format($generate->get_num_sequences()); ?>

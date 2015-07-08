@@ -35,7 +35,7 @@ foreach ($generate_per_month as $value) {
 }
 
 
-$month_html = "<select class='input-small' name='month'>";
+$month_html = "<select class='form-control' name='month'>";
 for ($i=1;$i<=12;$i++) {
 	if ($month == $i) {
 		$month_html .= "<option value='" . $i . "' selected='selected'>" . date("F", mktime(0, 0, 0, $i, 10)) . "</option>\n";
@@ -46,7 +46,7 @@ for ($i=1;$i<=12;$i++) {
 }
 $month_html .= "</select>";
 
-$year_html = "<select class='input-small' name='year'>";
+$year_html = "<select class='form-control' name='year'>";
 for ($i=2014;$i<=date('Y');$i++) {
 	if ($year = $i) {
 		$year_html .= "<option selected='selected' value='" . $i . "'>". $i . "</option>\n";
@@ -80,7 +80,7 @@ $year_html .= "</select>";
 </table>
 
 <form class='form-inline' method='post' action='report.php'>
-                <select name='report_type' class='input-medium'>
+                <select name='report_type' class='form-control'>
                 <option value='xls'>Excel 2003</option>
                 <option value='xlsx'>Excel 2007</option>
                 <option value='csv'>CSV</option>
@@ -92,7 +92,7 @@ $year_html .= "</select>";
 <br>
 <hr>
 <form class='form-inline' method='post' action='report.php'>
-                <select name='report_type' class='input-medium'>
+                <select name='report_type' class='form-control'>
                 <option value='xls'>Excel 2003</option>
                 <option value='xlsx'>Excel 2007</option>
                 <option value='csv'>CSV</option>
@@ -105,7 +105,7 @@ $year_html .= "</select>";
 </form>
 <hr>
 <form class='form-inline' method='post' action='<?php echo $_SERVER['PHP_SELF']; ?>'>
-                <select name='report_type' class='input-medium'>
+                <select name='report_type' class='form-control'>
                 <option value='xls'>Excel 2003</option>
                 <option value='xlsx'>Excel 2007</option>
                 <option value='csv'>CSV</option>

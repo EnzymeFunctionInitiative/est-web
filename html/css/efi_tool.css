@@ -474,4 +474,8 @@ li.active  { background: #7a0026; }
 
 .content h2 { color:#7a0026; text-transform:uppercase; font-size: 310%; font-family: 'DINPro-regular', helvetica, sans-serif; margin:0px 0 4px 0; border-bottom: 14px #7a0026 solid; line-height: 110%; background: none; font-weight: normal;  } 
 
+.align_left p { text-align: left; }
 
+fieldset {
+    border-style: none;
+}

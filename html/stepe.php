@@ -20,6 +20,18 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 		$net_info_html = "<td>PFam/Interpro Families</td>";
 		$net_info_html .= "<td>" . $generate->get_families_comma() . "</td>";
 	}
+	elseif ($generate->get_type() == "FASTA") {
+		$generate = new fasta($db,$_GET['id']);
+		$net_info_html = "<td>Uploaded Fasta File</td>";
+		$net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td>";
+		 if ($generate->get_families_comma() != "") {
+                        $net_info_html .= "<tr><td>PFam/Interpro Families</td>";
+                        $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
+
+                }
+
+
+	}
 
 	$analysis_id = $_GET['analysis_id'];
         $analysis = new analysis($db,$analysis_id);
@@ -111,6 +123,11 @@ else {
 	<tr>
 		<td>Total Number of Sequences</td>
 		<td><?php echo number_format($generate->get_num_sequences()); ?></td>
+	</tr>
+	<tr>
+		<td>Submission Time</td>
+		<td><?php echo $generate->get_time_created(); ?></td>
+	</tr>
     </table>
 
 	<h4>Full Network <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>

@@ -1,6 +1,24 @@
 <?php
 
 class functions {
+
+
+        //Possible errors when you upload a file
+        private static $upload_errors = array(
+                1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
+                2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
+                3 => 'The uploaded file was only partially uploaded.',
+                4 => 'No file was uploaded.',
+                6 => 'Missing a temporary folder.',
+                7 => 'Failed to write file to disk.',
+                8 => 'File upload stopped by extension.',
+        );
+
+        public static function get_upload_error($value) {
+                return self::$upload_errors[$value];
+
+        }
+
 	public static function get_blasts($db,$status = 'NEW') {
 
 		$sql = "SELECT * ";
@@ -29,6 +47,16 @@ class functions {
 
 
 	}
+        public static function get_fastas($db,$status = 'NEW') {
+
+                $sql = "SELECT * ";
+                $sql .= "FROM generate ";
+                $sql .= "WHERE generate_status='" . $status . "' ";
+                $sql .= "AND generate_type='FASTA' ";
+                $sql .= "ORDER BY generate_time_created ASC ";
+                $result = $db->query($sql);
+                return $result;
+        }
 
 	public static function get_analysis($db,$status = 'NEW') {
 
@@ -164,6 +192,26 @@ class functions {
 	public static function get_interpro_website() {
 		return __INTERPRO_WEBSITE__;
 	}
+
+	public static function option_a_enabled() {
+		return __ENABLE_A__;
+	}
+	public static function option_b_enabled() {
+		return __ENABLE_B__;
+	}
+	public static function option_c_enabled() {
+		return __ENABLE_C__;
+	}
+
+	public static function get_uploads_dir() {
+		return __UPLOADS_DIR__;
+	}
+	
+	public static function get_blasthits_processors() {
+		return __BLASTHITS_PROCS__;
+	}
+
+
 }
 
 ?>

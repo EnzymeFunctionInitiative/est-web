@@ -3,51 +3,6 @@ include_once 'includes/main.inc.php';
 include_once 'includes/header.inc.php'; 
 include_once 'includes/quest_acron.inc';
 
-if (isset($_POST['submit'])) {
-	foreach ($_POST as &$var) {
-		$var = trim(rtrim($var));
-	}
-	$message = "";
-	
-	//If you entered both blast and pfam/interpro, fail
-	if ((strlen($_POST['blast_input'])) && (strlen($_POST['families_input']))) {
-		$message = "<br><b>You can only select Option A or Option B</b></br>";
-
-	}
-
-	//If you entered only blast, do option A.
-	elseif (strlen($_POST['blast_input'])) {
-		$blast = new blast($db);
-		$result = $blast->create($_POST['email'],functions::get_evalue(),$_POST['blast_input']);
-                
-		if ($result['RESULT']) {
-                              header('Location: stepb.php');
-		}
-		else {
-			$message = $result['MESSAGE'];
-		}
-	}
-
-	//If you entered only pfam/interpro, do option B.
-	elseif (strlen($_POST['families_input'])) {
-		$generate = new generate($db);
-		$result = $generate->create($_POST['email'],functions::get_evalue(),$_POST['families_input']);
-
-       	        if ($result['RESULT']) {
-                	      header('Location: stepb.php');
-        	}
-		else {
-			$message = $result['MESSAGE']; 
-		}
-	}
-
-	//If you entered nothing, fail
-	else {
-		$message = "You need to select Option A or Option B";
-
-	}
-}
-
 ?>
 
 <script>
@@ -71,22 +26,43 @@ if (isset($_POST['submit'])) {
 <img src="images/quest_stages_a.jpg" width="990" height="119" alt="stage 1">
 <hr>
 <h4>Input<a href="tutorial_startscreen.php" class="question" target="_blank">?</a></h4>
-<form name="blast" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-<p>Option A: Generate data set of close relatives via BLAST.  Enter only protein sequence.  Do not enter any fasta header information. (Maximum number sequences retrieved: <?php echo number_format(functions::get_blast_seq(),0); ?>).</p>
-<textarea class="blast_inputs" name='blast_input'><?php if (isset($_POST['blast_input'])) { echo $_POST['blast_input']; } ?></textarea>
-<p>Option B: Generate data set with Pfam and/or InterPro numbers. For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).  The maximum number sequences retrieved is <?php echo number_format(functions::get_max_seq(),0); ?>. To convert your blast search into an InterPro number, please go to <a href='<?php echo functions::get_interpro_website(); ?>' target='_blank'><?php echo functions::get_interpro_website(); ?></a>.
+<form name="stepa" method="post" action="" enctype="multipart/form-data">
+<input type="hidden" id='MAX_FILE_SIZE' name="MAX_FILE_SIZE" value="2147483648" />
 
+<?php if (functions::option_a_enabled()) { ?>
+<p class='align_left'><input type='radio' id='option_selected_a' name='option_selected' value='A' onChange='disable_forms();'><b>Option A:</b> Generate data set of close relatives via BLAST.  Enter only protein sequence.  Do not enter any FASTA header information. (Maximum number sequences retrieved: <?php echo number_format(functions::get_blast_seq(),0); ?>).</p>
+<fieldset id='option_a'>
+<textarea class="blast_inputs" id='blast_input' name='blast_input'><?php if (isset($_POST['blast_input'])) { echo $_POST['blast_input']; } ?></textarea>
+</fieldset>
+<?php } ?>
+<hr>
+<?php if (functions::option_b_enabled()) { ?>
+<p class='align_left'><input type='radio' id='option_selected_b' name='option_selected' value='B' onChange='disable_forms();'><b>Option B:</b> Generate data set with Pfam and/or InterPro numbers. For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).  The maximum number sequences retrieved is <?php echo number_format(functions::get_max_seq(),0); ?>. To identify the Pfam and/or InterPro number from a BLAST sequence, please go to <a href='<?php echo functions::get_interpro_website(); ?>' target='_blank'><?php echo functions::get_interpro_website(); ?></a>.
 </p>
-<input type='text' name='families_input' class='blast_inputs' value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'>
+<fieldset id='option_b'>
+<input type='text' id='families_input' name='families_input' class='blast_inputs' value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'>
+</fieldset>
+<?php } ?>
+
+<hr>
+<?php if (functions::option_c_enabled()) { ?>
+<p class='align_left'><input type='radio' id='option_selected_c' name='option_selected' value='C' onChange='disable_forms();'><b>Option C:</b> Generate data set with custom FASTA file with header information. Maximum size is <?php echo ini_get('post_max_size'); ?>.
+<fieldset id='option_c'>
+<p>FASTA File: <input type='file' name='fasta_file' id='fasta_file' data-url='server/php/'><progress id='progress_bar' max='100' value='0'></progress>
+<br><div id="progressNumber"></div> 
+<p>If desired, include a Pfam and/or InterPro families, in the analysis of your FASTA file. For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).</p>
+<input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'>
+</fieldset>
+<?php } ?>
+<hr>
 <p>
-<input type="text" name='email' value='<?php if (isset($_POST['email'])) { echo $_POST['email']; } else { echo "Enter your email address"; } ?>' 
+<input type="text" id='email' name='email' value='<?php if (isset($_POST['email'])) { echo $_POST['email']; } else { echo "Enter your email address"; } ?>' 
 	class="blast_inputs email" id='email' onfocus="if(!this._haschanged){this.value=''};this._haschanged=true;"><br>
 <span class="smalltext">Used for data retrieval only</span>
 </p>
-<?php if (isset($message)) { echo "<b style='color: red;'>" . $message . "</b>"; } ?>       
-<hr>
+<div id='message'><?php if (isset($message)) { echo "<h4 class='center'>" . $message . "</h4>"; } ?></div>
 
-<input type="submit" name="submit" value="GO" class="css_btn_class">
+<input type="button" id='submit' name="submit" value="GO" class="css_btn_class" onclick="uploadFile()">
         
 </form>
 <P>View Example - <a href='stepc_example.php'>Click Here</a></p>
@@ -94,7 +70,8 @@ if (isset($_POST['submit'])) {
 <h4>UniProt Version: <b><?php echo functions::get_uniprot_version(); ?></b></h4>
     
 </div>
-  
-
+<script> 
+disable_forms();
+</script>
 
 <?php include_once 'includes/footer.inc.php'; ?>

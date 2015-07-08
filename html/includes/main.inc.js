@@ -39,3 +39,53 @@ var isFirst = true;
 
 }
 
+function uploadProgress(evt) {
+        if (evt.lengthComputable) {
+          var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+          document.getElementById('progressNumber').innerHTML = "Uploading File: " + percentComplete.toString() + '%';
+          var bar = document.getElementById('progress_bar');
+          bar.value = percentComplete;
+        }
+        else {
+          document.getElementById('progressNumber').innerHTML = 'unable to compute';
+        }
+}
+
+function disable_forms() {
+	var option_selected;
+        if (document.getElementById('option_selected_a').checked) {
+                option_selected = document.getElementById('option_selected_a').value;
+        }
+        else if (document.getElementById('option_selected_b').checked) {
+                option_selected = document.getElementById('option_selected_b').value;
+        }
+        else if (document.getElementById('option_selected_c').checked) {
+                option_selected = document.getElementById('option_selected_c').value;
+        }
+
+        if (option_selected == "A") {
+		document.getElementById("option_a").disabled = false;
+		document.getElementById("option_b").disabled = true;
+		document.getElementById("option_c").disabled = true;
+
+        } 
+	else if (option_selected == "B") {
+		document.getElementById("option_a").disabled = true;
+		document.getElementById("option_b").disabled = false;
+		document.getElementById("option_c").disabled = true;
+        }
+	else if (option_selected == "C") {
+		document.getElementById("option_a").disabled = true;
+		document.getElementById("option_b").disabled = true;
+		document.getElementById("option_c").disabled = false;
+	}
+	else {
+                document.getElementById("option_a").disabled = true;
+                document.getElementById("option_b").disabled = true;
+                document.getElementById("option_c").disabled = true;
+
+	}
+
+
+}
+

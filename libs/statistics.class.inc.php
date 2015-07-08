@@ -75,7 +75,7 @@ class statistics
 		$sql .= "analysis.analysis_status as 'Analysis Step Status', ";
 		$sql .= "analysis.analysis_min_length as 'Minimum Length', ";
 		$sql .= "analysis.analysis_max_length as 'Maximum Length', ";
-		$sql .= "analysis.analysis_evalue as 'E-Value', ";
+		$sql .= "analysis.analysis_evalue as 'Alignment Score', ";
 		$sql .= "analysis.analysis_name as 'Name', ";
 		$sql .= "analysis.analysis_time_started as 'Analysis Time Started', ";
 		$sql .= "analysis.analysis_time_completed as 'Analysis Time Completed' ";
@@ -119,7 +119,7 @@ class statistics
                 $sql .= "analysis.analysis_status as 'Status', ";
                 $sql .= "analysis.analysis_min_length as 'Minimum Length', ";
                 $sql .= "analysis.analysis_max_length as 'Maximum Length', ";
-                $sql .= "analysis.analysis_evalue as 'E-Value', ";
+                $sql .= "analysis.analysis_evalue as 'Alignment Score', ";
                 $sql .= "analysis.analysis_name as 'Name', ";
 		$sql .= "analysis.analysis_time_started as 'Time Started', ";
                 $sql .= "analysis.analysis_time_completed as 'Time Completed' ";

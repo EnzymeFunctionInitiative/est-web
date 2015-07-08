@@ -14,6 +14,12 @@ php $DIR/check_blasthits.php
 sleep 1
 php $DIR/blasthits.php
 
+sleep 1 
+php $DIR/check_fasta.php
+
+sleep
+php $DIR/fasta.php
+
 sleep 1
 php $DIR/check_analyzedata.php
 
