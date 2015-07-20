@@ -153,22 +153,35 @@ class blast extends stepa {
 	public function run_job() {
 		if ($this->available_pbs_slots()) {
 			//Setup Directories
-			$job_dir = functions::get_results_dir() . "/" . $this->get_id();
-			$relative_output_dir = "output";
-			if (@file_exists($job_dir)) {
-				functions::rrmdir($job_dir);
-			}
-			mkdir($job_dir);
+			//$job_dir = functions::get_results_dir() . "/" . $this->get_id();
+			//$relative_output_dir = "output";
+			//if (@file_exists($job_dir)) {
+			//	functions::rrmdir($job_dir);
+			//}
+			//mkdir($job_dir);
+		
+                        //Setup Directories
+                        $job_dir = functions::get_results_dir() . "/" . $this->get_id();
+                        $relative_output_dir = "output";
+                        $full_output_dir = $job_dir . "/" . $relative_output_dir;
 
-		        $exec_dir = "../bin";
-        		$exec = $exec_dir . "/submit_blast.pl ";
-		        $exec .= "-seq '" . $this->get_blast_input() . "' ";
-        		$exec .= "-evalue " . functions::get_evalue() . " ";
-	        	$exec .= "-jobdir " . $job_dir . " ";
-	        	$exec .= "-queue " . functions::get_generate_queue() . " ";
-		        $exec .= "-nresults " . functions::get_blast_seq() . " ";
-        		$exec .= "-efimodule " . functions::get_efi_module() . " ";
-		        $exec .= "-resultdir " . $relative_output_dir;
+                        if (@file_exists($job_dir)) {
+                                functions::rrmdir($job_dir);
+                        }
+                        mkdir($job_dir);
+                        //mkdir($full_output_dir);
+
+                        chdir($job_dir);	
+			$exec = "source /etc/profile\n";
+                        $exec .= "module load " . functions::get_efi_module() . "\n";
+                        $exec .= "module load " . functions::get_efidb_module() . "\n";
+			$exec .= "blasthits-new.pl ";
+			$exec .= "-seq  '" . $this->get_blast_input() . "' ";
+			$exec .= "-evalue " . functions::get_evalue() . " ";
+			$exec .= "-np " . functions::get_blasthits_processors() . " ";
+			$exec .= "-queue " . functions::get_generate_queue() . " ";
+			$exec .= "-memqueue " . functions::get_generate_queue() . " ";
+			$exec .= "-tmpdir " . $relative_output_dir;
         		$exit_status = 1;
 	        	$output_array = array();
 	        	$output = exec($exec,$output_array,$exit_status);

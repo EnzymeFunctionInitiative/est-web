@@ -253,6 +253,7 @@ class generate extends stepa {
         		$interpro_families = implode(",",$this->get_interpro_families());
 		        $exec = "source /etc/profile\n";
         		$exec .= "module load " . functions::get_efi_module() . "\n";
+			$exec .= "module load " . functions::get_efidb_module() . "\n";
 	        	$exec .= "generatedata.pl ";
 	        	$exec .= "-np " . functions::get_cluster_procs() . " ";
 		        $exec .= "-evalue " . functions::get_evalue() . " ";

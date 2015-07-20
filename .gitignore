@@ -3,3 +3,4 @@
 /conf/settings.inc.php
 /html/example/*
 /home/admin/.htaccess
+/uploads/*

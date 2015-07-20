@@ -34,7 +34,7 @@ else {
 				functions::log_message($msg);	
 	
         	        }
-                	if ((!$pbs_running) && (!$analysis->check_finish_file())) {
+                	elseif ((!$pbs_running) && (!$analysis->check_finish_file())) {
                         	$analysis->set_status(__FAILED__);
 	                        $analysis->set_time_completed();
         	                $analysis->email_failed();

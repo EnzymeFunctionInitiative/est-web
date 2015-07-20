@@ -386,6 +386,7 @@ class analysis {
 				chdir($job_dir);
 		        	$exec = "source /etc/profile\n";
 			        $exec .= "module load " . functions::get_efi_module() . "\n";
+				$exec .= "module load " . functions::get_efidb_module() . "\n";
         			$exec .= "analyzedata.pl ";
 			        $exec .= "-maxlen " . $this->get_max_length() . " ";
         			$exec .= "-minlen " . $this->get_min_length() . " ";

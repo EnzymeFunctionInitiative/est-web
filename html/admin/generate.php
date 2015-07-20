@@ -23,7 +23,7 @@ foreach ($jobs as $job) {
 		$generate_html .= "<td>&nbsp</td>";
 	}
 	else {
-		$generate_html .= "<td><a href='" . $url ."'><span class='glyphicon glyphicon-search'></span></a></td>";
+		$generate_html .= "<td><a href='" . $url ."'><span class='glyphicon glyphicon-share'></span></a></td>";
 	}
 	$generate_html .= "<td>" . $job['Generate ID'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Email'] . "</td>\n";

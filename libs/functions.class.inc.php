@@ -11,7 +11,7 @@ class functions {
                 4 => 'No file was uploaded.',
                 6 => 'Missing a temporary folder.',
                 7 => 'Failed to write file to disk.',
-                8 => 'File upload stopped by extension.',
+                8 => 'File upload stopped by extension.'
         );
 
         public static function get_upload_error($value) {
@@ -136,6 +136,9 @@ class functions {
 
 	}
 
+	public static function get_efidb_module() {
+		return __EFIDB_MODULE__;
+	}
 	public static function log_message($message) {
 		$current_time = date('Y-m-d H:i:s');
 		$full_msg = $current_time . ": " . $message . "\n";
