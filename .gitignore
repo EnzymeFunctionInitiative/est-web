@@ -5,3 +5,4 @@
 /home/admin/.htaccess
 /uploads/*
 .DS_Store
+/html/admin/.htaccess
