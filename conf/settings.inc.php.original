@@ -1,0 +1,69 @@
+<?php
+////////////////////////////////////
+//                                              
+//      EFI EST                         
+//      settings.inc.php                        
+//                                              
+//      Settings for the scripts.               
+//                                              
+//      David Slater                            
+//      Sep 2013                                
+//                                              
+////////////////////////////////////
+
+
+////////System Settings///////////
+define("__ENABLE_WEBSITE__",True);
+define("__ENABLE_EMAILS__",True);
+define("__TITLE__","EFI-EST");
+define("__VERSION__","Beta");
+define("__TIMEZONE__","America/Chicago");
+define("__ADMIN_EMAIL__","");
+define("__WEB_ROOT__","");
+define("__ENABLE_LOG__",true);
+define("__LOG_FILE__","");
+define("__INTERPRO_VERSION__","53.0");
+define("__UNIPROT_VERSION__","2015_08");
+define("__INTERPRO_WEBSITE__","http://www.ebi.ac.uk/interpro/");
+
+////////MySQL Settings///////////
+define("__MYSQL_HOST__","");
+define("__MYSQL_USER__","");
+define("__MYSQL_DATABASE__","");
+define("__MYSQL_PASSWORD__","");
+
+////////Cluster Settings////////////
+define("__CLUSTER_USER__","");
+define("__GENERATE_QUEUE__","");
+define("__ANALYSE_QUEUE__","");
+define("__CLUSTER_PROCS__","48");
+define("__BLASTHITS_PROCS__",12);
+define("__FRACTION_DEFAULT__",1);
+define("__RESULTS_DIR__","");
+define("__EFI_MODULE__","");
+define("__EFIDB_MODULE__","");
+
+////////Blast Settings/////////////
+define("__EVALUE__","5");
+
+///////Status/////////////
+define("__NEW__","NEW");
+define("__RUNNING__","RUNNING");
+define("__FINISH__","FINISH");
+define("__FAILED__","FAILED");
+
+define("__MINIMUM__",0);
+define("__MAXIMUM__",50000);
+
+define("__MAX_SEQ__",100000);
+
+define("__MAX_BLAST_SEQ__",10000);
+define("__DEFAULT_BLAST_SEQ__",5000);
+define("__RETENTION_DAYS__",14);
+define("__EMAIL_FOOTER__","");
+
+define("__ENABLE_A__",true);
+define("__ENABLE_B__",true);
+define("__ENABLE_C__",true);
+define("__UPLOADS_DIR__","");
+?>
