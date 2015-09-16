@@ -14,11 +14,18 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 		$generate = new blast($db,$_GET['id']);
 		$net_info_html = "<td>Blast Sequence</td>";
 		$net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td>";
+		$net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
+                $net_info_html .= "<tr><td>Maximum Blast Sequences</td><td>" . number_format($generate->get_submitted_max_sequences()) . "</td></tr>";
+
 	}
         elseif ($generate->get_type() == "FAMILIES") {
  		$generate = new generate($db,$_GET['id']);
 		$net_info_html = "<td>PFam/Interpro Families</td>";
 		$net_info_html .= "<td>" . $generate->get_families_comma() . "</td>";
+                $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
+                $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
+                $net_info_html .= "<tr><td>Domain</td><td>" . $generate->get_domain() . "</td></tr>";
+
 	}
 	elseif ($generate->get_type() == "FASTA") {
 		$generate = new fasta($db,$_GET['id']);
@@ -29,7 +36,8 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
                         $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
 
                 }
-
+                $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
+                $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
 
 	}
 
@@ -123,10 +131,6 @@ else {
 	<tr>
 		<td>Total Number of Sequences</td>
 		<td><?php echo number_format($generate->get_num_sequences()); ?></td>
-	</tr>
-	<tr>
-		<td>Submission Time</td>
-		<td><?php echo $generate->get_time_created(); ?></td>
 	</tr>
     </table>
 

@@ -89,3 +89,33 @@ function disable_forms() {
 
 }
 
+function toggle_blast_advanced() {
+	if ( $("#blast_advanced").is(":hidden")) {
+		$("#blast_advanced").slideDown("slow");
+	}
+	else {
+		$("#blast_advanced").slideUp("slow");
+	}
+
+}
+
+
+function toggle_pfam_advanced() {
+        if ( $("#pfam_advanced").is(":hidden")) {
+                $("#pfam_advanced").slideDown("slow");
+        }
+        else {
+                $("#pfam_advanced").slideUp();
+        }
+
+}
+
+function toggle_fasta_advanced() {
+        if ( $("#fasta_advanced").is(":hidden")) {
+                $("#fasta_advanced").slideDown("slow");
+        }
+        else {
+                $("#fasta_advanced").slideUp();
+        }
+
+}

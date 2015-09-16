@@ -6,6 +6,7 @@ class blast extends stepa {
 
 	private $blast_input;
 	private $sequence_max;
+	private $blast_sequence_max;
 	public $fail_file = "1.out.failed";
 	private $num_pbs_jobs = 1;
 	///////////////Public Functions///////////
@@ -23,6 +24,7 @@ class blast extends stepa {
         public function __destruct() {
         }
 
+	public function get_submitted_max_sequences() { return $this->blast_sequence_max; }
 	public function get_blast_input() { return $this->blast_input; }
 	public function get_finish_file() { 
 		return $this->get_output_dir() . "/" . $this->finish_file; 
@@ -43,13 +45,13 @@ class blast extends stepa {
 		return wordwrap($this->get_blast_input(),$width,$break,$cut);
 	}
 	
-	public function create($email,$evalue,$blast_input) {
+	public function create($email,$blast_input,$evalue,$max_seqs) {
 		$errors = false;
                 $message = "";
 		$type = "BLAST";
 		if (!$this->verify_email($email)) {
                         $errors = true;
-                        $message .= "<br>Please enter a valid email address</br>";
+                        $message .= "<br><b>Please enter a valid email address</b></br>";
                 }
 
 		if (($blast_input != "") && (!$this->verify_blast_input($blast_input))) {
@@ -58,6 +60,14 @@ class blast extends stepa {
 
 
 		}
+		if (!$this->verify_evalue($evalue)) {
+			$errors = true;
+			$message .= "<br><b>Please enter a valid E-Value</b></br>";
+		}
+		if (!$this->verify_max_seqs($max_seqs)) {
+			$errors = true;	
+			$message .= "<br><b>Please enter a valid maximum number of sequences</b></br>";
+		}
 		if (!$errors) {
 			$key = $key = $this->generate_key();
 			$formatted_blast = $this->format_blast($blast_input);
@@ -65,7 +75,8 @@ class blast extends stepa {
 					'generate_email'=>$email,
 					'generate_type'=>$type,
 					'generate_evalue'=>$evalue,
-				'generate_blast'=>$formatted_blast
+					'generate_blast_max_sequence'=>$max_seqs,
+					'generate_blast'=>$formatted_blast
 			);
 			$result = $this->db->build_insert("generate",$insert_array);
                         if ($result) {
@@ -93,7 +104,8 @@ class blast extends stepa {
 		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";	
 		$message .= "<br>Blast Sequence: \r\n";
 		$message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-
+		$message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+		$message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
 		$message .= "<br><br>";
 		$message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
 		$message .= functions::get_email_footer();
@@ -115,7 +127,8 @@ class blast extends stepa {
 		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
                 $message .= "<br>Blast Sequence: \r\n";
                 $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-
+                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+                $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
 		$message .= "<br><br>";
 		$message .= functions::get_email_footer();
                 $headers = "From: " . $from . "\r\n";
@@ -140,7 +153,8 @@ class blast extends stepa {
                 $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
 		$message .= "<br>Blast Sequence: \r\n";
                 $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-
+                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+                $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
 
                 $message .= "<br>" . functions::get_email_footer();
                 $headers = "From: " . $from . "\r\n";
@@ -177,10 +191,16 @@ class blast extends stepa {
                         $exec .= "module load " . functions::get_efidb_module() . "\n";
 			$exec .= "blasthits-new.pl ";
 			$exec .= "-seq  '" . $this->get_blast_input() . "' ";
-			$exec .= "-evalue " . functions::get_evalue() . " ";
+			$exec .= "-evalue " . $this->get_evalue() . " ";
 			$exec .= "-np " . functions::get_blasthits_processors() . " ";
 			$exec .= "-queue " . functions::get_generate_queue() . " ";
 			$exec .= "-memqueue " . functions::get_generate_queue() . " ";
+			if ($this->get_submitted_max_sequences() != "") {
+				$exec .= "-nresults " . $this->get_submitted_max_sequences() . " ";
+			}
+			else {
+				$exec .= "-nresults " . functions::get_default_blast_seq() . " ";
+			}
 			$exec .= "-tmpdir " . $relative_output_dir;
         		$exit_status = 1;
 	        	$output_array = array();
@@ -225,6 +245,7 @@ class blast extends stepa {
 			$this->blast_input = $result[0]['generate_blast'];
                         $this->sequence_max = $result[0]['generate_sequence_max'];
                         $this->num_sequences = $result[0]['generate_num_sequences'];
+			$this->blast_sequence_max = $result[0]['generate_blast_max_sequence'];
                 }
 
         }
@@ -258,7 +279,25 @@ class blast extends stepa {
 
 
         }
-	 private function available_pbs_slots() {
+
+	protected function verify_max_seqs($max_seqs) {
+		$valid = 0;
+		if ($max_seqs == "") {
+			$valid = 0;
+		}
+		elseif (!preg_match("/^[1-9][0-9]*$/",$max_seqs)) {
+			$valid = 0;
+		}
+		elseif ($max_seqs > functions::get_max_blast_seq()) {
+			$valid = 0;
+		}
+		else {
+			$valid = 1;
+		}
+		return $valid;
+	}
+
+	private function available_pbs_slots() {
                 $queue = new queue(functions::get_generate_queue());
                 $num_queued = $queue->get_num_queued();
                 $max_queuable = $queue->get_max_queuable();
@@ -283,7 +322,24 @@ class blast extends stepa {
         }
 
 
+	private function get_email_info_txt() {
+		return strip_tags($this->get_email_info_html());
 
+	}
+
+	private function get_email_info_html() {
+                $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
+                $message .= "<br>Blast Sequence: \r\n";
+                $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
+                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+                $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
+                $message .= "<br><br>";
+                $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
+                $message .= functions::get_email_footer();
+		return $message;
+
+
+	}
 }
 
 ?>

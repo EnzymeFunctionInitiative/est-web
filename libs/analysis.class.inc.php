@@ -251,11 +251,19 @@ class analysis {
 			$stepa = new blast($this->db,$this->get_generate_id());
 			$input_message = "<br>Blast Input: \r\n";
 			$input_message .= $stepa->get_formatted_blast();
+			$input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
+                        $input_message .= "<br>Maximum Blast Sequences: " . $stepa->get_submitted_max_sequences() . "\r\n";
+
 		}
 		elseif ($stepa->get_type() == "FAMILIES") {
 			$stepa = new generate($this->db,$this->get_generate_id());
 			$input_message = "<br>PFAM/Interpro Families: ";
 			$input_message .= implode(", ", $stepa->get_families());
+			$input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
+                        $input_message .= "<br>Fraction: " . $stepa->get_fraction() . "\r\n";
+                        $input_message .= "<br>Enable Domain: " . $stepa->get_domain() . "\r\n";
+
+	
 		}
 		elseif ($stepa->get_type() == "FASTA") {
                         $stepa = new fasta($this->db,$this->get_generate_id());
@@ -264,7 +272,8 @@ class analysis {
 				$input_message .= "<br>PFAM/Interpro Families: ";
 	                        $input_message .= implode(", ", $stepa->get_families());
 			}
-
+                        $input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
+                        $input_message .= "<br>Fraction: " . $stepa->get_fraction() . "\r\n";
 
 		}
 
@@ -305,6 +314,7 @@ class analysis {
                 if ($generate->get_blast_input() != "") {
                         $message .= "<br>Blast Input: \r\n";
                         $message .= $generate->get_formatted_blast();
+
                 }
                 elseif (count($generate->get_families())) {
                         $message .= "<br>PFAM/Interpro Families: ";
@@ -334,20 +344,27 @@ class analysis {
                         $stepa = new blast($this->db,$this->get_generate_id());
                         $input_message = "<br>Blast Input: \r\n";
                         $input_message .= $stepa->get_formatted_blast();
+			$input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
+	                $input_message .= "<br>Maximum Blast Sequences: " . $stepa->get_submitted_max_sequences() . "\r\n";
                 }
                 elseif ($stepa->get_type() == "FAMILIES") {
                         $stepa = new generate($this->db,$this->get_generate_id());
                         $input_message = "<br>PFAM/Interpro Families: ";
                         $input_message .= implode(", ", $stepa->get_families());
+			$input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
+	                $input_message .= "<br>Fraction: " . $stepa->get_fraction() . "\r\n";
+        	        $input_message .= "<br>Enable Domain: " . $stepa->get_domain() . "\r\n";
+
                 }
                 elseif ($stepa->get_type() == "FASTA") {
                         $stepa = new fasta($this->db,$this->get_generate_id());
-			$input_message = "<br>Uploaded Fasta File: " . $this->get_uploaded_filename() . "\r\n";
+			$input_message = "<br>Uploaded Fasta File: " . $stepa->get_uploaded_filename() . "\r\n";
                         if ($stepa->get_families() != "") {
                                 $input_message .= "<br>PFAM/Interpro Families: ";
                                 $input_message .= implode(", ", $stepa->get_families());
                         }
-
+	                $input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
+	                $input_message .= "<br>Fraction: " . $stepa->get_fraction() . "\r\n";
 
                 }
 

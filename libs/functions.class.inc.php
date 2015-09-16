@@ -108,13 +108,25 @@ class functions {
 		return __EVALUE__;
 	}
 
-	public static function get_max_seq() {
+	public static function get_max_seq($format = 0) {
+		if ($format) {
+			return number_format(__MAX_SEQ__,0);
+		}
 		return __MAX_SEQ__;
 	}
-	public static function get_blast_seq() {
+	public static function get_max_blast_seq($format = 0) {
+		if ($format) {
+			return number_format(__MAX_BLAST_SEQ__,0);
+		}
 		return __MAX_BLAST_SEQ__;
 	}
-
+	public static function get_default_blast_seq($format = 0) {
+		if ($format) {
+			return number_format(__DEFAULT_BLAST_SEQ__,0);
+		}
+		return __DEFAULT_BLAST_SEQ__;
+	}
+	
 	public static function get_email_footer() {
 		return __EMAIL_FOOTER__;
 	}
@@ -214,7 +226,27 @@ class functions {
 		return __BLASTHITS_PROCS__;
 	}
 
+	public static function get_fraction() {
+		return __FRACTION_DEFAULT__;
+	}
 
+	public static function get_databases($db) {
+		$sql = "SELECT * FROM db_version";
+		return $db->query($sql);
+
+
+	}
+
+	public static function add_database($db,$db_date,$interpro,$unipro,$default = 0) {
+		$sql = "INSERT INTO db_version(db_version_date,db_version_interpro,db_version_unipro,db_version_default) ";
+		$sql .= "VALUES($db_date,$interpro,$unipro,$default)";
+		$result = $db->query($sql);
+		if ($result) {
+			return array('RESULT'=>true,'ID'=>$result,'MESSAGE'=>'Successfully added EFI-EST database');
+		}
+		return array('RESULT'=>false,'MESSAGE'=>'Error adding EFI-EST database version');
+
+	}
 }
 
 ?>

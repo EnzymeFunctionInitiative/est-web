@@ -1,8 +1,11 @@
 <!doctype html>
 <head>
-<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-<link rel="stylesheet" type="text/css" href="css/efi_tool.css">
 <link rel="shortcut icon" href="images/favicon_efi.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="css/efi_tool.css">
+<link rel='stylesheet' type='text/css' href='includes/jquery-ui-1.11.4.custom/jquery-ui.css'>
+
+<script src='includes/jquery-1.11.3.min.js' type='text/javascript'></script>
+<script src='includes/jquery-ui-1.11.4.custom/jquery-ui.js' type='text/javascript'></script>
 <script src='includes/main.inc.js' type='text/javascript'></script>
 <script src='includes/upload.inc.js' type='text/javascript'></script>
 <title>EFI - Enzyme Similarity Tool</title>

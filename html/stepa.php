@@ -26,13 +26,18 @@ include_once 'includes/quest_acron.inc';
 <img src="images/quest_stages_a.jpg" width="990" height="119" alt="stage 1">
 <hr>
 <h4>Input<a href="tutorial_startscreen.php" class="question" target="_blank">?</a></h4>
-<form name="stepa" method="post" action="" enctype="multipart/form-data">
+<form id='stepa' name="stepa" method="post" action="" enctype="multipart/form-data">
 <input type="hidden" id='MAX_FILE_SIZE' name="MAX_FILE_SIZE" value="2147483648" />
 
 <?php if (functions::option_a_enabled()) { ?>
-<p class='align_left'><input type='radio' id='option_selected_a' name='option_selected' value='A' onChange='disable_forms();'><b>Option A:</b> Generate data set of close relatives via BLAST.  Enter only protein sequence.  Do not enter any FASTA header information. (Maximum number sequences retrieved: <?php echo number_format(functions::get_blast_seq(),0); ?>).</p>
+<p class='align_left'><input type='radio' id='option_selected_a' name='option_selected' value='A' onChange='disable_forms();'><b>Option A:</b> Generate data set of close relatives via BLAST.  Enter only protein sequence.  Do not enter any FASTA header information. (Maximum number sequences retrieved: <?php echo number_format(functions::get_max_blast_seq(),0); ?>).</p>
 <fieldset id='option_a'>
 <textarea class="blast_inputs" id='blast_input' name='blast_input'><?php if (isset($_POST['blast_input'])) { echo $_POST['blast_input']; } ?></textarea>
+<p class='align_left'><a href='javascript:toggle_blast_advanced();'>Advanced Options (see tutorial) <span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
+<br><div id="blast_advanced" style="display: none;">
+<p class='align_left'>E-Value: <input type='text' class='small' id='blast_evalue' name='blast_evalue' value='<?php if (isset($_POST['blast_evalue'])) { echo $_POST['blast_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge; 1; default: <?php echo functions::get_evalue(); ?>)</p>
+<p class='align_left'>Maximum Blast Sequences: <input type='text' id='blast_max_seqs' class='small' name='blast_max_seqs' value='<?php if (isset($_POST['blast_max_seqs'])) { echo $_POST['blast_max_seqs']; } else { echo functions::get_default_blast_seq(); } ?>'> Maximum number of sequences retrieved (&le; <?php echo functions::get_max_blast_seq(); ?>; default: <?php echo functions::get_default_blast_seq(); ?>)</p>
+</div>
 </fieldset>
 <?php } ?>
 <hr>
@@ -41,6 +46,13 @@ include_once 'includes/quest_acron.inc';
 </p>
 <fieldset id='option_b'>
 <input type='text' id='families_input' name='families_input' class='blast_inputs' value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'>
+<p class='align_left'><a href='javascript:toggle_pfam_advanced();'>Advanced Options (see tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
+<br><div id="pfam_advanced" style="display: none;">
+<p class='align_left'>E-Value: <input type='text' class='small' id='pfam_evalue' name='pfam_evalue' value='<?php if (isset($_POST['pfam_evalue'])) { echo $_POST['pfam_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default <?php echo functions::get_evalue(); ?>)</p>
+<p class='align_left'>Fraction: <input type='text' class='small' id='pfam_fraction' name='pfam_fraction' value='<?php if (isset($_POST['pfam_fraction'])) { echo $_POST['pfam_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; (default: <?php echo functions::get_fraction(); ?>)</p>
+<p class='align_left'>Enable Domain: <input type='checkbox' id='pfam_domain' name='pfam_domain' value='1' <?php if (isset($_POST['pfam_domain']) && ($_POST['pfam_domain'] == "1")) { echo "checked='checked'"; } ?>'> Check to generate SSN with Pfam-defined domains (default: off)</p>
+</div>
+
 </fieldset>
 <?php } ?>
 
@@ -52,6 +64,12 @@ include_once 'includes/quest_acron.inc';
 <br><div id="progressNumber"></div> 
 <p>If desired, include a Pfam and/or InterPro families, in the analysis of your FASTA file. For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).</p>
 <input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'>
+<p class='align_left'><a href='javascript:toggle_fasta_advanced();'>Advanced Options (see tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
+<br><div id="fasta_advanced" style="display: none;">
+<p class='align_left'>E-Value: <input type='text' class='small' id='fasta_evalue' name='fasta_evalue' value='<?php if (isset($_POST['fasta_evalue'])) { echo $_POST['fasta_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
+<p class='align_left'>Fraction: <input type='text' class='small' id='fasta_fraction' name='fasta_fraction' value='<?php if (isset($_POST['fasta_fraction'])) { echo $_POST['fasta_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
+</div>
+
 </fieldset>
 <?php } ?>
 <hr>

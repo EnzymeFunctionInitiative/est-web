@@ -7,6 +7,9 @@ class generate extends stepa {
 	private $families;
 	private $sequence_max;
 	private $max_blast_failed = "accession.txt.failed";
+	private $fraction;
+	private $domain;
+
         //number of pbs jobs, not including blast jobs.
         private $num_pbs_jobs = 8;
         ///////////////Public Functions///////////
@@ -24,6 +27,14 @@ class generate extends stepa {
         public function __destruct() {
         }
 
+	public function get_fraction() { return $this->fraction; }
+	public function get_domain() { 
+		if ($this->domain) {
+			return "on";
+		}
+		return "off";
+	
+	}
 	public function get_families() { return $this->families; }
 	public function get_families_comma() { return implode(",", $this->get_families()); }
 	public function get_sequence_max() { return $this->sequence_max; }
@@ -86,27 +97,43 @@ class generate extends stepa {
 
         }
 
-	public function create($email,$evalue,$families) {
+	public function create($email,$evalue,$families,$fraction,$domain) {
 		$errors = false;
                 $message = "";
 		$type = "FAMILIES";
 		if (!$this->verify_email($email)) {
                         $errors = true;
-                        $message .= "<br>Please enter a valid email address</br>";
+                        $message .= "<br><b>Please enter a valid email address</b></br>";
                 }
 
 		if (($families != "") && (!$this->verify_families($families))) {
 			$errors = true;
 			$message .= "<br><b>Please enter valid Interpro and PFam numbers</b></br>";
 		}
+		if (!$this->verify_evalue($evalue)) {
+                        $errors = true;
+                        $message .= "<br><b>Please enter a valid E-Value.</b></br>";
+
+                }
+
+		if (!$this->verify_fraction($fraction)) {
+			$errors = true;
+			$message .= "<br><b>Please enter an integer for the fraction option.</b></br>";
+		}
 		if (!$errors) {
+			$domain_bool = 0;
+			if ($domain == 'true') {
+				$domain_bool = 1;
+			}
 			$key = $key = $this->generate_key();
 			$formatted_families = $this->format_families($families);
 			$insert_array = array('generate_key'=>$key,
 					'generate_email'=>$email,
 					'generate_type'=>$type,
 					'generate_families'=>$formatted_families,
-					'generate_evalue'=>$evalue
+					'generate_evalue'=>$evalue,
+					'generate_fraction'=>$fraction,
+					'generate_domain'=>$domain_bool
 			);
 			$result = $this->db->build_insert("generate",$insert_array);
                         if ($result) {
@@ -149,7 +176,9 @@ class generate extends stepa {
 		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
 		$message .= "<br>PFAM/Interpro Families: \r\n";
 		$message .= "<br>" . implode(", ",$this->get_families()) . "\r\n";
-
+		$message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+		$message .= "<br>Fraction: " . $this->get_fraction() . "\r\n";
+		$message .= "<br>Enable Domain: " . $this->get_domain() . "\r\n";
 		$message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
 		$message .= "<br>" . functions::get_email_footer();
                 $headers = "From: " . $from . "\r\n";
@@ -170,7 +199,9 @@ class generate extends stepa {
 		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
                 $message .= "<br>PFAM/Interpro Families: \r\n";
                 $message .= "<br>" . implode(", ",$this->get_families()) . "\r\n";
-
+                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+                $message .= "<br>Fraction: " . $this->get_fraction() . "\r\n";
+                $message .= "<br>Enable Domain: " . $this->get_domain() . "\r\n";
 		$message .= "<br><br>";
 		$message .= functions::get_email_footer();
                 $headers = "From: " . $from . "\r\n";
@@ -191,7 +222,9 @@ class generate extends stepa {
 		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
                 $message .= "<br>Pfam/InterPro Families: \r\n";
                 $message .= "<br>" . implode(", ",$this->get_families()) . "\r\n";
-
+                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+                $message .= "<br>Fraction: " . $this->get_fraction() . "\r\n";
+                $message .= "<br>Enable Domain: " . $this->get_domain() . "\r\n";
 		$message .= "<br>This job will use " . number_format($this->get_num_sequences()) . ".";
 		$message .= "This number is too large--you are limited to ";
 		$message .=  number_format($max_seq) . " sequences.";
@@ -226,7 +259,9 @@ class generate extends stepa {
                 $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
                 $message .= "<br>PFAM/Interpro Families: \r\n";
                 $message .= "<br>" . implode(", ",$this->get_families()) . "\r\n";
-
+                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+                $message .= "<br>Fraction: " . $this->get_fraction() . "\r\n";
+                $message .= "<br>Enable Domain: " . $this->get_domain() . "\r\n";
                 $message .= "<br>" . functions::get_email_footer();
                 $headers = "From: " . $from . "\r\n";
                 $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
@@ -266,14 +301,15 @@ class generate extends stepa {
 	        	}
 		        $exec .= "-tmp " . $relative_output_dir . " ";
         		$exec .= "-maxsequence " . functions::get_max_seq() . " ";
+			$exec .= "-fraction " . $this->get_fraction() . " ";
+			$exec .= "-evalue " . $this->get_evalue() . " ";
+			$exec .= "-domain " . $this->get_domain() . " ";
 		        $exec .= "-queue " . functions::get_generate_queue() . " ";
         		$exec .= "-memqueue " . functions::get_generate_queue() . " 2>&1";
         		$exit_status = 1;
 		        $output_array = array();
         		$output = exec($exec,$output_array,$exit_status);
 	        	$output = trim(rtrim($output));
-			//print_r($output_array);
-			//echo "Output: " . $output . "\n";
 	        	$pbs_job_number = substr($output,0,strpos($output,"."));
 	
 		        if ($pbs_job_number && !$exit_status) {
@@ -321,6 +357,8 @@ class generate extends stepa {
                         $this->families = $families;
                         $this->sequence_max = $result[0]['generate_sequence_max'];
                         $this->num_sequences = $result[0]['generate_num_sequences'];
+			$this->fraction = $result[0]['generate_fraction'];
+			$this->domain = $result[0]['generate_domain'];
                 }
 
         }
@@ -348,6 +386,7 @@ class generate extends stepa {
 		return $valid;
 
 	}
+
 	private function format_families($families) {
 		$search = array(" ");
 		$replace = "";

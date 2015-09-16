@@ -12,7 +12,7 @@
 	?>
 </header>
 
-<body>
+<body style='padding-top: 60px;'>
 <nav class="navbar navbar-inverse navbar-fixed-top">
 	<div class='container'>
 		
@@ -25,6 +25,7 @@
 					<li><a href='analysis_stats.php'>Analysis Stats</a></li>
                                         <li><a href='generate.php'>Generate Jobs</a></li>
 					<li><a href='analyse.php'>Analyse Jobs</a></li>
+					<li><a href='databases.php'>Databases</a></li>
                         </ul>
 
                 </div>

@@ -250,6 +250,35 @@ class stepa {
 
         }
 
+	protected function verify_evalue($evalue) {
+		$max_evalue = 100;
+		$valid = 1;
+		if ($evalue == "") {
+			$valid = 0;
+		}
+		if (!preg_match("/^\d+$/",$evalue)) {
+			$valid = 0;
+			
+		}
+		if ($evalue > $max_evalue) {
+			$valid = 0;
+		}
+		return $valid;
+
+
+	}
+
+        protected function verify_fraction($fraction) {
+                $valid = 1;
+                if ($fraction == "") {
+                        $valid = 0;
+                }
+                if (!preg_match("/^\d+$/",$fraction)) {
+                        $valid = 0;
+                }
+                return $valid;
+
+        }
 
         protected function generate_key() {
                 $key = uniqid (rand (),true);
