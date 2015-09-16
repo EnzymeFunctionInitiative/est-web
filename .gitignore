@@ -4,3 +4,4 @@
 /html/example/*
 /home/admin/.htaccess
 /uploads/*
+.DS_Store
