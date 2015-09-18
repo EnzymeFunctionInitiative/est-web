@@ -2,8 +2,7 @@
 
 Sequence similarity networks (SSNs) are a powerful tool for analyzing relationships among sequences in protein (super)families and that these will be useful for enhancing functional discovery/annotation using strategies developed by the Enzyme Function Initiative (EFI) as well as developing hypotheses about structure‑function relationships in families and superfamilies. As a result, this web tool provides “open access” to the ability to generate SSNs. Four different options for user-initiated generation of SSNs, three with this web tool and one with Unix terminal scripts:
 
-This is the web interface for the command line scripts located at
-```https://github.com/EnzymeFunctionInitiative/EST```
+This is the web interface for the command line scripts located at https://github.com/EnzymeFunctionInitiative/EST
 
 ## Installation
 1.  Git Clone the repository
