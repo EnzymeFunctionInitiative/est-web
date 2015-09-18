@@ -29,6 +29,8 @@ foreach ($generate_per_month as $value) {
 	$generate_per_month_html .= "<td>" . $value['num_success_option_b'] . "</td>";
 	$generate_per_month_html .= "<td>" . $value['num_failed_option_b'] . "</td>";
 	$generate_per_month_html .= "<td>" . $value['num_failed_seq_option_b'] . "</td>";
+        $generate_per_month_html .= "<td>" . $value['num_success_option_c'] . "</td>";
+        $generate_per_month_html .= "<td>" . $value['num_failed_option_c'] . "</td>";
 	$generate_per_month_html .= "<td>" . $value['total_time'] . "</td>";
 	$generate_per_month_html .= "</tr>";
 
@@ -69,11 +71,13 @@ $year_html .= "</select>";
 	<th>Month</th>
 	<th>Year</th>
 	<th>Total Jobs</th>
-	<th>Successful Option A Jobs</th>
-	<th>Failed Option A Jobs</th>	
-	<th>Successful Option B Jobs</th>
-	<th>Failed Option B Jobs</th>
-	<th>Failed Option B Jobs (> <?php echo __MAX_SEQ__; ?> Sequences)</th>
+	<th>Successful Option A</th>
+	<th>Failed Option A</th>	
+	<th>Successful Option B</th>
+	<th>Failed Option B</th>
+	<th>Failed Option B (> <?php echo __MAX_SEQ__; ?> Sequences)</th>
+	<th>Successful Option C</th>
+	<th>Failed Option C</th>
 	<th>Total Time</th>	
 </tr>
 <?php echo $generate_per_month_html; ?>

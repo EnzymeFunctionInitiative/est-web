@@ -12,6 +12,8 @@ class statistics
 		$sql .= "SUM(IF(generate_type='FAMILIES' AND generate_status='FAILED' AND generate_sequence_max,1,0)) as num_failed_seq_option_b, ";
 		$sql .= "SUM(IF(generate_type='BLAST' AND generate_status='FINISH',1,0)) as num_success_option_a, ";
 		$sql .= "SUM(IF(generate_type='BLAST' AND generate_status='FAILED',1,0)) as num_failed_option_a, ";
+		$sql .= "SUM(IF(generate_type='FASTA' AND generate_status='FINISH',1,0)) as num_success_option_c, ";
+		$sql .= "SUM(IF(generate_type='FASTA' AND generate_status='FAILED',1,0)) as num_failed_option_c, ";
 		$sql .= "SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(generate_time_completed,generate_time_started)))) as total_time ";
 		$sql .= "FROM generate ";
 		$sql .= "GROUP BY MONTH(generate_time_created),YEAR(generate_time_created) ORDER BY year,MONTH(generate_time_created)";
