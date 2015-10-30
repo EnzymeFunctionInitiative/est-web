@@ -36,6 +36,7 @@ if (isset($_POST['submit'])) {
 	                        $fasta = new fasta($db);
         	                $result = $fasta->create($_POST['email'],$_POST['fasta_evalue'],$_POST['families_input2'],
 					$_FILES['fasta_file']['tmp_name'],$_FILES['fasta_file']['name'],$_POST['fasta_fraction']);
+				
 			}
 			break;
                 default:

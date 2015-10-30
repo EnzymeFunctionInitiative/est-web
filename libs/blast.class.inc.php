@@ -83,7 +83,7 @@ class blast extends stepa {
                                 return array('RESULT'=>true,'id'=>$result,'MESSAGE'=>'Job successfully created');
                         }
                 }
-                return array('RESULT'=>false,'MESSAGE'=>$message);
+                return array('RESULT'=>false,'MESSAGE'=>$message,'id'=>0);
 
 
 

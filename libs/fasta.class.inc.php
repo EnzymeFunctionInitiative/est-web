@@ -145,7 +145,7 @@ class fasta extends stepa {
                                 return array('RESULT'=>true,'id'=>$result,'MESSAGE'=>'Job successfully created');
                         }
                 }
-                return array('RESULT'=>false,'MESSAGE'=>$message,'id'=>1);
+                return array('RESULT'=>false,'MESSAGE'=>$message,'id'=>0);
 
 
 
