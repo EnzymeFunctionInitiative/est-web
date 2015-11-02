@@ -259,7 +259,7 @@ class stepa {
                 $message .= "<br>Your " . $this->subject . " Generation is Complete\r\n";
                 $message .= "<br>To view results, please go to\r\n";
                 $message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
-                $message .= nl2br($this->get_job_info());
+                $message .= "<br>" . nl2br($this->get_job_info());
                 $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
                 $message .= "<br>" . nl2br(functions::get_email_footer());
 
