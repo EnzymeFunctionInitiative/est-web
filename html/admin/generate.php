@@ -29,7 +29,7 @@ foreach ($jobs as $job) {
 	$generate_html .= "<td>" . $job['Email'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Option Selected'] . "</td>\n";
 	if ($job['Option Selected'] == 'BLAST') { 
-		$generate_html .= "<td><a href='blast.php?blast=" . $job['Blast'] . "' target='_blank' ><span class='glyphicon glyphicon-ok'></span></a>";
+		$generate_html .= "<td><a href='../blast.php?blast=" . $job['Blast'] . "' target='_blank' ><span class='glyphicon glyphicon-ok'></span></a>";
 		$generate_html .= "</td>\n";
 	}
 	elseif ($job['Option Selected'] == 'FASTA') {

@@ -21,7 +21,6 @@ if ($sapi_type != 'cli') {
 else {
 	//functions::log_message("Running " . basename($argv[0]));
 	$new_fastas = functions::get_fastas($db,__NEW__);
-	print_r($new_fastas);
 	if (count($new_fastas)) {
 		foreach ($new_fastas as $data) {
 			sleep(1);

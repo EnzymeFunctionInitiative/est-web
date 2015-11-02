@@ -4,7 +4,7 @@ class fasta extends stepa {
 
         ////////////////Private Variables//////////
 
-	private $families;
+	private $families = array();
 	private $sequence_max;
 	private $max_blast_failed = "accession.txt.failed";
         //number of pbs jobs, not including blast jobs.
@@ -13,6 +13,7 @@ class fasta extends stepa {
 	private $userdat_file = "output.dat";
 	private $uploaded_filename;
 	private $fraction;
+	public $subject = "EFI-EST FASTA";
 
         ///////////////Public Functions///////////
 
@@ -168,111 +169,6 @@ class fasta extends stepa {
 
 	
 
-	public function email_complete() {
-                $subject = "EFI-EST FASTA Generation Complete";
-                $to = $this->get_email();
-		$from = functions::get_admin_email();
-		$url = functions::get_web_root() . "/stepc.php";
-                $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
-                                'key'=>$this->get_key()));
-                $message = "<br>Your EFI-EST PFAM/Interpro Generation is Complete\r\n";
-                $message .= "<br>To view results, please go to\r\n";
-		$message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
-		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-		$message .= "<br>Uploaded Fasta File: " . $this->get_uploaded_filename() . "\r\n";
-		$message .= "<br>PFAM/Interpro Families: \r\n";
-		$message .= "<br>" . implode(", ",$this->get_families()) . "\r\n";
-		$message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-		$message .= "<br>Fraction: " . $this->get_fraction() . "\r\n";
-		$message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-		$message .= "<br>" . functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
-		
-
-        }
-
-	public function email_failed() {
-                $subject = "EFI-EST FASTA Generation Failed";
-                $to = $this->get_email();
-                $url = functions::get_web_root();
-		$from = functions::get_admin_email();
-                $message = "<br>Your EFI-EST PFAM/Interpro Generation Failed\r\n";
-                $message .= "<br>Sorry it failed.\r\n";
-                $message .= "<br>Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
-		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-		$message .= "<br>Uploaded Fasta File: " . $this->get_uploaded_filename() . "\r\n";
-                $message .= "<br>PFAM/Interpro Families: \r\n";
-                $message .= "<br>" . implode(", ",$this->get_families()) . "\r\n";
-                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "<br>Fraction: " . $this->get_fraction() . "\r\n";
-		$message .= "<br><br>";
-		$message .= functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
-	
-
-
-	}
-	public function email_number_seq() {
-                $subject = "EFI-EST FASTA Number of Sequences too large";
-                $to = $this->get_email();
-                $url = functions::get_web_root();
-                $from = functions::get_admin_email();
-		$max_seq = functions::get_max_seq();
-
-		$message = "<br>Your EFI_EST Pfam/InterPro Data Set\n";
-		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-		$message .= "<br>Uploaded Fasta File: " . $this->get_uploaded_filename() . "\r\n";
-                $message .= "<br>Pfam/InterPro Families: \r\n";
-                $message .= "<br>" . implode(", ",$this->get_families()) . "\r\n";
-                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "<br>Fraction: " . $this->get_fraction() . "\r\n";
-		$message .= "<br>This job will use " . number_format($this->get_num_sequences()) . ".";
-		$message .= "This number is too large--you are limited to ";
-		$message .=  number_format($max_seq) . " sequences.";
-		$message .= "<br>Return to <a href='" . $url . "'>" . $url. "</a> ";
-		$message .= "to start a new job with a different set of Pfam/InterPro families.";
-		$message .= "<br>Or, if you would like to generate a network with the Pfam/InterPro";
-		$message .= " families you have chosen, send an e-mail to efi@enzymefunction.org and";
-		$message .= " request an account on Biocluster.  We will provide you with instructions";
-		$message .= " to use our Unix scripts for network generation.  These scripts allow you";
-		$message .= " to use a larger number of processors and, also, provide more options for";
-		$message .= " generating the network files.  Your e-mail should provide a brief ";
-		$message .= "description of your project so that the EFI can assist you.";
-		$message .= "<br><br>";
-		$message .= functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
-
-
-        }
-
-	public function email_started() {
-
-                $subject = "EFI-EST FASTA Generation Started";
-                $to = $this->get_email();
-                $from = functions::get_admin_email();
-                $url = functions::get_web_root() . "/stepc.php";
-                $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
-                                'key'=>$this->get_key()));
-                $message = "<br>Your EFI-EST PFAM/Interpro Generation has started running.\r\n";
-                $message .= "<br>You will receive an email once the job has been completed.\r\n";
-                $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-		$message .= "<br>Uploaded Fasta File: " . $this->get_uploaded_filename() . "\r\n";
-                $message .= "<br>PFAM/Interpro Families: \r\n";
-                $message .= "<br>" . implode(", ",$this->get_families()) . "\r\n";
-                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "<br>Fraction: " . $this->get_fraction() . "\r\n";
-                $message .= "<br>" . functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
-
-	}
 	public function run_job() {
                 if ($this->available_pbs_slots()) {
 
@@ -322,7 +218,6 @@ class fasta extends stepa {
         		$output = exec($exec,$output_array,$exit_status);
 	        	$output = trim(rtrim($output));
 	        	$pbs_job_number = substr($output,0,strpos($output,"."));
-			print_r($output_array);	
 		        if ($pbs_job_number && !$exit_status) {
         		        $this->set_pbs_number($pbs_job_number);
                 		$this->set_time_started();
@@ -380,8 +275,10 @@ class fasta extends stepa {
                         $this->status = $result[0]['generate_status'];
 			$this->time_started = $result[0]['generate_time_started'];
                         $this->time_completed = $result[0]['generate_time_completed'];
-                        $families = explode(",",$result[0]['generate_families']);
-                        $this->families = $families;
+	                if ($result[0]['generate_families'] != "") {
+				$families = explode(",",$result[0]['generate_families']);
+        		        $this->families = $families;
+			}
                         $this->sequence_max = $result[0]['generate_sequence_max'];
                         $this->num_sequences = $result[0]['generate_num_sequences'];
 			$this->uploaded_filename = $result[0]['generate_fasta_file'];
@@ -482,6 +379,20 @@ class fasta extends stepa {
 		return false;
 
 	}
+
+	public function get_job_info() {
+		$message = "EFI-EST ID: " . $this->get_id() . "\r\n";
+                $message .= "Uploaded Fasta File: " . $this->get_uploaded_filename() . "\r\n";
+		if (count($this->get_families())) {
+			 $message .= "PFAM/Interpro Families: ";
+                         $message .= $this->get_families_comma() . "\r\n";
+		}
+                $message .= "E-Value: " . $this->get_evalue() . "\r\n";
+                $message .= "Fraction: " . $this->get_fraction() . "\r\n";
+                return $message;
+
+        }
+
 }
 
 ?>

@@ -9,6 +9,8 @@ class blast extends stepa {
 	private $blast_sequence_max;
 	public $fail_file = "1.out.failed";
 	private $num_pbs_jobs = 1;
+	public $subject = "EFI-EST PFAM/Interpro";
+
 	///////////////Public Functions///////////
 
         public function __construct($db,$id = 0) {
@@ -39,10 +41,11 @@ class blast extends stepa {
 
 	}
 	public function get_formatted_blast() {
-		$width = 70;
+		$width = 80;
 		$break = "\r\n";
 		$cut = true;
-		return wordwrap($this->get_blast_input(),$width,$break,$cut);
+		$formatted_blast = str_replace(" ","",$this->get_blast_input());
+		return wordwrap($formatted_blast,$width,$break,$cut);
 	}
 	
 	public function create($email,$blast_input,$evalue,$max_seqs) {
@@ -91,78 +94,6 @@ class blast extends stepa {
 
 
 	
-	public function email_complete() {
-                $subject = "EFI-EST PFAM/Interpro Generation Complete";
-                $to = $this->get_email();
-		$from = functions::get_admin_email();
-                $url = functions::get_web_root() . "/stepc.php";
-                $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
-                                'key'=>$this->get_key()));
-                $message = "<br>Your EFI-EST PFAM/Interpro Generation is Complete\r\n";
-                $message .= "<br>To view results, please go to\r\n";
-		$message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
-		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";	
-		$message .= "<br>Blast Sequence: \r\n";
-		$message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-		$message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-		$message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
-		$message .= "<br><br>";
-		$message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-		$message .= functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
-		
-
-        }
-
-	public function email_failed() {
-                $subject = "EFI-EST PFAM/Interpro Generation Failed";
-                $to = $this->get_email();
-		$from = functions::get_admin_email();
-                $url = functions::get_web_root();
-                $message = "<br>Your EFI-EST PFAM/Interpro Generation Failed\r\n";
-                $message .= "<br>Sorry it failed.\r\n";
-                $message .= "<br>Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
-		$message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-                $message .= "<br>Blast Sequence: \r\n";
-                $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
-		$message .= "<br><br>";
-		$message .= functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
-	
-
-
-	}
-	
-
-	 public function email_started() {
-
-                $subject = "EFI-EST PFAM/Interpro Generation Started";
-                $to = $this->get_email();
-                $from = functions::get_admin_email();
-                $url = functions::get_web_root() . "/stepc.php";
-                $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
-                                'key'=>$this->get_key()));
-                $message = "<br>Your EFI-EST PFAM/Interpro Generation has started running.\r\n";
-                $message .= "<br>You will receive an email once the job has been completed.\r\n";
-                $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-		$message .= "<br>Blast Sequence: \r\n";
-                $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
-
-                $message .= "<br>" . functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
-
-        }
-
 
 	public function run_job() {
 		if ($this->available_pbs_slots()) {
@@ -270,10 +201,10 @@ class blast extends stepa {
         }
 
 
-        private function format_blast($blast_input) {
+        public static function format_blast($blast_input) {
                 //$search = array(" ","\n","\r\n","\r","\t");
-		$search = array("\r\n","\r");
-                $replace = "\n";
+		$search = array("\r\n","\r"," ");
+                $replace = "";
                 $formatted_blast = str_ireplace($search,$replace,$blast_input);
                 return $formatted_blast;
 
@@ -336,6 +267,18 @@ class blast extends stepa {
                 $message .= "<br><br>";
                 $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
                 $message .= functions::get_email_footer();
+		return $message;
+
+
+	}
+
+	public function get_job_info() {
+
+		$message = "EFI-EST ID: " . $this->get_id() . "\r\n";
+                $message .= "Blast Sequence: \r\n";
+                $message .= $this->get_formatted_blast() . "\r\n";
+                $message .= "E-Value: " . $this->get_evalue() . "\r\n";
+                $message .= "Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
 		return $message;
 
 

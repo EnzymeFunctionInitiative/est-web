@@ -245,60 +245,46 @@ class analysis {
 
 	public function email_complete() {
 	
-		$stepa = new stepa($this->db,$this->get_generate_id());
-		$input_message = "";
-		if ($stepa->get_type() == "BLAST") {
-			$stepa = new blast($this->db,$this->get_generate_id());
-			$input_message = "<br>Blast Input: \r\n";
-			$input_message .= $stepa->get_formatted_blast();
-			$input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
-                        $input_message .= "<br>Maximum Blast Sequences: " . $stepa->get_submitted_max_sequences() . "\r\n";
-
-		}
-		elseif ($stepa->get_type() == "FAMILIES") {
-			$stepa = new generate($this->db,$this->get_generate_id());
-			$input_message = "<br>PFAM/Interpro Families: ";
-			$input_message .= implode(", ", $stepa->get_families());
-			$input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
-                        $input_message .= "<br>Fraction: " . $stepa->get_fraction() . "\r\n";
-                        $input_message .= "<br>Enable Domain: " . $stepa->get_domain() . "\r\n";
-
-	
-		}
-		elseif ($stepa->get_type() == "FASTA") {
-                        $stepa = new fasta($this->db,$this->get_generate_id());
-			$input_message = "<br>Uploaded Fasta File: " . $stepa->get_uploaded_filename() . "\r\n";
-                        if ($stepa->get_families() != "") {
-				$input_message .= "<br>PFAM/Interpro Families: ";
-	                        $input_message .= implode(", ", $stepa->get_families());
-			}
-                        $input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
-                        $input_message .= "<br>Fraction: " . $stepa->get_fraction() . "\r\n";
-
-		}
-
+		$stepa = new stepa($this->db,$this->get_generate_id());	
+		$boundary = uniqid('np');
                 $subject = "EFI-EST PFAM/Interpro Analysis Complete";
 		$from = functions::get_admin_email();
                 $to = $stepa->get_email();
                 $url = functions::get_web_root() . "/stepe.php";
                 $full_url = $url . "?" . http_build_query(array('id'=>$this->get_generate_id(),
                                 'key'=>$stepa->get_key(),'analysis_id'=>$this->get_id()));
-                $message = "<br>Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
+
+		//html email
+		$message = "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/html;charset='iso-8859-1'\r\n\r\n";
+                $message .= "<br>Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
 		$message .= "<br>To view results, please go to\r\n";
                 $message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
-		$message .= "<br>EFI-EST ID: " . $this->get_generate_id() . "\r\n";
-		$message .= $input_message;	
-		$message .= "<br>Minimum Length: " . $this->get_min_length();
-		$message .= "<br>Maximum Length: " . $this->get_max_length();
-		$message .= "<br>Alignment Score: " . $this->get_evalue();
-		$message .= "<br>Network Name: " . $this->get_name();
-		$message .= "<br><br>";
+		$message .= "<br><br>" . nl2br($this->get_stepa_job_info());
+		$message .= "<br>" . nl2br($this->get_job_info());
+		$message .= "<br>\r\n";
 		$message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-                $message .= functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
+                $message .= "<br>" . nl2br(functions::get_email_footer());
 
+		//plain text email
+		$message .= "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/plain;charset='iso-8859-1'\r\n\r\n";
+		$message .= "Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
+                $message .= "To view results, please go to\r\n";
+                $message .= $full_url . "\r\n";
+                $message .= $this->get_stepa_job_info();
+		$message .= $this->get_job_info();
+                $message .= "\r\n";
+                $message .= "This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
+                $message .= "\r\n";
+                $message .= functions::get_email_footer() . "\r\n";
+		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+
+		//headers
+                $headers = "MIME-Version: 1.0\r\n";
+                $headers .= "From: " . $from . "\r\n";
+                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
+                mail($to,$subject,$message,$headers," -f " . $from);
 
         }
 
@@ -307,6 +293,8 @@ class analysis {
                 $subject = "EFI-EST PFAM/Interpro Analysis Failed";
                 $to = $generate->get_email();
                 $url = $web_root . "/stepa.php";
+
+		
                 $message = "<br>Your EFI-EST PFAM/Interpro Generation Failed\r\n";
                 $message .= "<br>Sorry it failed.\r\n";
                 $message .= "Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
@@ -321,13 +309,10 @@ class analysis {
                         $message .= implode(", ",$generate->get_families());
 
                 }
-
-                $message .= "<br>Minimum Length: " . $this->get_min_length();
-                $message .= "<br>Maximum Length: " . $this->get_max_length();
-                $message .= "<br>Alignment Score: " . $this->get_evalue();
-		$message .= "<br>Network Name: " . $this->get_name();
+		$message .= nl2br($this->get_job_info());
 		$message .= "<br><br>";
                 $message .= $footer;
+
                 $headers = "From: " . $from_email . "\r\n";
                 $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
                 mail($to,$subject,$message,$headers," -f " . $from_email);
@@ -339,50 +324,34 @@ class analysis {
 	public function email_started() {
 
                 $stepa = new stepa($this->db,$this->get_generate_id());
-		$input_message = "";
-                if ($stepa->get_type() == "BLAST") {
-                        $stepa = new blast($this->db,$this->get_generate_id());
-                        $input_message = "<br>Blast Input: \r\n";
-                        $input_message .= $stepa->get_formatted_blast();
-			$input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
-	                $input_message .= "<br>Maximum Blast Sequences: " . $stepa->get_submitted_max_sequences() . "\r\n";
-                }
-                elseif ($stepa->get_type() == "FAMILIES") {
-                        $stepa = new generate($this->db,$this->get_generate_id());
-                        $input_message = "<br>PFAM/Interpro Families: ";
-                        $input_message .= implode(", ", $stepa->get_families());
-			$input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
-	                $input_message .= "<br>Fraction: " . $stepa->get_fraction() . "\r\n";
-        	        $input_message .= "<br>Enable Domain: " . $stepa->get_domain() . "\r\n";
-
-                }
-                elseif ($stepa->get_type() == "FASTA") {
-                        $stepa = new fasta($this->db,$this->get_generate_id());
-			$input_message = "<br>Uploaded Fasta File: " . $stepa->get_uploaded_filename() . "\r\n";
-                        if ($stepa->get_families() != "") {
-                                $input_message .= "<br>PFAM/Interpro Families: ";
-                                $input_message .= implode(", ", $stepa->get_families());
-                        }
-	                $input_message .= "<br>E-Value: " . $stepa->get_evalue() . "\r\n";
-	                $input_message .= "<br>Fraction: " . $stepa->get_fraction() . "\r\n";
-
-                }
-
+		$boundary = uniqid('np');
                 $subject = "EFI-EST PFAM/Interpro Analysis Started";
                 $from = functions::get_admin_email();
                 $to = $stepa->get_email();
-                $message = "<br>Your EFI-EST PFAM/Interpro Analysis has started\r\n";
+		//html email
+		$message = "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/html;charset='iso-8859-1'\r\n\r\n";
+                $message .= "<br>Your EFI-EST PFAM/Interpro Analysis has started\r\n";
                 $message .= "<br>You will receive an email once it is completed.\r\n";
-                $message .= "<br>EFI-EST ID: " . $this->get_generate_id() . "\r\n";
-		$message .= $input_message;
-                $message .= "<br>Minimum Length: " . $this->get_min_length();
-                $message .= "<br>Maximum Length: " . $this->get_max_length();
-                $message .= "<br>Alignment Score: " . $this->get_evalue();
-		$message .= "<br>Network Name: " . $this->get_name();
-                $message .= "<br><br>";
-                $message .= functions::get_email_footer();
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
+		$message .= "<br><br>" . nl2br($this->get_stepa_job_info());
+		$message .= nl2br($this->get_job_info());
+                $message .= "<br>" . nl2br(functions::get_email_footer()) . "\r\n";
+
+		//plain text email
+		$message .= "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/plain;charset='iso-8859-1'\r\n\r\n";
+		$message .= "Your EFI-EST PFAM/Interpro Analysis has started\r\n";
+                $message .= "You will receive an email once it is completed.\r\n\r\n";
+                $message .= $this->get_stepa_job_info();
+                $message .= $this->get_job_info();
+                $message .= "\r\n";
+                $message .= functions::get_email_footer() . "\r\n";
+		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+
+		//headers
+		$headers = "MIME-Version: 1.0\r\n";
+                $headers .= "From: " . $from . "\r\n";
+                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
                 mail($to,$subject,$message,$headers," -f " . $from);
 
 
@@ -549,6 +518,35 @@ class analysis {
                 return $result;
         }
 
+	private function get_job_info() {
+		$message = "Minimum Length: " . $this->get_min_length() . "\r\n";
+                $message .= "Maximum Length: " . $this->get_max_length() . "\r\n";
+                $message .= "Alignment Score: " . $this->get_evalue() . "\r\n";
+                $message .= "Network Name: " . $this->get_name() . "\r\n";
+		return $message;
+
+	}
+
+	private function get_stepa_job_info() {
+		$stepa = new stepa($this->db,$this->get_generate_id());
+		$job_type = $stepa->get_type();
+		switch ($job_type) {
+		
+			case "BLAST":
+                	        $stepa = new blast($this->db,$this->get_generate_id());
+				break;
+                
+                	case "FAMILIES": 
+	                        $stepa = new generate($this->db,$this->get_generate_id());
+				break;			
+
+                	case "FASTA":
+	                        $stepa = new fasta($this->db,$this->get_generate_id());
+				break;
+		}
+		$message = $stepa->get_job_info();
+		return $message;
+	}
 }
 
 ?>

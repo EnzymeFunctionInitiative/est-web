@@ -25,7 +25,6 @@ else {
 	        foreach ($running_jobs as $job) {
 
 			$fasta = new fasta($db,$job['generate_id']);
-			print_r($fasta);
 			$blast_failed_exists = $fasta->check_max_blast_failed_file();
                         $finish_file_exists = $fasta->check_finish_file();
                         $job_running = $fasta->check_pbs_running();

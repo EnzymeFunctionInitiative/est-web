@@ -208,6 +208,177 @@ class stepa {
 
 	}
 
+        public function email_started() {
+
+		$boundary = uniqid('np');
+                $subject = $this->subject . " Generation Started";
+                $to = $this->get_email();
+                $from = functions::get_admin_email();
+                $url = functions::get_web_root() . "/stepc.php";
+                $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
+                                'key'=>$this->get_key()));
+
+		//html email
+		$message = "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/html;charset='iso-8859-1'\r\n\r\n";
+                $message .= "<br>Your " . $this->subject . " Generation has started running.\r\n";
+                $message .= "<br>You will receive an email once the job has been completed.\r\n";
+		$message .= "<br>" .nl2br($this->get_job_info()); 
+                $message .= "<br><br>" . nl2br(functions::get_email_footer());
+
+
+		//plain text email
+                $message .= "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/plain;charset='iso-8859-1'\r\n\r\n";
+		$message .= "Your " . $this->subject . " Generation has started running.\r\n";
+                $message .= "You will receive an email once the job has been completed.\r\n";
+                $message .= $this->get_job_info();
+                $message .= "\r\n" . functions::get_email_footer() . "\r\n";
+		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+
+                $headers = "MIME-Version: 1.0\r\n";
+                $headers .= "From: " . $from . "\r\n";
+                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
+                mail($to,$subject,$message,$headers," -f " . $from);
+        }
+
+
+        public function email_complete() {
+
+                $boundary = uniqid('np');
+                $subject = $this->subject . " Generation Complete";
+                $to = $this->get_email();
+                $from = functions::get_admin_email();
+                $url = functions::get_web_root() . "/stepc.php";
+                $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
+                                'key'=>$this->get_key()));
+
+                //html email
+                $message = "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/html;charset='iso-8859-1'\r\n\r\n";
+                $message .= "<br>Your " . $this->subject . " Generation is Complete\r\n";
+                $message .= "<br>To view results, please go to\r\n";
+                $message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
+                $message .= nl2br($this->get_job_info());
+                $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
+                $message .= "<br>" . nl2br(functions::get_email_footer());
+
+
+                //plain text email
+                $message .= "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/plain;charset='iso-8859-1'\r\n\r\n";
+                $message .= "Your " . $this->subject . " Generation is Complete\r\n";
+                $message .= "To view results, please go to\r\n";
+                $message .= $full_url . "\r\n";
+                $message .= $this->get_job_info();
+                $message .= "This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
+                $message .= "\r\n" . functions::get_email_footer() . "\r\n";
+                $message .= "\r\n\r\n--" . $boundary . "--\r\n";
+
+                $headers = "MIME-Version: 1.0\r\n";
+                $headers .= "From: " . $from . "\r\n";
+                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
+                mail($to,$subject,$message,$headers," -f " . $from);
+
+
+        }
+
+
+        public function email_failed() {
+
+                $boundary = uniqid('np');
+                $subject = $this->subject . " Generation Failed";
+                $to = $this->get_email();
+                $url = functions::get_web_root();
+                $from = functions::get_admin_email();
+
+                //html email
+                $message = "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/html;charset='iso-8859-1'\r\n\r\n";
+                $message .= "<br>Your " . $this->subject . " Generation Failed\r\n";
+                $message .= "<br>Sorry it failed.\r\n";
+                $message .= "<br>Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
+                $message .= nl2br($this->get_job_info());
+                $message .= "<br><br>";
+                $message .= nl2br(functions::get_email_footer());
+
+                //plain text email
+                $message .= "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/plain;charset='iso-8859-1'\r\n\r\n";
+                $message .= "<br>Your " . $this->subject . " Generation Failed\r\n";
+                $message .= "<br>Sorry it failed.\r\n";
+                $message .= "<br>Please restart by going to " . $url . "\r\n";
+                $message .= $this->get_job_info();
+                $message .= "\r\n" . functions::get_email_footer() . "\r\n";
+                $message .= "\r\n\r\n--" . $boundary . "--\r\n";
+
+
+                $headers = "MIME-Version: 1.0\r\n";
+                $headers = "From: " . $from . "\r\n";
+                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
+                mail($to,$subject,$message,$headers," -f " . $from);
+
+
+
+        }
+
+
+	public function email_number_seq() {
+                $boundary = uniqid('np');
+                $subject = "EFI-EST " . $this->subject . " Number of Sequences too large";
+                $to = $this->get_email();
+                $url = functions::get_web_root();
+                $from = functions::get_admin_email();
+                $max_seq = functions::get_max_seq();
+
+                //html email
+                $message = "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/html;charset='iso-8859-1'\r\n\r\n";
+                $message .= "<br>Your EFI-EST " . $this->subject . " Data Set\n";
+                $message .= nl2br($this->get_job_info());
+                $message .= "<br>This job will use " . number_format($this->get_num_sequences()) . ".";
+                $message .= "This number is too large--you are limited to ";
+                $message .=  number_format($max_seq) . " sequences.";
+                $message .= "<br>Return to <a href='" . $url . "'>" . $url. "</a> ";
+                $message .= "to start a new job with a different set of Pfam/InterPro families.";
+                $message .= "<br>Or, if you would like to generate a network with the Pfam/InterPro";
+                $message .= " families you have chosen, send an e-mail to efi@enzymefunction.org and";
+                $message .= " request an account on Biocluster.  We will provide you with instructions";
+                $message .= " to use our Unix scripts for network generation.  These scripts allow you";
+                $message .= " to use a larger number of processors and, also, provide more options for";
+                $message .= " generating the network files.  Your e-mail should provide a brief ";
+                $message .= "description of your project so that the EFI can assist you.";
+                $message .= "<br>";
+                $message .= nl2br(functions::get_email_footer());
+
+                //plain text
+                $message .= "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type:text/plain;charset='iso-8859-1'\r\n\r\n";
+                $message .= "Your EFI-EST " . $this->subject . " Data Set\n";
+                $message .= $this->get_job_info();
+                $message .= "This job will use " . number_format($this->get_num_sequences()) . ".";
+                $message .= "This number is too large--you are limited to ";
+                $message .=  number_format($max_seq) . " sequences.\r\n";
+                $message .= "Return to " . $url;
+                $message .= "to start a new job with a different set of Pfam/InterPro families.\r\n";
+                $message .= "Or, if you would like to generate a network with the Pfam/InterPro";
+                $message .= " families you have chosen, send an e-mail to efi@enzymefunction.org and";
+                $message .= " request an account on Biocluster.  We will provide you with instructions";
+                $message .= " to use our Unix scripts for network generation.  These scripts allow you";
+                $message .= " to use a larger number of processors and, also, provide more options for";
+                $message .= " generating the network files.  Your e-mail should provide a brief ";
+                $message .= "description of your project so that the EFI can assist you.\r\n";
+                $message .= "\r\n";
+                $message .= "\r\n" . functions::get_email_footer() . "\r\n";
+                $message .= "\r\n\r\n--" . $boundary . "--\r\n";
+
+
+                $headers = "MIME-Version: 1.0\r\n";
+                $headers = "From: " . $from . "\r\n";
+                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
+                mail($to,$subject,$message,$headers," -f " . $from);
+
+        }
 
 
 	///////////////Protected Functions///////////
@@ -228,6 +399,7 @@ class stepa {
                         $this->time_completed = $result[0]['generate_time_completed'];
 			$this->type = $result[0]['generate_type'];
 			$this->num_sequences = $result[0]['generate_num_sequences'];
+			$this->email = $result[0]['generate_email'];
                 }
 
         }
@@ -311,6 +483,12 @@ class stepa {
 		return $result;
         }
 
+//	private function get_job_info() {
+//
+//		$message = "EFI-EST ID: " . $this->get_id() . "\r\n";
+//		$message .= "E-Value: " . $this->get_evalue() . "\r\n";	
+//              return $message;
+//	}
 
 }
 
