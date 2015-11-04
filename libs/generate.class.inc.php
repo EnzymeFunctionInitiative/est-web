@@ -106,7 +106,7 @@ class generate extends stepa {
                         $message .= "<br><b>Please enter a valid email address</b></br>";
                 }
 
-		if (($families != "") && (!$this->verify_families($families))) {
+		if (($families == "") || (!$this->verify_families($families))) {
 			$errors = true;
 			$message .= "<br><b>Please enter valid Interpro and PFam numbers</b></br>";
 		}
