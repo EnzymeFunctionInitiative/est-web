@@ -256,19 +256,21 @@ class analysis {
 
 		//html email
 		$message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type:text/html;charset='iso-8859-1'\r\n\r\n";
+                $message .= "Content-type:text/html;charset='utf-8'\r\n";
+		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
                 $message .= "<br>Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
 		$message .= "<br>To view results, please go to\r\n";
                 $message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
-		$message .= "<br><br>" . nl2br($this->get_stepa_job_info());
-		$message .= "<br>" . nl2br($this->get_job_info());
+		$message .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
+		$message .= "<br>" . nl2br($this->get_job_info(),false);
 		$message .= "<br>\r\n";
 		$message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-                $message .= "<br>" . nl2br(functions::get_email_footer());
+                $message .= "<br>" . nl2br(functions::get_email_footer(),false);
 
 		//plain text email
 		$message .= "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type:text/plain;charset='iso-8859-1'\r\n\r\n";
+                $message .= "Content-type:text/plain;charset='utf-8'\r\n";
+		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
 		$message .= "Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
                 $message .= "To view results, please go to\r\n";
                 $message .= $full_url . "\r\n";
@@ -309,12 +311,13 @@ class analysis {
                         $message .= implode(", ",$generate->get_families());
 
                 }
-		$message .= nl2br($this->get_job_info());
+		$message .= nl2br($this->get_job_info(),false);
 		$message .= "<br><br>";
                 $message .= $footer;
 
                 $headers = "From: " . $from_email . "\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
+                $headers .= "Content-Type: text/html; charset=utf-8" . "\r\n";
+		$message .= "Content-Transfer-Encoding: 7bit\r\n";
                 mail($to,$subject,$message,$headers," -f " . $from_email);
 
 
@@ -330,16 +333,18 @@ class analysis {
                 $to = $stepa->get_email();
 		//html email
 		$message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type:text/html;charset='iso-8859-1'\r\n\r\n";
+                $message .= "Content-type:text/html;charset='utf-8'\r\n";
+		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
                 $message .= "<br>Your EFI-EST PFAM/Interpro Analysis has started\r\n";
                 $message .= "<br>You will receive an email once it is completed.\r\n";
-		$message .= "<br><br>" . nl2br($this->get_stepa_job_info());
-		$message .= nl2br($this->get_job_info());
-                $message .= "<br>" . nl2br(functions::get_email_footer()) . "\r\n";
+		$message .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
+		$message .= nl2br($this->get_job_info(),false);
+                $message .= "<br>" . nl2br(functions::get_email_footer(),false) . "\r\n";
 
 		//plain text email
 		$message .= "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type:text/plain;charset='iso-8859-1'\r\n\r\n";
+                $message .= "Content-type:text/plain;charset='utf-8'\r\n";
+		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
 		$message .= "Your EFI-EST PFAM/Interpro Analysis has started\r\n";
                 $message .= "You will receive an email once it is completed.\r\n\r\n";
                 $message .= $this->get_stepa_job_info();
