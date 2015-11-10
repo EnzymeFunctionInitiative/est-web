@@ -213,7 +213,7 @@ class stepa {
 		$boundary = uniqid('np');
                 $subject = $this->subject . " Generation Started";
                 $to = $this->get_email();
-                $from = functions::get_admin_email();
+		$from = "EFI-EST <" .functions::get_admin_email() . ">";
                 $url = functions::get_web_root() . "/stepc.php";
                 $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
                                 'key'=>$this->get_key()));
@@ -222,10 +222,12 @@ class stepa {
 		$message = "\r\n\r\n--" . $boundary . "\r\n";
                 $message .= "Content-type:text/html;charset='utf-8'\r\n";
 		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+		$message .= "<html><body>";
                 $message .= "<br>Your " . $this->subject . " Generation has started running.\r\n";
                 $message .= "<br>You will receive an email once the job has been completed.\r\n";
 		$message .= "<br>" .nl2br($this->get_job_info(),false); 
                 $message .= "<br><br>" . nl2br(functions::get_email_footer(),false);
+		$message .= "</body></html>";
 
 
 		//plain text email
@@ -250,7 +252,7 @@ class stepa {
                 $boundary = uniqid('np');
                 $subject = $this->subject . " Generation Complete";
                 $to = $this->get_email();
-                $from = functions::get_admin_email();
+                $from = "EFI-EST <" .functions::get_admin_email() . ">";
                 $url = functions::get_web_root() . "/stepc.php";
                 $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
                                 'key'=>$this->get_key()));
@@ -261,7 +263,8 @@ class stepa {
 		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
                 $message .= "<br>Your " . $this->subject . " Generation is Complete\r\n";
                 $message .= "<br>To view results, please go to\r\n";
-                $message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
+                $message .= "<a href=\"" . $full_url . "\">" . $full_url . "</a>\r\n";
+		$message .= "<br>test";
                 $message .= "<br>" . nl2br($this->get_job_info(),false);
                 $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
                 $message .= "<br>" . nl2br(functions::get_email_footer(),false);
@@ -273,7 +276,7 @@ class stepa {
 		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
                 $message .= "Your " . $this->subject . " Generation is Complete\r\n";
                 $message .= "To view results, please go to\r\n";
-                $message .= $full_url . "\r\n";
+                $message .= $full_url . "\r\n\r\n";
                 $message .= $this->get_job_info();
                 $message .= "This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
                 $message .= "\r\n" . functions::get_email_footer() . "\r\n";
@@ -294,7 +297,7 @@ class stepa {
                 $subject = $this->subject . " Generation Failed";
                 $to = $this->get_email();
                 $url = functions::get_web_root();
-                $from = functions::get_admin_email();
+		$from = "EFI-EST <" .functions::get_admin_email() . ">";
 
                 //html email
                 $message = "\r\n\r\n--" . $boundary . "\r\n";
@@ -334,7 +337,7 @@ class stepa {
                 $subject = "EFI-EST " . $this->subject . " Number of Sequences too large";
                 $to = $this->get_email();
                 $url = functions::get_web_root();
-                $from = functions::get_admin_email();
+		$from = "EFI-EST <" .functions::get_admin_email() . ">";
                 $max_seq = functions::get_max_seq();
 
                 //html email
