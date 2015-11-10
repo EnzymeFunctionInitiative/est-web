@@ -248,7 +248,7 @@ class analysis {
 		$stepa = new stepa($this->db,$this->get_generate_id());	
 		$boundary = uniqid('np');
                 $subject = "EFI-EST PFAM/Interpro Analysis Complete";
-		$from = functions::get_admin_email();
+		$from = "EFI-EST <" .functions::get_admin_email() . ">";
                 $to = $stepa->get_email();
                 $url = functions::get_web_root() . "/stepe.php";
                 $full_url = $url . "?" . http_build_query(array('id'=>$this->get_generate_id(),
@@ -273,7 +273,7 @@ class analysis {
 		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
 		$message .= "Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
                 $message .= "To view results, please go to\r\n";
-                $message .= $full_url . "\r\n";
+                $message .= $full_url . "\r\n\r\n";
                 $message .= $this->get_stepa_job_info();
 		$message .= $this->get_job_info();
                 $message .= "\r\n";
@@ -329,7 +329,7 @@ class analysis {
                 $stepa = new stepa($this->db,$this->get_generate_id());
 		$boundary = uniqid('np');
                 $subject = "EFI-EST PFAM/Interpro Analysis Started";
-                $from = functions::get_admin_email();
+		$from = "EFI-EST <" .functions::get_admin_email() . ">";
                 $to = $stepa->get_email();
 		//html email
 		$message = "\r\n\r\n--" . $boundary . "\r\n";
