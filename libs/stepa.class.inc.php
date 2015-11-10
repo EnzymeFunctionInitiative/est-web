@@ -262,7 +262,7 @@ class stepa {
                 $message .= "<br>Your " . $this->subject . " Generation is Complete\r\n";
                 $message .= "<br>To view results, please go to\r\n";
                 $message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
-                $message .= nl2br($this->get_job_info(),false);
+                $message .= "<br>" . nl2br($this->get_job_info(),false);
                 $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
                 $message .= "<br>" . nl2br(functions::get_email_footer(),false);
 
@@ -303,7 +303,7 @@ class stepa {
                 $message .= "<br>Your " . $this->subject . " Generation Failed\r\n";
                 $message .= "<br>Sorry it failed.\r\n";
                 $message .= "<br>Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
-                $message .= nl2br($this->get_job_info(),false);
+                $message .= "<br>" . nl2br($this->get_job_info(),false);
                 $message .= "<br><br>";
                 $message .= nl2br(functions::get_email_footer(),false);
 
@@ -311,9 +311,9 @@ class stepa {
                 $message .= "\r\n\r\n--" . $boundary . "\r\n";
                 $message .= "Content-type:text/plain;charset='utf-8'\r\n";
 		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "<br>Your " . $this->subject . " Generation Failed\r\n";
-                $message .= "<br>Sorry it failed.\r\n";
-                $message .= "<br>Please restart by going to " . $url . "\r\n";
+                $message .= "Your " . $this->subject . " Generation Failed\r\n";
+                $message .= "Sorry it failed.\r\n";
+                $message .= "Please restart by going to " . $url . "\r\n";
                 $message .= $this->get_job_info();
                 $message .= "\r\n" . functions::get_email_footer() . "\r\n";
                 $message .= "\r\n\r\n--" . $boundary . "--\r\n";
