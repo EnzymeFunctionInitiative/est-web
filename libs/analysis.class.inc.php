@@ -246,7 +246,7 @@ class analysis {
 	public function email_complete() {
 	
 		$stepa = new stepa($this->db,$this->get_generate_id());	
-		$boundary = uniqid('np');
+		$boundary = "------------" .  uniqid('np');
                 $subject = "EFI-EST PFAM/Interpro Analysis Complete";
 		$from = "EFI-EST <" .functions::get_admin_email() . ">";
                 $to = $stepa->get_email();
@@ -254,21 +254,9 @@ class analysis {
                 $full_url = $url . "?" . http_build_query(array('id'=>$this->get_generate_id(),
                                 'key'=>$stepa->get_key(),'analysis_id'=>$this->get_id()));
 
-		//html email
-		$message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type:text/html;charset='utf-8'\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "<br>Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
-		$message .= "<br>To view results, please go to\r\n";
-                $message .= "<a href='" . $full_url . "'>" . $full_url . "</a>\r\n";
-		$message .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
-		$message .= "<br>" . nl2br($this->get_job_info(),false);
-		$message .= "<br>\r\n";
-		$message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-                $message .= "<br>" . nl2br(functions::get_email_footer(),false);
 
 		//plain text email
-		$message .= "\r\n\r\n--" . $boundary . "\r\n";
+		$message = "\r\n\r\n--" . $boundary . "\r\n";
                 $message .= "Content-type:text/plain;charset='utf-8'\r\n";
 		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
 		$message .= "Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
@@ -280,8 +268,24 @@ class analysis {
                 $message .= "This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
                 $message .= "\r\n";
                 $message .= functions::get_email_footer() . "\r\n";
-		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
 
+		//html email
+                $message .= "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type: text/html; charset=utf-8\r\n";
+                $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+		$message .= "<html>\r\n";
+                $message .= "<head><meta http-equiv='content-type' content='text/html; charset=utf-8'></head>\r\n";
+                $message .= "<body>\r\n";
+                $message .= "<br>Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
+                $message .= "<br>To view results, please go to\r\n";
+                $message .= "<a href='" . htmlentities($full_url) . "'>" . $full_url . "</a>\r\n";
+                $message .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
+                $message .= "<br>" . nl2br($this->get_job_info(),false);
+                $message .= "<br>\r\n";
+                $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
+                $message .= "<br>" . nl2br(functions::get_email_footer(),false);
+		$message .= "</body></html>";
+		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
 		//headers
                 $headers = "MIME-Version: 1.0\r\n";
                 $headers .= "From: " . $from . "\r\n";
@@ -325,24 +329,14 @@ class analysis {
         }
 
 	public function email_started() {
-
+		$boundary = "------------" .  uniqid('np');
                 $stepa = new stepa($this->db,$this->get_generate_id());
-		$boundary = uniqid('np');
                 $subject = "EFI-EST PFAM/Interpro Analysis Started";
 		$from = "EFI-EST <" .functions::get_admin_email() . ">";
                 $to = $stepa->get_email();
-		//html email
-		$message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type:text/html;charset='utf-8'\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "<br>Your EFI-EST PFAM/Interpro Analysis has started\r\n";
-                $message .= "<br>You will receive an email once it is completed.\r\n";
-		$message .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
-		$message .= nl2br($this->get_job_info(),false);
-                $message .= "<br>" . nl2br(functions::get_email_footer(),false) . "\r\n";
 
 		//plain text email
-		$message .= "\r\n\r\n--" . $boundary . "\r\n";
+		$message = "\r\n\r\n--" . $boundary . "\r\n";
                 $message .= "Content-type:text/plain;charset='utf-8'\r\n";
 		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
 		$message .= "Your EFI-EST PFAM/Interpro Analysis has started\r\n";
@@ -351,6 +345,20 @@ class analysis {
                 $message .= $this->get_job_info();
                 $message .= "\r\n";
                 $message .= functions::get_email_footer() . "\r\n";
+
+                //html email
+                $message .= "\r\n\r\n--" . $boundary . "\r\n";
+                $message .= "Content-type: text/html; charset=utf-8\r\n";
+                $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+		$message .= "<html>\r\n";
+                $message .= "<head><meta http-equiv='content-type' content='text/html; charset=utf-8'></head>\r\n";
+                $message .= "<body>\r\n";
+                $message .= "<br>Your EFI-EST PFAM/Interpro Analysis has started\r\n";
+                $message .= "<br>You will receive an email once it is completed.\r\n";
+                $message .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
+                $message .= nl2br($this->get_job_info(),false);
+                $message .= "<br>" . nl2br(functions::get_email_footer(),false) . "\r\n";
+		$message .= "</body></html>";
 		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
 
 		//headers
@@ -391,6 +399,8 @@ class analysis {
 		        	$output = exec($exec,$output_array,$exit_status);
 				chdir($current_dir);
 		        	$output = trim(rtrim($output));
+				print_r($output);
+				print_r($output_array);
 	        		$pbs_job_number = substr($output,0,strpos($output,"."));
 		        	if ($pbs_job_number && !$exit_status) {
         			        $this->set_pbs_number($pbs_job_number);
