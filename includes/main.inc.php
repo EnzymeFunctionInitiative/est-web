@@ -3,7 +3,6 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-chdir(dirname(__FILE__));
 set_include_path(get_include_path() . ':../libs:../includes/pear');
 function __autoload($class_name) {
         if(file_exists("../libs/" . $class_name . ".class.inc.php")) {

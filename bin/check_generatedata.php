@@ -1,5 +1,5 @@
 <?php
-
+chdir(dirname(__FILE__));
 require_once '../includes/main.inc.php';
 
 $sapi_type = php_sapi_name();
