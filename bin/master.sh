@@ -17,7 +17,7 @@ php $DIR/blasthits.php
 sleep 1 
 php $DIR/check_fasta.php
 
-sleep
+sleep 1
 php $DIR/fasta.php
 
 sleep 1

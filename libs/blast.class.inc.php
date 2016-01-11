@@ -272,13 +272,13 @@ class blast extends stepa {
 
 	}
 
-	public function get_job_info() {
+	public function get_job_info($eol = "\r\n") {
 
-		$message = "EFI-EST ID: " . $this->get_id() . "\r\n";
-                $message .= "Blast Sequence: \r\n";
-                $message .= $this->get_formatted_blast() . "\r\n";
-                $message .= "E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
+		$message = "EFI-EST ID: " . $this->get_id() . $eol;
+                $message .= "Blast Sequence: " . $eol;
+                $message .= $this->get_formatted_blast() . $eol;
+                $message .= "E-Value: " . $this->get_evalue() . $eol;
+                $message .= "Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . $eol;
 		return $message;
 
 

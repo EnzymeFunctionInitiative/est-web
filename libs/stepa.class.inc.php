@@ -1,5 +1,8 @@
 <?php
 
+require_once('Mail.php');
+require_once('Mail/mime.php');
+
 class stepa {
 
         ////////////////Private Variables//////////
@@ -19,6 +22,7 @@ class stepa {
 	protected $type;
 	protected $num_sequences;
 	protected $accession_file = "allsequences.fa";
+	protected $eol = PHP_EOL;
 	private $num_pbs_jobs = 1;
 
 	//private $alignment_length = "r_quartile_align.png";
@@ -208,143 +212,121 @@ class stepa {
 
 	}
 
-        public function email_started() {
 
-		$boundary = "------------" .  uniqid('np');
+        public function email_started() {
                 $subject = $this->subject . " Generation Started";
                 $to = $this->get_email();
-		$from = "EFI-EST <" .functions::get_admin_email() . ">";
-                $url = functions::get_web_root() . "/stepc.php";
-                $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
-                                'key'=>$this->get_key()));
+                $from = "EFI EST <" . functions::get_admin_email() . ">";
 
-		//plain text email
-                $message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/plain; charset=utf-8\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-		$message .= "Your " . $this->subject . " Generation has started running.\r\n";
-                $message .= "You will receive an email once the job has been completed.\r\n";
-                $message .= $this->get_job_info();
-                $message .= "\r\n" . functions::get_email_footer() . "\r\n";
+                //plain text email
+                $plain_email = "Your " . $this->subject . " Generation has started running." . $this->eol;
+                $plain_email .= "You will receive an email once the job has been completed." . $this->eol;
+                $plain_email .= $this->get_job_info($this->eol);
+                $plain_email .= functions::get_email_footer();
 
-		//html email
-                $message .= "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/html; charset=utf-8\r\n";
-                $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "<html>\r\n";
-                $message .= "<head><meta http-equiv='content-type' content='text/html; charset=utf-8'></head>\r\n";
-                $message .= "<body>\r\n";
-                $message .= "<br>Your " . $this->subject . " Generation has started running.\r\n";
-                $message .= "<br>You will receive an email once the job has been completed.\r\n";
-                $message .= "<br>" .nl2br($this->get_job_info(),false);
-                $message .= "<br><br>" . nl2br(functions::get_email_footer(),false);
-                $message .= "</body></html>";
+                //html email
+                $html_email = "<br>Your " . $this->subject . " Generation has started running." . $this->eol;
+                $html_email .= "<br>You will receive an email once the job has been completed." . $this->eol;
+                $html_email .= "<br>" . nl2br($this->get_job_info(),false);
+                $html_email .= "<br><br>" . nl2br(functions::get_email_footer(),false);
+                
 
-		$message .= "\r\n\r\n--" . $boundary . "--\r\n\r\n";
+		$message = new Mail_mime(array("eol"=>$this->eol));
+		$message->setTXTBody($plain_email);
+		$message->setHTMLBody($html_email);
+		$body = $message->get();
+		$extraheaders = array("From"=>$from,
+				"Subject"=>$subject
+				);
+		$headers = $message->headers($extraheaders);
 
-                $headers = "MIME-Version: 1.0\r\n";
-                $headers .= "From: " . $from . "\r\n";
-                $headers .= "Content-Type: multipart/alternative;boundary=\"" . $boundary . "\"\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
+		$mail = Mail::factory("mail");
+		$mail->send($to,$headers,$body);
         }
 
 
         public function email_complete() {
 
-                $boundary = "------------" . uniqid('np');
                 $subject = $this->subject . " Generation Complete";
                 $to = $this->get_email();
                 $from = "EFI-EST <" .functions::get_admin_email() . ">";
+
                 $url = functions::get_web_root() . "/stepc.php";
                 $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
                                 'key'=>$this->get_key()));
 
 
                 //plain text email
-                $message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/plain; charset=utf-8\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "Your " . $this->subject . " Generation is Complete\r\n";
-                $message .= "To view results, please go to\r\n";
-                $message .= $full_url . "\r\n\r\n";
-                $message .= $this->get_job_info();
-                $message .= "This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-                $message .= "\r\n" . functions::get_email_footer() . "\r\n";
+                $plain_email = "Your " . $this->subject . " Generation is Complete" . $this->eol;
+                $plain_email .= "To view results, please go to " . $full_url . $this->eol . $this->eol;
+                $plain_email .= $this->get_job_info();
+                $plain_email .= "This data will only be retained for " . functions::get_retention_days() . " days." . $this->eol;
+                $plain_email .= $this->eol . functions::get_email_footer() . $this->eol;
 
-		//html email
-                $message .= "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/html; charset=utf-8\r\n";
-                $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "<html>\r\n";
-                $message .= "<head><meta http-equiv='content-type' content='text/html; charset=utf-8'></head>\r\n";
-                $message .= "<body>\r\n";
+                //html email
 
-                $message .= "<br>Your " . $this->subject . " Generation is Complete\r\n";
-                $message .= "<br>To view results, please go to\r\n";
-                $message .= "<a href=\"" . htmlentities($full_url) . "\">" . $full_url . "</a>\r\n";
-                $message .= "<br><br>" . nl2br($this->get_job_info(),false);
-                $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-                $message .= "<br>" . nl2br(functions::get_email_footer(),false);
-                $message .= "</body></html>";
+                $html_email = "<br>Your " . $this->subject . " Generation is Complete" . $this->eol;
+                $html_email .= "<br>To view results, please go to <a href=\"" . htmlentities($full_url) . "\">" . $full_url . "</a>" . $this->eol;
+                $html_email .= "<br><br>" . nl2br($this->get_job_info(),false);
+                $html_email .= "<br>This data will only be retained for " . functions::get_retention_days() . " days." . $this->eol;
+                $html_email .= "<br>" . nl2br(functions::get_email_footer(),false);
 
-                $message .= "\r\n\r\n--" . $boundary . "--\r\n\r\n";
 
-                $headers = "MIME-Version: 1.0\r\n";
-                $headers .= "From: " . $from . "\r\n";
-                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
+		$message = new Mail_mime(array("eol"=>$this->eol));
+                $message->setTXTBody($plain_email);
+                $message->setHTMLBody($html_email);
+                $body = $message->get();
+                $extraheaders = array("From"=>$from,
+                                "Subject"=>$subject
+                                );
+                $headers = $message->headers($extraheaders);
+
+                $mail = Mail::factory("mail");
+                $mail->send($to,$headers,$body);
 
 
         }
 
-
         public function email_failed() {
 
-                $boundary = "------------"  . uniqid('np');
                 $subject = $this->subject . " Generation Failed";
                 $to = $this->get_email();
                 $url = functions::get_web_root();
 		$from = "EFI-EST <" .functions::get_admin_email() . ">";
 
-
                 //plain text email
-                $message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/plain; charset=utf-8\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "Your " . $this->subject . " Generation Failed\r\n";
-                $message .= "Sorry it failed.\r\n";
-                $message .= "Please restart by going to " . $url . "\r\n";
-                $message .= $this->get_job_info();
-                $message .= "\r\n" . functions::get_email_footer() . "\r\n";
+                $plain_email = "Your " . $this->subject . " Generation Failed" . $this->eol;
+                $plain_email .= "Sorry it failed." . $this->eol;
+                $plain_email .= "Please restart by going to " . $url . $this->eol;
+                $plain_email .= $this->get_job_info();
+                $plain_email .= "\r\n" . functions::get_email_footer() . $this->eol;
 
                 //html email
-                $message .= "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/html; charset=utf-8\r\n";
-                $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "<html>\r\n";
-                $message .= "<head><meta http-equiv='content-type' content='text/html; charset=utf-8'></head>\r\n";
-                $message .= "<body>\r\n";
-                $message .= "<br>Your " . $this->subject . " Generation Failed\r\n";
-                $message .= "<br>Sorry it failed.\r\n";
-                $message .= "<br>Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
-                $message .= "<br>" . nl2br($this->get_job_info(),false);
-                $message .= "<br><br>";
-                $message .= nl2br(functions::get_email_footer(),false);
-                $message .= "</body></html>";
-		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
-                $headers = "MIME-Version: 1.0\r\n";
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
+                $html_email = "<br>Your " . $this->subject . " Generation Failed" . $this->eol;
+                $html_email .= "<br>Sorry it failed." . $this->eol;
+                $html_email .= "<br>Please restart by going to <a href='" . htmlentities($url) . "'>" . $url . "</a>" . $this->eol;
+                $html_email .= "<br>" . nl2br($this->get_job_info(),false);
+                $html_email .= "<br><br>";
+                $html_email .= nl2br(functions::get_email_footer(),false);
 
+                $message = new Mail_mime(array("eol"=>$this->eol));
+                $message->setTXTBody($plain_email);
+                $message->setHTMLBody($html_email);
+                $body = $message->get();
+                $extraheaders = array("From"=>$from,
+                                "Subject"=>$subject
+                                );
+                $headers = $message->headers($extraheaders);
+
+                $mail = Mail::factory("mail");
+                $mail->send($to,$headers,$body);
 
 
         }
 
 
 	public function email_number_seq() {
-                $boundary = "------------" . uniqid('np');
-                $subject = "EFI-EST " . $this->subject . " Number of Sequences too large";
+		$subject = "EFI-EST " . $this->subject . " Number of Sequences too large";
                 $to = $this->get_email();
                 $url = functions::get_web_root();
 		$from = "EFI-EST <" .functions::get_admin_email() . ">";
@@ -352,58 +334,50 @@ class stepa {
 
 
                 //plain text
-                $message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/plain; charset=utf-8\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "Your EFI-EST " . $this->subject . " Data Set\n";
-                $message .= $this->get_job_info();
-                $message .= "This job will use " . number_format($this->get_num_sequences()) . ".";
-                $message .= "This number is too large--you are limited to ";
-                $message .=  number_format($max_seq) . " sequences.\r\n";
-                $message .= "Return to " . $url;
-                $message .= "to start a new job with a different set of Pfam/InterPro families.\r\n";
-                $message .= "Or, if you would like to generate a network with the Pfam/InterPro";
-                $message .= " families you have chosen, send an e-mail to efi@enzymefunction.org and";
-                $message .= " request an account on Biocluster.  We will provide you with instructions";
-                $message .= " to use our Unix scripts for network generation.  These scripts allow you";
-                $message .= " to use a larger number of processors and, also, provide more options for";
-                $message .= " generating the network files.  Your e-mail should provide a brief ";
-                $message .= "description of your project so that the EFI can assist you.\r\n";
-                $message .= "\r\n";
-                $message .= "\r\n" . functions::get_email_footer() . "\r\n";
-                $message .= "\r\n\r\n--" . $boundary . "--\r\n";
+                $plain_email = "Your EFI-EST " . $this->subject . " Data Set" . $this->eol;
+                $plain_email .= $this->get_job_info();
+                $plain_email .= "This job will use " . number_format($this->get_num_sequences()) . "." . $this->eol;
+                $plain_email .= "This number is too large--you are limited to ";
+                $plain_email .=  number_format($max_seq) . " sequences." . $this->eol;
+                $plain_email .= "Return to " . $url . $this->eol;
+                $plain_email .= "to start a new job with a different set of Pfam/InterPro families." . $this->eol;
+                $plain_email .= "Or, if you would like to generate a network with the Pfam/InterPro" . $this->eol;
+                $plain_email .= " families you have chosen, send an e-mail to efi@enzymefunction.org and" . $this->eol;
+                $plain_email .= " request an account on Biocluster.  We will provide you with instructions" . $this->eol;
+                $plain_email .= " to use our Unix scripts for network generation.  These scripts allow you" . $this->eol;
+                $plain_email .= " to use a larger number of processors and, also, provide more options for" . $this->eol;
+                $plain_email .= " generating the network files.  Your e-mail should provide a brief " . $this->eol;
+                $plain_email .= "description of your project so that the EFI can assist you." . $this->eol;
+                $plain_email .= $this->eol . $this->eol . functions::get_email_footer() . $this->eol;
 
                 //html email
-                $message .= "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/html; charset=utf-8\r\n";
-                $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-                $message .= "<html>\r\n";
-                $message .= "<head><meta http-equiv='content-type' content='text/html; charset=utf-8'></head>\r\n";
-                $message .= "<body>\r\n";
-                $message .= "<br>Your EFI-EST " . $this->subject . " Data Set\n";
-                $message .= nl2br($this->get_job_info(),false);
-                $message .= "<br>This job will use " . number_format($this->get_num_sequences()) . ".";
-                $message .= "This number is too large--you are limited to ";
-                $message .=  number_format($max_seq) . " sequences.";
-                $message .= "<br>Return to <a href='" . $url . "'>" . $url. "</a> ";
-                $message .= "to start a new job with a different set of Pfam/InterPro families.";
-                $message .= "<br>Or, if you would like to generate a network with the Pfam/InterPro";
-                $message .= " families you have chosen, send an e-mail to efi@enzymefunction.org and";
-                $message .= " request an account on Biocluster.  We will provide you with instructions";
-                $message .= " to use our Unix scripts for network generation.  These scripts allow you";
-                $message .= " to use a larger number of processors and, also, provide more options for";
-                $message .= " generating the network files.  Your e-mail should provide a brief ";
-                $message .= "description of your project so that the EFI can assist you.";
-                $message .= "<br>";
-                $message .= nl2br(functions::get_email_footer(),false);
-                $message .= "</body></html>";
-		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+                $html_email = "<br>Your EFI-EST " . $this->subject . " Data Set" . $this->eol;
+                $html_email .= nl2br($this->get_job_info($this->eol),false);
+                $html_email .= "<br>This job will use " . number_format($this->get_num_sequences()) . "." . $this->eol;
+                $html_email .= "This number is too large--you are limited to ";
+                $html_email .=  number_format($max_seq) . " sequences." . $this->eol;
+                $html_email .= "<br>Return to <a href='" . htmlentities($url) . "'>" . $url. "</a> " . $this->eol;
+                $html_email .= "to start a new job with a different set of Pfam/InterPro families." . $this->eol;
+                $html_email .= "<br>Or, if you would like to generate a network with the Pfam/InterPro" . $this->eol;
+                $html_email .= " families you have chosen, send an e-mail to efi@enzymefunction.org and" . $this->eol;
+                $html_email .= " request an account on Biocluster.  We will provide you with instructions" . $this->eol;
+                $html_email .= " to use our Unix scripts for network generation.  These scripts allow you" . $this->eol;
+                $html_email .= " to use a larger number of processors and, also, provide more options for" . $this->eol;
+                $html_email .= " generating the network files.  Your e-mail should provide a brief " . $this->eol;
+                $html_email .= "description of your project so that the EFI can assist you." . $this->eol;
+                $html_email .= "<br>" . nl2br(functions::get_email_footer(),false);
 	
-                $headers = "MIME-Version: 1.0\r\n";
-                $headers = "From: " . $from . "\r\n";
-                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
+                $message = new Mail_mime(array("eol"=>$this->eol));
+                $message->setTXTBody($plain_email);
+                $message->setHTMLBody($html_email);
+                $body = $message->get();
+                $extraheaders = array("From"=>$from,
+                                "Subject"=>$subject
+                                );
+                $headers = $message->headers($extraheaders);
 
+                $mail = Mail::factory("mail");
+                $mail->send($to,$headers,$body);
         }
 
 

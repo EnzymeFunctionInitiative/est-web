@@ -313,14 +313,13 @@ class generate extends stepa {
                 return $result;
         }
 
-	public function get_job_info() {
+	public function get_job_info($eol = "\r\n") {
 
-		$message = "EFI-EST ID: " . $this->get_id() . "\r\n";
-                $message .= "PFAM/Interpro Families: \r\n";
-                $message .= $this->get_families_comma() . "\r\n";
-                $message .= "E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "Fraction: " . $this->get_fraction() . "\r\n";
-                $message .= "Enable Domain: " . $this->get_domain() . "\r\n";
+		$message = "EFI-EST ID: " . $this->get_id() . $eol;
+                $message .= "PFAM/Interpro Families: " . $this->get_families_comma() . $eol;
+                $message .= "E-Value: " . $this->get_evalue() . $eol;
+                $message .= "Fraction: " . $this->get_fraction() . $eol;
+                $message .= "Enable Domain: " . $this->get_domain() . $eol;
 		return $message;
 
 	}

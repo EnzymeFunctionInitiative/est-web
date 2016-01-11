@@ -1,5 +1,8 @@
 <?php
 
+require_once('Mail.php');
+require_once('Mail/mime.php');
+
 class analysis {
 
         ////////////////Private Variables//////////
@@ -23,6 +26,7 @@ class analysis {
 	protected $output_dir = "output";
 	private $num_pbs_jobs = 16;
 	private $filter_sequences;
+	private $eol = PHP_EOL;
         ///////////////Public Functions///////////
 
         public function __construct($db,$id = 0) {
@@ -246,7 +250,6 @@ class analysis {
 	public function email_complete() {
 	
 		$stepa = new stepa($this->db,$this->get_generate_id());	
-		$boundary = "------------" .  uniqid('np');
                 $subject = "EFI-EST PFAM/Interpro Analysis Complete";
 		$from = "EFI-EST <" .functions::get_admin_email() . ">";
                 $to = $stepa->get_email();
@@ -256,41 +259,35 @@ class analysis {
 
 
 		//plain text email
-		$message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type:text/plain;charset='utf-8'\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-		$message .= "Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
-                $message .= "To view results, please go to\r\n";
-                $message .= $full_url . "\r\n\r\n";
-                $message .= $this->get_stepa_job_info();
-		$message .= $this->get_job_info();
-                $message .= "\r\n";
-                $message .= "This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-                $message .= "\r\n";
-                $message .= functions::get_email_footer() . "\r\n";
+		$plain_email = "Your EFI-EST PFAM/Interpro Analysis is Complete" . $this->eol;
+                $plain_email .= "To view results, please go to " . $full_url . $this->eol . $this->eol;
+                $plain_email .= $this->get_stepa_job_info();
+		$plain_email .= $this->get_job_info();
+                $plain_email .= $this->eol;
+                $plain_email .= "This data will only be retained for " . functions::get_retention_days() . " days." . $this->eol;
+                $plain_email .= $this->eol;
+                $plain_email .= functions::get_email_footer() . $this->eol;
 
 		//html email
-                $message .= "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/html; charset=utf-8\r\n";
-                $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-		$message .= "<html>\r\n";
-                $message .= "<head><meta http-equiv='content-type' content='text/html; charset=utf-8'></head>\r\n";
-                $message .= "<body>\r\n";
-                $message .= "<br>Your EFI-EST PFAM/Interpro Analysis is Complete\r\n";
-                $message .= "<br>To view results, please go to\r\n";
-                $message .= "<a href='" . htmlentities($full_url) . "'>" . $full_url . "</a>\r\n";
-                $message .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
-                $message .= "<br>" . nl2br($this->get_job_info(),false);
-                $message .= "<br>\r\n";
-                $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-                $message .= "<br>" . nl2br(functions::get_email_footer(),false);
-		$message .= "</body></html>";
-		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
-		//headers
-                $headers = "MIME-Version: 1.0\r\n";
-                $headers .= "From: " . $from . "\r\n";
-                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
+                $html_email = "<br>Your EFI-EST PFAM/Interpro Analysis is Complete" . $this->eol;
+                $html_email .= "<br>To view results, please go to <a href='" . htmlentities($full_url) . "'>" . $full_url . "</a>" . $this->eol;
+                $html_email .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
+                $html_email .= "<br>" . nl2br($this->get_job_info(),false);
+                $html_email .= "<br>" . $this->eol;
+                $html_email .= "<br>This data will only be retained for " . functions::get_retention_days() . " days." . $this->eol;
+                $html_email .= "<br>" . nl2br(functions::get_email_footer(),false);
+
+                $message = new Mail_mime(array("eol"=>$this->eol));
+                $message->setTXTBody($plain_email);
+                $message->setHTMLBody($html_email);
+                $body = $message->get();
+                $extraheaders = array("From"=>$from,
+                                "Subject"=>$subject
+                                );
+                $headers = $message->headers($extraheaders);
+
+                $mail = Mail::factory("mail");
+                $mail->send($to,$headers,$body);
 
         }
 
@@ -319,11 +316,17 @@ class analysis {
 		$message .= "<br><br>";
                 $message .= $footer;
 
-                $headers = "From: " . $from_email . "\r\n";
-                $headers .= "Content-Type: text/html; charset=utf-8" . "\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from_email);
+                $message = new Mail_mime(array("eol"=>$this->eol));
+                $message->setTXTBody($plain_email);
+                $message->setHTMLBody($html_email);
+                $body = $message->get();
+                $extraheaders = array("From"=>$from,
+                                "Subject"=>$subject
+                                );
+                $headers = $message->headers($extraheaders);
 
+                $mail = Mail::factory("mail");
+                $mail->send($to,$headers,$body);
 
 
         }
@@ -336,37 +339,31 @@ class analysis {
                 $to = $stepa->get_email();
 
 		//plain text email
-		$message = "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type:text/plain;charset='utf-8'\r\n";
-		$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-		$message .= "Your EFI-EST PFAM/Interpro Analysis has started\r\n";
-                $message .= "You will receive an email once it is completed.\r\n\r\n";
-                $message .= $this->get_stepa_job_info();
-                $message .= $this->get_job_info();
-                $message .= "\r\n";
-                $message .= functions::get_email_footer() . "\r\n";
+		$plain_email = "Your EFI-EST PFAM/Interpro Analysis has started" . $this->eol;
+                $plain_email .= "You will receive an email once it is completed." . $this->eol . $this->eol;
+                $plain_email .= $this->get_stepa_job_info();
+                $plain_email .= $this->get_job_info();
+                $plain_email .= $this->eol;
+                $plain_email .= functions::get_email_footer() . $this->eol;
 
                 //html email
-                $message .= "\r\n\r\n--" . $boundary . "\r\n";
-                $message .= "Content-type: text/html; charset=utf-8\r\n";
-                $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-		$message .= "<html>\r\n";
-                $message .= "<head><meta http-equiv='content-type' content='text/html; charset=utf-8'></head>\r\n";
-                $message .= "<body>\r\n";
-                $message .= "<br>Your EFI-EST PFAM/Interpro Analysis has started\r\n";
-                $message .= "<br>You will receive an email once it is completed.\r\n";
-                $message .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
-                $message .= nl2br($this->get_job_info(),false);
-                $message .= "<br>" . nl2br(functions::get_email_footer(),false) . "\r\n";
-		$message .= "</body></html>";
-		$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+                $html_email = "<br>Your EFI-EST PFAM/Interpro Analysis has started" . $this->eol;
+                $html_email .= "<br>You will receive an email once it is completed." . $this->eol;
+                $html_email .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
+                $html_email .= nl2br($this->get_job_info(),false);
+                $html_email .= "<br>" . nl2br(functions::get_email_footer(),false) . $this->eol;
 
-		//headers
-		$headers = "MIME-Version: 1.0\r\n";
-                $headers .= "From: " . $from . "\r\n";
-                $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
-                mail($to,$subject,$message,$headers," -f " . $from);
+                $message = new Mail_mime(array("eol"=>$this->eol));
+                $message->setTXTBody($plain_email);
+                $message->setHTMLBody($html_email);
+                $body = $message->get();
+                $extraheaders = array("From"=>$from,
+                                "Subject"=>$subject
+                                );
+                $headers = $message->headers($extraheaders);
 
+                $mail = Mail::factory("mail");
+                $mail->send($to,$headers,$body);
 
         }
 
@@ -399,8 +396,6 @@ class analysis {
 		        	$output = exec($exec,$output_array,$exit_status);
 				chdir($current_dir);
 		        	$output = trim(rtrim($output));
-				print_r($output);
-				print_r($output_array);
 	        		$pbs_job_number = substr($output,0,strpos($output,"."));
 		        	if ($pbs_job_number && !$exit_status) {
         			        $this->set_pbs_number($pbs_job_number);

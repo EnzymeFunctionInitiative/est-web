@@ -380,15 +380,15 @@ class fasta extends stepa {
 
 	}
 
-	public function get_job_info() {
-		$message = "EFI-EST ID: " . $this->get_id() . "\r\n";
-                $message .= "Uploaded Fasta File: " . $this->get_uploaded_filename() . "\r\n";
+	public function get_job_info($eol = "\r\n") {
+		$message = "EFI-EST ID: " . $this->get_id() . $eol;
+                $message .= "Uploaded Fasta File: " . $this->get_uploaded_filename() . $eol;
 		if (count($this->get_families())) {
 			 $message .= "PFAM/Interpro Families: ";
-                         $message .= $this->get_families_comma() . "\r\n";
+                         $message .= $this->get_families_comma() . $eol;
 		}
-                $message .= "E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "Fraction: " . $this->get_fraction() . "\r\n";
+                $message .= "E-Value: " . $this->get_evalue() . $eol;
+                $message .= "Fraction: " . $this->get_fraction() . $eol;
                 return $message;
 
         }
