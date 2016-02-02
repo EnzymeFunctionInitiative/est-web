@@ -20,6 +20,9 @@ if (file_exists("../includes/jpgraph-3.5.0b1/src")) {
         set_include_path(get_include_path() . ':../includes/jpgraph-3.5.0b1/src');
 }
 
+if (file_exists("../../includes/pear")) {
+	set_include_path(get_include_path() . ':../../includes/pear');
+}
 if (file_exists("../../conf/settings.inc.php")) {
 	require_once '../../conf/settings.inc.php';
 }

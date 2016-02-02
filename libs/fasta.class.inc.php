@@ -243,10 +243,17 @@ class fasta extends stepa {
 	}
 
 	public function view_fasta_file() {
-		$filename = $this->get_id() . ".fasta";
-		$full_path = functions::get_uploads_dir() . "/" . $filename;
-		$data = file_get_contents($full_path);
-		return $data;
+                $filename = $this->get_id() . ".fasta";
+                $full_path = functions::get_uploads_dir() . "/" . $filename;
+                $data = file_get_contents($full_path);
+                $data_array = explode("\n", $data);
+                $output = "";
+                while (list($var, $val) = each($data_array)) {
+                        ++$var;
+                        $val = trim($val);
+                        $output .= "<br>" . $val;
+                }
+                return $output;
 
 	}
 	public function download_fasta_file() {
