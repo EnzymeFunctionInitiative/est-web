@@ -8,7 +8,7 @@ class blast extends stepa {
 	private $sequence_max;
 	private $blast_sequence_max;
 	public $fail_file = "1.out.failed";
-	private $num_pbs_jobs = 1;
+	private $num_pbs_jobs = 11;
 	public $subject = "EFI-EST PFAM/Interpro";
 
 	///////////////Public Functions///////////
@@ -228,7 +228,7 @@ class blast extends stepa {
 		return $valid;
 	}
 
-	private function available_pbs_slots() {
+        private function available_pbs_slots() {
                 $queue = new queue(functions::get_generate_queue());
                 $num_queued = $queue->get_num_queued();
                 $max_queuable = $queue->get_max_queuable();
@@ -236,11 +236,11 @@ class blast extends stepa {
                 $max_user_queuable = $queue-> get_max_user_queuable();
 
                 $result = false;
-                if ($max_queuable - $num_queued < $this->num_pbs_jobs) {
+                if ($max_queuable - $num_queued < $this->num_pbs_jobs + functions::get_blasthits_processors()) {
                         $result = false;
                         $msg = "Generate ID: " . $this->get_id() . " - ERROR: Queue " . functions::get_generate_queue() . " is full.  Number in the queue: " . $num_queued;
                 }
-                elseif ($max_user_queuable - $num_user_queued < $this->num_pbs_jobs) {
+                elseif ($max_user_queuable - $num_user_queued < $this->num_pbs_jobs + functions::get_blasthits_processors()) {
                         $result = false;
                         $msg = "Generate ID: " . $this->get_id() . " - ERROR: Number of Queued Jobs for user " . functions::get_cluster_user() . " is full.  Number in the queue: " . $num_user_queued;
                 }
