@@ -1,4 +1,6 @@
+<div class="content_nav">
 <ul>
+	  <li><a href='index.php'>Options for Generating Sequence Similarity Networks</a></li>
           <li><a href="tutorial.php">What is a Sequence Similarity Network?</a></li>
           <li><a href="tutorial_why_use_networks.php">Why use Sequence Similarity Networks?</a></li>
           <li><a href="tutorial_startscreen.php">EFI-EST Start Screen</a></li>
@@ -10,8 +12,8 @@
           </li>
           <li><a href="tutorial_download.php">Network File Download</a></li>
           <li><a href="tutorial_node_attributes.php">Node Attributes</a></li>
-	  <li><a href='tutorial_cytoscape.php'>Introduction to Cytoscape</a>
-		<ul>
+	  <li><a href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3'>Introduction to Cytoscape 3.X.X</a>
+		<!--<ul>
 			<li><a href='tutorial_cytoscape.php#ex1'>Download Cytoscape</a></li>
 			<li><a href='tutorial_cytoscape.php#ex2'>Initial Steps</li>
 			<li><a href='tutorial_cytoscape.php#ex3'>Selecting Nodes</li>
@@ -21,7 +23,8 @@
 			<li><a href='tutorial_cytoscape.php#ex7'>Filtering Network</li>
 			<li><a href='tutorial_cytoscape.php#ex8'>Saving Sessions</li>
 			<li><a href='tutorial_cytoscape.php#ex9'>Opening a Session File</li>
-		</ul>
+		</ul>-->
 		</li>
           <li><a href="tutorial_references.php">References</a></li>
 </ul>
+</div>

@@ -13,38 +13,9 @@ include_once 'includes/header.inc.php';
     <div class="content_2ndlevel">
 <!--<h2>Sequence Similarity Networks Tool</h2>-->
 <h2>EFI - Enzyme Similarity Tool</h2>
-<div class="content_nav">
-
-<ul>
-	  <li><a href='index.php'>OPTIONS FOR GENERATING SEQUENCE SIMLARITY NETWORKS</a></li>
-          <li><a href="tutorial.php">What is a Sequence Similarity Network?</a></li>
-          <li><a href="tutorial_why_use_networks.php">Why use Sequence Similarity Networks?</a></li>
-          <li><a href="tutorial_startscreen.php">EFI-EST Start Screen</a></li>
-          <li><a href="tutorial_analysis.php">Data Set Analysis</a>
-          <ul>
-                <li><a href="tutorial_analysis.php#ex1">Example 1: a &quot;simple&quot; case</a></li>
-            <li><a href="tutorial_analysis.php#ex3">Example 2: multidomain proteins</a></li>
-          </ul>
-          </li>
-          <li><a href="tutorial_download.php">Network File Download</a></li>
-          <li><a href="tutorial_node_attributes.php">Node Attributes</a></li>
-          <li><a href='tutorial_cytoscape.php'>Introduction to Cytoscape</a>
-                <ul>
-                        <li><a href='tutorial_cytoscape.php#ex1'>Download Cytoscape</a></li>
-                        <li><a href='tutorial_cytoscape.php#ex2'>Initial Steps</li>
-                        <li><a href='tutorial_cytoscape.php#ex3'>Selecting Nodes</li>
-                        <li><a href='tutorial_cytoscape.php#ex4'>Node Attributes Data Panel</li>
-                        <li><a href='tutorial_cytoscape.php#ex5'>Searching</li>
-                        <li><a href='tutorial_cytoscape.php#ex6'>Changing Visual Styles</li>
-                        <li><a href='tutorial_cytoscape.php#ex7'>Filtering Network</li>
-                        <li><a href='tutorial_cytoscape.php#ex8'>Saving Sessions</li>
-                        <li><a href='tutorial_cytoscape.php#ex9'>Opening a Session File</li>
-                </ul>
-                </li>
-          <li><a href="tutorial_references.php">References</a></li>
-</ul>
-</div>
-  <div class="content_content">
+  
+<?php include_once 'includes/tutorial_nav.php'; ?>
+<div class="content_content">
 <h3>OPTIONS FOR GENERATING SEQUENCE SIMLARITY NETWORKS</h3>
 <p style='line-height:120%'><br>Sequence similarity networks (SSNs) are a powerful tool for analyzing relationships among sequences in protein (super)families and that these will be useful for enhancing functional discovery/annotation using strategies developed by the Enzyme Function Initiative (EFI) as well as developing hypotheses about structure‑function relationships in families and superfamilies.  As a result, this web tool provides “open access” to the ability to generate SSNs.  
 Four different options for user-initiated generation of SSNs, three with this web tool and one with Unix terminal scripts:</p>

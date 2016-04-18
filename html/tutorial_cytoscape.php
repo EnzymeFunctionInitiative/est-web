@@ -8,7 +8,6 @@ include_once 'includes/quest_tutorial.inc';
 <p>Please choose the version of cytoscape you wish to work with.
 
 <br><a target='_blank' href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3'>Cytoscape 3.X.X</a>
-<br><a target='_blank' href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape2'>Cytoscape 2.8.X</a>
 
 <div>
   <div> </div>
