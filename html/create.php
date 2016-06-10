@@ -4,6 +4,12 @@ $result['id'] = 0;
 $result['MESSAGE'] = "";
 $result['RESULT'] = 0;
 
+$test = "";
+foreach($_POST as $var) {
+	$test .= " " . $var;
+
+}
+error_log($test);
 if (isset($_POST['submit'])) {
         foreach ($_POST as &$var) {
                 $var = trim(rtrim($var));
@@ -20,7 +26,7 @@ if (isset($_POST['submit'])) {
                 case 'B':
 
                         $generate = new generate($db);
-                        $result = $generate->create($_POST['email'],$_POST['pfam_evalue'],$_POST['families_input'],$_POST['pfam_fraction'],$_POST['pfam_domain']);
+                        $result = $generate->create($_POST['email'],$_POST['pfam_evalue'],$_POST['families_input'],$_POST['pfam_fraction'],$_POST['pfam_domain'],$_POST['program']);
                         break;
 
                 //Option C - Fasta Input
@@ -35,7 +41,7 @@ if (isset($_POST['submit'])) {
 			else {
 	                        $fasta = new fasta($db);
         	                $result = $fasta->create($_POST['email'],$_POST['fasta_evalue'],$_POST['families_input2'],
-					$_FILES['fasta_file']['tmp_name'],$_FILES['fasta_file']['name'],$_POST['fasta_fraction']);
+					$_FILES['fasta_file']['tmp_name'],$_FILES['fasta_file']['name'],$_POST['fasta_fraction'],$_POST['program']);
 				
 			}
 			break;

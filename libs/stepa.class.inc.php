@@ -24,6 +24,7 @@ class stepa {
 	protected $accession_file = "allsequences.fa";
 	protected $eol = PHP_EOL;
 	private $num_pbs_jobs = 1;
+	protected $program;
 
 	//private $alignment_length = "r_quartile_align.png";
 	//private $length_histogram = "r_hist_length.png";
@@ -60,6 +61,7 @@ class stepa {
 	public function get_time_completed() { return $this->time_completed; }
 	public function get_unixtime_completed() { return strtotime($this->time_completed); }
 	public function get_num_sequences() { return $this->num_sequences; }
+	public function get_program() { return $this->program; }
 	public function get_finish_file() { 
 		return $this->get_output_dir() . "/" . $this->finish_file; 
 	}

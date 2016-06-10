@@ -102,7 +102,7 @@ class fasta extends stepa {
 
         }
 
-	public function create($email,$evalue,$families,$tmp_fastafile,$uploaded_filename,$fraction) {
+	public function create($email,$evalue,$families,$tmp_fastafile,$uploaded_filename,$fraction,$program) {
 		$errors = false;
                 $message = "";
 		$type = "FASTA";
@@ -124,6 +124,10 @@ class fasta extends stepa {
 			$message .= "<br><b>Please enter a valid E-Value</b></br>";
 	
 		}
+		if (!$this->verify_fasta($uploaded_filename)) {
+			$errors = true;
+			$message .= "<br><b>Please upload a valid fasta file.  The file extension must be .txt, .fasta, or .fa</b></br>";
+		}
 		if (!$errors) {
 
 			$key = $key = $this->generate_key();
@@ -134,7 +138,8 @@ class fasta extends stepa {
 					'generate_families'=>$formatted_families,
 					'generate_evalue'=>$evalue,
 					'generate_fasta_file'=>$uploaded_filename,
-					'generate_fraction'=>$fraction
+					'generate_fraction'=>$fraction,
+					'generate_program'=>$program
 			);
 			$result = $this->db->build_insert("generate",$insert_array);
 			
@@ -198,7 +203,7 @@ class fasta extends stepa {
 	        	$exec .= "generatedata.pl ";
 	        	$exec .= "-np " . functions::get_cluster_procs() . " ";
 		        $exec .= "-evalue " . functions::get_evalue() . " ";
-		
+			$exec .= "-blast " . strtolower($this->get_program()) . " ";
         		if (strlen($interpro_families)) {
 	                	$exec .= "-ipro " . $interpro_families . " ";
 		        }
@@ -290,6 +295,7 @@ class fasta extends stepa {
                         $this->num_sequences = $result[0]['generate_num_sequences'];
 			$this->uploaded_filename = $result[0]['generate_fasta_file'];
 			$this->fraction = $result[0]['generate_fraction'];
+			$this->program = $result[0]['generate_program'];
                 }
 
         }
@@ -396,10 +402,22 @@ class fasta extends stepa {
 		}
                 $message .= "E-Value: " . $this->get_evalue() . $eol;
                 $message .= "Fraction: " . $this->get_fraction() . $eol;
+		$message .= "Selected Program: " . $this->get_program() . $eol;
                 return $message;
 
         }
 
+	private function verify_fasta($filename) {
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		$valid = true;
+		if (!in_array($ext,functions::get_valid_fasta_filetypes())) {
+			$valid = false;	
+
+		}
+		return $valid;
+
+
+	}
 }
 
 ?>

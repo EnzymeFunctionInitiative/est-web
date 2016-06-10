@@ -97,7 +97,7 @@ class generate extends stepa {
 
         }
 
-	public function create($email,$evalue,$families,$fraction,$domain) {
+	public function create($email,$evalue,$families,$fraction,$domain,$program) {
 		$errors = false;
                 $message = "";
 		$type = "FAMILIES";
@@ -133,7 +133,8 @@ class generate extends stepa {
 					'generate_families'=>$formatted_families,
 					'generate_evalue'=>$evalue,
 					'generate_fraction'=>$fraction,
-					'generate_domain'=>$domain_bool
+					'generate_domain'=>$domain_bool,
+					'generate_program'=>$program
 			);
 			$result = $this->db->build_insert("generate",$insert_array);
                         if ($result) {
@@ -185,7 +186,7 @@ class generate extends stepa {
 	        	$exec .= "generatedata.pl ";
 	        	$exec .= "-np " . functions::get_cluster_procs() . " ";
 		        $exec .= "-evalue " . functions::get_evalue() . " ";
-
+			$exec .= "-blast " . strtolower($this->get_program()) . " ";
         		if (strlen($interpro_families)) {
 	                	$exec .= "-ipro " . $interpro_families . " ";
 		        }
@@ -252,6 +253,7 @@ class generate extends stepa {
                         $this->num_sequences = $result[0]['generate_num_sequences'];
 			$this->fraction = $result[0]['generate_fraction'];
 			$this->domain = $result[0]['generate_domain'];
+			$this->program = $result[0]['generate_program'];
                 }
 
         }
@@ -320,6 +322,7 @@ class generate extends stepa {
                 $message .= "E-Value: " . $this->get_evalue() . $eol;
                 $message .= "Fraction: " . $this->get_fraction() . $eol;
                 $message .= "Enable Domain: " . $this->get_domain() . $eol;
+		$message .= "Selected Program: " . $this->get_program() . $eol;
 		return $message;
 
 	}

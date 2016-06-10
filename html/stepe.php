@@ -81,6 +81,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 		}
 	}
 
+
 }
 
 else {
@@ -132,6 +133,9 @@ else {
 		<td>Total Number of Sequences</td>
 		<td><?php echo number_format($generate->get_num_sequences()); ?></td>
 	</tr>
+	<tr>
+		<td>Download Statistics</td>
+		<td><a href='<?php echo $analysis->get_stats_full_path(); ?>'><button>Download</button></a></td> 
     </table>
 
 	<h4>Full Network <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>

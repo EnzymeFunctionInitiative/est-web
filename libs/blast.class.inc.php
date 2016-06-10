@@ -48,7 +48,7 @@ class blast extends stepa {
 		return wordwrap($formatted_blast,$width,$break,$cut);
 	}
 	
-	public function create($email,$blast_input,$evalue,$max_seqs) {
+	public function create($email,$blast_input,$evalue,$max_seqs,$program) {
 		$errors = false;
                 $message = "";
 		$type = "BLAST";
@@ -79,7 +79,8 @@ class blast extends stepa {
 					'generate_type'=>$type,
 					'generate_evalue'=>$evalue,
 					'generate_blast_max_sequence'=>$max_seqs,
-					'generate_blast'=>$formatted_blast
+					'generate_blast'=>$formatted_blast,
+					'generate_program'=>$program
 			);
 			$result = $this->db->build_insert("generate",$insert_array);
                         if ($result) {
@@ -171,12 +172,11 @@ class blast extends stepa {
 			$this->pbs_number = $result[0]['generate_pbs_number'];
 			$this->time_started = $result[0]['generate_time_started'];
 			$this->time_completed = $result[0]['generate_time_completed'];
-                        
-
 			$this->blast_input = $result[0]['generate_blast'];
                         $this->sequence_max = $result[0]['generate_sequence_max'];
                         $this->num_sequences = $result[0]['generate_num_sequences'];
 			$this->blast_sequence_max = $result[0]['generate_blast_max_sequence'];
+			$this->program = $result[0]['generate_program'];
                 }
 
         }
@@ -279,6 +279,7 @@ class blast extends stepa {
                 $message .= $this->get_formatted_blast() . $eol;
                 $message .= "E-Value: " . $this->get_evalue() . $eol;
                 $message .= "Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . $eol;
+		$message .= "Selected Program: " . $this->get_program() . $eol;
 		return $message;
 
 

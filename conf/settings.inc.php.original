@@ -66,4 +66,5 @@ define("__ENABLE_A__",true);
 define("__ENABLE_B__",true);
 define("__ENABLE_C__",true);
 define("__UPLOADS_DIR__","");
+define("__FASTA_FILETYPES__","txt fasta fa");
 ?>

@@ -51,6 +51,14 @@ include_once 'includes/quest_acron.inc';
 <p class='align_left'>E-Value: <input type='text' class='small' id='pfam_evalue' name='pfam_evalue' value='<?php if (isset($_POST['pfam_evalue'])) { echo $_POST['pfam_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default <?php echo functions::get_evalue(); ?>)</p>
 <p class='align_left'>Fraction: <input type='text' class='small' id='pfam_fraction' name='pfam_fraction' value='<?php if (isset($_POST['pfam_fraction'])) { echo $_POST['pfam_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; (default: <?php echo functions::get_fraction(); ?>)</p>
 <p class='align_left'>Enable Domain: <input type='checkbox' id='pfam_domain' name='pfam_domain' value='1' <?php if (isset($_POST['pfam_domain']) && ($_POST['pfam_domain'] == "1")) { echo "checked='checked'"; } ?>'> Check to generate SSN with Pfam-defined domains (default: off)</p>
+<p class='align_left'>Select Program to use: 
+<select name='option_b_program' id='option_b_program'>
+        <option value='BLAST'>Blast</option>
+        <option value='BLAST+'>Blast+</option>
+        <option selected='selected' value='DIAMOND'>Diamond</option>
+	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
+</select></p>
+
 </div>
 
 </fieldset>
@@ -68,13 +76,21 @@ include_once 'includes/quest_acron.inc';
 <br><div id="fasta_advanced" style="display: none;">
 <p class='align_left'>E-Value: <input type='text' class='small' id='fasta_evalue' name='fasta_evalue' value='<?php if (isset($_POST['fasta_evalue'])) { echo $_POST['fasta_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
 <p class='align_left'>Fraction: <input type='text' class='small' id='fasta_fraction' name='fasta_fraction' value='<?php if (isset($_POST['fasta_fraction'])) { echo $_POST['fasta_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
+<p class='align_left'>Select Program to use:
+<select name='option_c_program' id='option_c_program'>
+        <option value='BLAST'>Blast</option>
+        <option value='BLAST+'>Blast+</option>
+        <option selected='selected' value='DIAMOND'>Diamond</option>
+	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
+</select></p>
+
+
 </div>
 
 </fieldset>
 <?php } ?>
 <hr>
-<p>
-<input type="text" id='email' name='email' value='<?php if (isset($_POST['email'])) { echo $_POST['email']; } else { echo "Enter your email address"; } ?>' 
+<p><br><input type="text" id='email' name='email' value='<?php if (isset($_POST['email'])) { echo $_POST['email']; } else { echo "Enter your email address"; } ?>' i
 	class="blast_inputs email" id='email' onfocus="if(!this._haschanged){this.value=''};this._haschanged=true;"><br>
 <span class="smalltext">Used for data retrieval only</span>
 </p>

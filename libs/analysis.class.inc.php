@@ -23,6 +23,7 @@ class analysis {
 	private $time_completed;
 	private $finish_file = "stats.tab.completed";
 	private $sequence_file = "sequences.fa";
+	private $stats_file = "stats.tab";
 	protected $output_dir = "output";
 	private $num_pbs_jobs = 16;
 	private $filter_sequences;
@@ -201,8 +202,8 @@ class analysis {
 	public function get_network_stats() {
 		$results_dir = functions::get_results_dir();
 		$file = $results_dir . "/" . $this->get_output_dir();
-		$file .= "/" . $this->get_network_dir() . "/stats.tab";
-		$file_handle = @fopen($file,"r") or die("Error opening stats.tab\n");
+		$file .= "/" . $this->get_network_dir() . "/" . $this->stats_file;
+		$file_handle = @fopen($file,"r") or die("Error opening " . $this->stats_file . "\n");
                	$i = 0; 
 		$stats_array = array();
 		$keys = array('File','Nodes','Edges','Size');
@@ -246,7 +247,14 @@ class analysis {
 
 	}
 
+	public function get_stats_full_path() {
+		$path = functions::get_web_root() . "/results/" . $this->get_output_dir() . "/" . $this->get_network_dir() . "/" . $this->stats_file;
+		return $path;
 
+
+
+
+	}
 	public function email_complete() {
 	
 		$stepa = new stepa($this->db,$this->get_generate_id());	

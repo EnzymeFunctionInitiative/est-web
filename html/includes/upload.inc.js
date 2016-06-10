@@ -17,6 +17,7 @@ function uploadFile() {
 		fd.append('pfam_evalue',document.getElementById('pfam_evalue').value);
 		fd.append('pfam_fraction',document.getElementById('pfam_fraction').value);
 		fd.append('pfam_domain',document.getElementById('pfam_domain').checked);
+		fd.append('program',document.getElementById('option_b_program').value);
 	}
 
 	//Option C Selected
@@ -26,7 +27,7 @@ function uploadFile() {
 		fd.append('families_input2',document.getElementById('families_input2').value);
 	        fd.append('fasta_evalue',document.getElementById('fasta_evalue').value);
 	        fd.append('fasta_fraction',document.getElementById('fasta_fraction').value);
-
+		fd.append('program',document.getElementById('option_c_program').value);
         }
 
 	//Global Form Options

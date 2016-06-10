@@ -247,6 +247,11 @@ class functions {
 		return array('RESULT'=>false,'MESSAGE'=>'Error adding EFI-EST database version');
 
 	}
+	public static function get_valid_fasta_filetypes() {
+		$filetypes = explode(" ",__FASTA_FILETYPES__);
+		return $filetypes;
+
+	}
 }
 
 ?>
