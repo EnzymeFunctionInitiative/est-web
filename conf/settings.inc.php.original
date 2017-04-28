@@ -65,6 +65,9 @@ define("__EMAIL_FOOTER__","");
 define("__ENABLE_A__",true);
 define("__ENABLE_B__",true);
 define("__ENABLE_C__",true);
+define("__ENABLE_D__",true);
+define("__ENABLE_E__",true);
 define("__UPLOADS_DIR__","");
 define("__FASTA_FILETYPES__","txt fasta fa");
+define("__ACCESSION_FILETYPES__","txt");
 ?>

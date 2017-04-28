@@ -47,6 +47,19 @@ class functions {
 
 
 	}
+    
+    public static function get_accessions($db,$status = 'NEW') {
+
+		$sql = "SELECT * ";
+		$sql .= "FROM generate ";
+		$sql .= "WHERE generate_status='" . $status . "' ";
+		$sql .= "AND generate_type='ACCESSION' ";
+		$sql .= "ORDER BY generate_time_created ASC ";
+		$result = $db->query($sql);
+		return $result;
+
+
+	}
         public static function get_fastas($db,$status = 'NEW') {
 
                 $sql = "SELECT * ";
@@ -217,6 +230,12 @@ class functions {
 	public static function option_c_enabled() {
 		return __ENABLE_C__;
 	}
+	public static function option_d_enabled() {
+		return __ENABLE_D__;
+	}
+	public static function option_e_enabled() {
+		return __ENABLE_E__;
+	}
 
 	public static function get_uploads_dir() {
 		return __UPLOADS_DIR__;
@@ -250,8 +269,15 @@ class functions {
 	public static function get_valid_fasta_filetypes() {
 		$filetypes = explode(" ",__FASTA_FILETYPES__);
 		return $filetypes;
-
 	}
+	public static function get_valid_accession_filetypes() {
+		$filetypes = explode(" ",__ACCESSION_FILETYPES__);
+		return $filetypes;
+    }
+
+    public static function get_is_debug() {
+        return getenv('EFI_DEBUG') ? true : false;
+    }
 }
 
 ?>

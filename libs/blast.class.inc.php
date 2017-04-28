@@ -1,289 +1,215 @@
 <?php
 
-class blast extends stepa {
+require_once('option_base.class.inc.php');
 
-        ////////////////Private Variables//////////
-
-	private $blast_input;
-	private $sequence_max;
-	private $blast_sequence_max;
-	public $fail_file = "1.out.failed";
-	private $num_pbs_jobs = 11;
-	public $subject = "EFI-EST PFAM/Interpro";
-
-	///////////////Public Functions///////////
-
-        public function __construct($db,$id = 0) {
-                $this->db = $db;
-
-                if ($id) {
-                        $this->load_generate($id);
+class blast extends option_base {
 
 
-                }
+    private $blast_input;
+    private $blast_sequence_max;
+    public $fail_file = "1.out.failed";
+    public $subject = "EFI-EST PFAM/Interpro";
+
+
+    public function __construct($db,$id = 0) {
+        parent::__construct($db, $id);
+        $this->num_pbs_jobs = 11;
+    }
+
+    public function __destruct() {
+    }
+
+    public function get_submitted_max_sequences() { return $this->blast_sequence_max; }
+    public function get_blast_input() { return $this->blast_input; }
+    public function get_finish_file() { 
+        return $this->get_output_dir() . "/" . $this->finish_file; 
+    }
+    public function get_fail_file() {
+        return $this->get_output_dir() . "/" . $this->fail_file;
+    }
+    public function check_fail_file() {
+        $results_path = functions::get_results_dir();
+        $full_path = $results_path . "/" . $this->get_fail_file();
+        return file_exists($full_path);
+    }
+    public function get_formatted_blast() {
+        $width = 80;
+        $break = "\r\n";
+        $cut = true;
+        $formatted_blast = str_replace(" ","",$this->get_blast_input());
+        return wordwrap($formatted_blast,$width,$break,$cut);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // OVERLOADS
+
+    protected function get_create_type() {
+        return "BLAST";
+    }
+
+    protected function get_insert_array($data) {
+        $insert_array = parent::get_insert_array($data);
+        $insert_array['generate_blast_max_sequence'] = $data->max_seqs;
+        $formatted_blast = $this->format_blast($data->blast_input);
+        $insert_array['generate_blast'] = $formatted_blast;
+        return $insert_array;
+    }
+
+
+    protected function validate($data) {
+        $result = parent::validate($data);
+
+        if (($data->blast_input != "") && (!$this->verify_blast_input($data->blast_input))) {
+            $result->errors = true;
+            $result->message .= "<br><b>Please enter a valid blast input</b></br>";
+        }
+        if (!$this->verify_max_seqs($data->max_seqs)) {
+            $result->errors = true;	
+            $result->message .= "<br><b>Please enter a valid maximum number of sequences</b></br>";
         }
 
-        public function __destruct() {
+        return $result;
+    }
+
+    protected function get_run_script() {
+        return "blasthits-new.pl";
+    }
+
+    protected function get_run_script_args($out) {
+        $parms = array();
+
+        $parms["-seq"] = "'" . $this->get_blast_input() . "'";
+        $parms["-evalue"] = $this->get_evalue();
+        $parms["-np"] = functions::get_blasthits_processors();
+        $parms["-queue"] = functions::get_generate_queue();
+        $parms["-memqueue"] = functions::get_generate_queue();
+        if ($this->get_submitted_max_sequences() != "") {
+            $parms["-nresults"] = $this->get_submitted_max_sequences();
+        }
+        else {
+            $parms["-nresults"] = functions::get_default_blast_seq();
+        }
+        $parms["-tmpdir"] = $out->relative_output_dir;
+
+        return $parms;
+    }
+
+    protected function load_generate($id) {
+        $result = parent::load_generate($id);
+        if (! $result) {
+            return;
         }
 
-	public function get_submitted_max_sequences() { return $this->blast_sequence_max; }
-	public function get_blast_input() { return $this->blast_input; }
-	public function get_finish_file() { 
-		return $this->get_output_dir() . "/" . $this->finish_file; 
-	}
-	public function get_fail_file() {
-		return $this->get_output_dir() . "/" . $this->fail_file;
-	}
-	public function check_fail_file() {
-		$results_path = functions::get_results_dir();
-                $full_path = $results_path . "/" . $this->get_fail_file();
-		return file_exists($full_path);
+        $this->blast_input = $result[0]['generate_blast'];
+        $this->blast_sequence_max = $result[0]['generate_blast_max_sequence'];
 
-	}
-	public function get_formatted_blast() {
-		$width = 80;
-		$break = "\r\n";
-		$cut = true;
-		$formatted_blast = str_replace(" ","",$this->get_blast_input());
-		return wordwrap($formatted_blast,$width,$break,$cut);
-	}
-	
-	public function create($email,$blast_input,$evalue,$max_seqs,$program) {
-		$errors = false;
-                $message = "";
-		$type = "BLAST";
-		if (!$this->verify_email($email)) {
-                        $errors = true;
-                        $message .= "<br><b>Please enter a valid email address</b></br>";
-                }
+        return $result;
+    }
 
-		if (($blast_input != "") && (!$this->verify_blast_input($blast_input))) {
-			$errors = true;
-                        $message .= "<br><b>Please enter a valid blast input</b></br>";
+    public function get_job_info($eol = "\r\n") {
+
+        $message = "EFI-EST ID: " . $this->get_id() . $eol;
+        $message .= "Blast Sequence: " . $eol;
+        $message .= $this->get_formatted_blast() . $eol;
+        $message .= "E-Value: " . $this->get_evalue() . $eol;
+        $message .= "Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . $eol;
+        $message .= "Selected Program: " . $this->get_program() . $eol;
+        return $message;
+    }
+
+    // END OVERLOADS
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		}
-		if (!$this->verify_evalue($evalue)) {
-			$errors = true;
-			$message .= "<br><b>Please enter a valid E-Value</b></br>";
-		}
-		if (!$this->verify_max_seqs($max_seqs)) {
-			$errors = true;	
-			$message .= "<br><b>Please enter a valid maximum number of sequences</b></br>";
-		}
-		if (!$errors) {
-			$key = $key = $this->generate_key();
-			$formatted_blast = $this->format_blast($blast_input);
-			$insert_array = array('generate_key'=>$key,
-					'generate_email'=>$email,
-					'generate_type'=>$type,
-					'generate_evalue'=>$evalue,
-					'generate_blast_max_sequence'=>$max_seqs,
-					'generate_blast'=>$formatted_blast,
-					'generate_program'=>$program
-			);
-			$result = $this->db->build_insert("generate",$insert_array);
-                        if ($result) {
-                                return array('RESULT'=>true,'id'=>$result,'MESSAGE'=>'Job successfully created');
-                        }
-                }
-                return array('RESULT'=>false,'MESSAGE'=>$message,'id'=>0);
+    private function verify_blast_input($blast_input) {
+        $blast_input = strtolower($blast_input);
+        $valid = 1;
 
-
-
-	}
-
-
-	
-
-	public function run_job() {
-		if ($this->available_pbs_slots()) {
-			//Setup Directories
-			//$job_dir = functions::get_results_dir() . "/" . $this->get_id();
-			//$relative_output_dir = "output";
-			//if (@file_exists($job_dir)) {
-			//	functions::rrmdir($job_dir);
-			//}
-			//mkdir($job_dir);
-		
-                        //Setup Directories
-                        $job_dir = functions::get_results_dir() . "/" . $this->get_id();
-                        $relative_output_dir = "output";
-                        $full_output_dir = $job_dir . "/" . $relative_output_dir;
-
-                        if (@file_exists($job_dir)) {
-                                functions::rrmdir($job_dir);
-                        }
-                        mkdir($job_dir);
-                        //mkdir($full_output_dir);
-
-                        chdir($job_dir);	
-			$exec = "source /etc/profile\n";
-                        $exec .= "module load " . functions::get_efi_module() . "\n";
-                        $exec .= "module load " . functions::get_efidb_module() . "\n";
-			$exec .= "blasthits-new.pl ";
-			$exec .= "-seq  '" . $this->get_blast_input() . "' ";
-			$exec .= "-evalue " . $this->get_evalue() . " ";
-			$exec .= "-np " . functions::get_blasthits_processors() . " ";
-			$exec .= "-queue " . functions::get_generate_queue() . " ";
-			$exec .= "-memqueue " . functions::get_generate_queue() . " ";
-			if ($this->get_submitted_max_sequences() != "") {
-				$exec .= "-nresults " . $this->get_submitted_max_sequences() . " ";
-			}
-			else {
-				$exec .= "-nresults " . functions::get_default_blast_seq() . " ";
-			}
-			$exec .= "-tmpdir " . $relative_output_dir;
-        		$exit_status = 1;
-	        	$output_array = array();
-	        	$output = exec($exec,$output_array,$exit_status);
-		        $output = trim(rtrim($output));
-        		$pbs_job_number = substr($output,0,strpos($output,"."));
-		        if ($pbs_job_number && !$exit_status) {
-        		        $this->set_pbs_number($pbs_job_number);
-                		$this->set_time_started();
-	                	$this->set_status(__RUNNING__);
-				$this->email_started();
-        		        return array('RESULT'=>true,'PBS_NUMBER'=>$pbs_job_number,'EXIT_STATUS'=>$exit_status,'MESSAGE'=>'Job Successfully Submitted');
-	        	}
-	        	else {
-        	        	return array('RESULT'=>false,'EXIT_STATUS'=>$exit_status,'MESSAGE'=>$output);
-	        	}
-		}
-		else {
-			return array('RESULT'=>false,'EXIT_STATUS'=>1,'MESSAGE'=>'Queue is full');
-		}
-
-}
-
-	///////////////Private Functions///////////
-
-        private function load_generate($id) {
-                $sql = "SELECT * FROM generate WHERE generate_id='" . $id . "' ";
-                $sql .= "LIMIT 1";
-                $result = $this->db->query($sql);
-                if ($result) {
-                        $this->id = $id;
-			$this->email = $result[0]['generate_email'];
-			$this->key = $result[0]['generate_key'];
-			$this->status = $result[0]['generate_status'];
-			$this->evalue = $result[0]['generate_evalue'];
-                        $this->time_created = $result[0]['generate_time_created'];
-			$this->pbs_number = $result[0]['generate_pbs_number'];
-			$this->time_started = $result[0]['generate_time_started'];
-			$this->time_completed = $result[0]['generate_time_completed'];
-			$this->blast_input = $result[0]['generate_blast'];
-                        $this->sequence_max = $result[0]['generate_sequence_max'];
-                        $this->num_sequences = $result[0]['generate_num_sequences'];
-			$this->blast_sequence_max = $result[0]['generate_blast_max_sequence'];
-			$this->program = $result[0]['generate_program'];
-                }
+        if (!strlen($blast_input)) {
+            $valid = 0;
+        }
+        if (strlen($blast_input) > 65534) {
+            $valid = 0;
+        }
+        if (preg_match('/[^a-z-* \n\t\r]/',$blast_input)) {
+            $valid = 0;
 
         }
-
-	private function verify_blast_input($blast_input) {
-                $blast_input = strtolower($blast_input);
-                $valid = 1;
-
-                if (!strlen($blast_input)) {
-                        $valid = 0;
-                }
-		if (strlen($blast_input) > 65534) {
-			$valid = 0;
-		}
-		if (preg_match('/[^a-z-* \n\t\r]/',$blast_input)) {
-                        $valid = 0;
-
-                }
-                return $valid;
+        return $valid;
+    }
 
 
+    public static function format_blast($blast_input) {
+        //$search = array(" ","\n","\r\n","\r","\t");
+        $search = array("\r\n","\r"," ");
+        $replace = "";
+        $formatted_blast = str_ireplace($search,$replace,$blast_input);
+        return $formatted_blast;
+
+
+    }
+
+    protected function verify_max_seqs($max_seqs) {
+        $valid = 0;
+        if ($max_seqs == "") {
+            $valid = 0;
         }
-
-
-        public static function format_blast($blast_input) {
-                //$search = array(" ","\n","\r\n","\r","\t");
-		$search = array("\r\n","\r"," ");
-                $replace = "";
-                $formatted_blast = str_ireplace($search,$replace,$blast_input);
-                return $formatted_blast;
-
-
+        elseif (!preg_match("/^[1-9][0-9]*$/",$max_seqs)) {
+            $valid = 0;
         }
-
-	protected function verify_max_seqs($max_seqs) {
-		$valid = 0;
-		if ($max_seqs == "") {
-			$valid = 0;
-		}
-		elseif (!preg_match("/^[1-9][0-9]*$/",$max_seqs)) {
-			$valid = 0;
-		}
-		elseif ($max_seqs > functions::get_max_blast_seq()) {
-			$valid = 0;
-		}
-		else {
-			$valid = 1;
-		}
-		return $valid;
-	}
-
-        private function available_pbs_slots() {
-                $queue = new queue(functions::get_generate_queue());
-                $num_queued = $queue->get_num_queued();
-                $max_queuable = $queue->get_max_queuable();
-                $num_user_queued = $queue->get_num_queued(functions::get_cluster_user());
-                $max_user_queuable = $queue-> get_max_user_queuable();
-
-                $result = false;
-                if ($max_queuable - $num_queued < $this->num_pbs_jobs + functions::get_blasthits_processors()) {
-                        $result = false;
-                        $msg = "Generate ID: " . $this->get_id() . " - ERROR: Queue " . functions::get_generate_queue() . " is full.  Number in the queue: " . $num_queued;
-                }
-                elseif ($max_user_queuable - $num_user_queued < $this->num_pbs_jobs + functions::get_blasthits_processors()) {
-                        $result = false;
-                        $msg = "Generate ID: " . $this->get_id() . " - ERROR: Number of Queued Jobs for user " . functions::get_cluster_user() . " is full.  Number in the queue: " . $num_user_queued;
-                }
-                else {
-                        $result = true;
-                        $msg = "Generate ID: " . $this->get_id() . " - Number of queued jobs in queue " . functions::get_generate_queue() . ": " . $num_queued . ", Number of queued user jobs: " . $num_user_queued;
-                }
-                functions::log_message($msg);
-                return $result;
+        elseif ($max_seqs > functions::get_max_blast_seq()) {
+            $valid = 0;
         }
+        else {
+            $valid = 1;
+        }
+        return $valid;
+    }
+
+    protected function available_pbs_slots() {
+        $queue = new queue(functions::get_generate_queue());
+        $num_queued = $queue->get_num_queued();
+        $max_queuable = $queue->get_max_queuable();
+        $num_user_queued = $queue->get_num_queued(functions::get_cluster_user());
+        $max_user_queuable = $queue-> get_max_user_queuable();
+
+        $result = false;
+        if ($max_queuable - $num_queued < $this->num_pbs_jobs + functions::get_blasthits_processors()) {
+            $result = false;
+            $msg = "Generate ID: " . $this->get_id() . " - ERROR: Queue " . functions::get_generate_queue() . " is full.  Number in the queue: " . $num_queued;
+        }
+        elseif ($max_user_queuable - $num_user_queued < $this->num_pbs_jobs + functions::get_blasthits_processors()) {
+            $result = false;
+            $msg = "Generate ID: " . $this->get_id() . " - ERROR: Number of Queued Jobs for user " . functions::get_cluster_user() . " is full.  Number in the queue: " . $num_user_queued;
+        }
+        else {
+            $result = true;
+            $msg = "Generate ID: " . $this->get_id() . " - Number of queued jobs in queue " . functions::get_generate_queue() . ": " . $num_queued . ", Number of queued user jobs: " . $num_user_queued;
+        }
+        functions::log_message($msg);
+        return $result;
+    }
 
 
-	private function get_email_info_txt() {
-		return strip_tags($this->get_email_info_html());
+    private function get_email_info_txt() {
+        return strip_tags($this->get_email_info_html());
 
-	}
+    }
 
-	private function get_email_info_html() {
-                $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-                $message .= "<br>Blast Sequence: \r\n";
-                $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-                $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-                $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
-                $message .= "<br><br>";
-                $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-                $message .= functions::get_email_footer();
-		return $message;
-
-
-	}
-
-	public function get_job_info($eol = "\r\n") {
-
-		$message = "EFI-EST ID: " . $this->get_id() . $eol;
-                $message .= "Blast Sequence: " . $eol;
-                $message .= $this->get_formatted_blast() . $eol;
-                $message .= "E-Value: " . $this->get_evalue() . $eol;
-                $message .= "Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . $eol;
-		$message .= "Selected Program: " . $this->get_program() . $eol;
-		return $message;
+    private function get_email_info_html() {
+        $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
+        $message .= "<br>Blast Sequence: \r\n";
+        $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
+        $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
+        $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
+        $message .= "<br><br>";
+        $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
+        $message .= functions::get_email_footer();
+        return $message;
 
 
-	}
+    }
+
 }
 
 ?>

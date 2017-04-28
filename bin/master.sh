@@ -21,6 +21,12 @@ sleep 1
 php $DIR/fasta.php
 
 sleep 1
+php $DIR/check_accessions.php
+
+sleep 1
+php $DIR/accessions.php
+
+sleep 1
 php $DIR/check_analyzedata.php
 
 sleep 1
