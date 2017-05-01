@@ -51,6 +51,7 @@ include_once 'includes/quest_acron.inc';
 <p class='align_left'>E-Value: <input type='text' class='small' id='pfam_evalue' name='pfam_evalue' value='<?php if (isset($_POST['pfam_evalue'])) { echo $_POST['pfam_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default <?php echo functions::get_evalue(); ?>)</p>
 <p class='align_left'>Fraction: <input type='text' class='small' id='pfam_fraction' name='pfam_fraction' value='<?php if (isset($_POST['pfam_fraction'])) { echo $_POST['pfam_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; (default: <?php echo functions::get_fraction(); ?>)</p>
 <p class='align_left'>Enable Domain: <input type='checkbox' id='pfam_domain' name='pfam_domain' value='1' <?php if (isset($_POST['pfam_domain']) && ($_POST['pfam_domain'] == "1")) { echo "checked='checked'"; } ?>'> Check to generate SSN with Pfam-defined domains (default: off)</p>
+<?php    if (functions::get_program_selection_enabled()) { ?>
 <p class='align_left'>Select Program to use: 
 <select name='option_b_program' id='option_b_program'>
         <option value='BLAST'>Blast</option>
@@ -58,6 +59,7 @@ include_once 'includes/quest_acron.inc';
         <option selected='selected' value='DIAMOND'>Diamond</option>
 	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
 </select></p>
+<?php    } ?>
 
 </div>
 
@@ -76,6 +78,7 @@ include_once 'includes/quest_acron.inc';
 <br><div id="fasta_advanced" style="display: none;">
 <p class='align_left'>E-Value: <input type='text' class='small' id='fasta_evalue' name='fasta_evalue' value='<?php if (isset($_POST['fasta_evalue'])) { echo $_POST['fasta_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
 <p class='align_left'>Fraction: <input type='text' class='small' id='fasta_fraction' name='fasta_fraction' value='<?php if (isset($_POST['fasta_fraction'])) { echo $_POST['fasta_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
+<?php    if (functions::get_program_selection_enabled()) { ?>
 <p class='align_left'>Select Program to use:
 <select name='option_c_program' id='option_c_program'>
         <option value='BLAST'>Blast</option>
@@ -83,7 +86,7 @@ include_once 'includes/quest_acron.inc';
         <option selected='selected' value='DIAMOND'>Diamond</option>
 	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
 </select></p>
-
+<?php    } ?>
 
 </div>
 
@@ -100,6 +103,7 @@ include_once 'includes/quest_acron.inc';
 <br><div id="accession_advanced" style="display: none;">
 <p class='align_left'>E-Value: <input type='text' class='small' id='accession_evalue' name='accession_evalue' value='<?php if (isset($_POST['accession_evalue'])) { echo $_POST['accession_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
 <p class='align_left'>Fraction: <input type='text' class='small' id='accession_fraction' name='accession_fraction' value='<?php if (isset($_POST['accession_fraction'])) { echo $_POST['accession_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
+<?php    if (functions::get_program_selection_enabled()) { ?>
 <p class='align_left'>Select Program to use:
 <select name='option_d_program' id='option_d_program'>
         <option value='BLAST'>Blast</option>
@@ -107,6 +111,7 @@ include_once 'includes/quest_acron.inc';
         <option selected='selected' value='DIAMOND'>Diamond</option>
 	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
 </select></p>
+<?php    } ?>
 
 
 </div>
@@ -126,6 +131,7 @@ include_once 'includes/quest_acron.inc';
 <br><div id="fasta_id_advanced" style="display: none;">
 <p class='align_left'>E-Value: <input type='text' class='small' id='fasta_id_evalue' name='fasta_id_evalue' value='<?php if (isset($_POST['fasta_id_evalue'])) { echo $_POST['fasta_id_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
 <p class='align_left'>Fraction: <input type='text' class='small' id='fasta_id_fraction' name='fasta_id_fraction' value='<?php if (isset($_POST['fasta_id_fraction'])) { echo $_POST['fasta_id_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
+<?php    if (functions::get_program_selection_enabled()) { ?>
 <p class='align_left'>Select Program to use:
 <select name='option_e_program' id='option_e_program'>
         <option value='BLAST'>Blast</option>
@@ -133,6 +139,7 @@ include_once 'includes/quest_acron.inc';
         <option selected='selected' value='DIAMOND'>Diamond</option>
 	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
 </select></p>
+<?php    } ?>
 
 </div>
 

@@ -67,6 +67,7 @@ define("__ENABLE_B__",true);
 define("__ENABLE_C__",true);
 define("__ENABLE_D__",true);
 define("__ENABLE_E__",true);
+define("__ENABLE_PROGRAM_SELECTION__",false);
 define("__UPLOADS_DIR__","");
 define("__FASTA_FILETYPES__","txt fasta fa");
 define("__ACCESSION_FILETYPES__","txt");

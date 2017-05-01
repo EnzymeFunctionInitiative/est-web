@@ -278,6 +278,10 @@ class functions {
     public static function get_is_debug() {
         return getenv('EFI_DEBUG') ? true : false;
     }
+
+    public static function get_program_selection_enabled() {
+        return __ENABLE_PROGRAM_SELECTION__;
+    }
 }
 
 ?>
