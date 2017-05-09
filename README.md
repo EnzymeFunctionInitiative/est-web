@@ -23,5 +23,9 @@ This is the web interface for the command line scripts located at https://github
 11.  Give efi_est user read/write permssions to /logs
 
 
+# Notes
+
+html/includes/uploads.js.inc contains code that is used for processing the form data in addition to handling uploads.
+
 
 

@@ -99,6 +99,8 @@ include_once 'includes/quest_acron.inc';
 <fieldset id='option_d'>
 <p>Accession ID File: <input type='file' name='accession_file' id='accession_file' data-url='server/php/'><progress id='progress_bar_accession' max='100' value='0'></progress>
 <br><div id="progressNumberAccession"></div> 
+<p>If desired, include a Pfam and/or InterPro families, in the analysis of your file. For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).</p>
+<input type='text' id='families_input4' name='families_input4' class='blast_inputs' value='<?php if (isset($_POST['families_input4'])) { echo $_POST['families_input4']; } ?>'>
 <p class='align_left'><a href='javascript:toggle_accession_advanced();'>Advanced Options (see tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
 <br><div id="accession_advanced" style="display: none;">
 <p class='align_left'>E-Value: <input type='text' class='small' id='accession_evalue' name='accession_evalue' value='<?php if (isset($_POST['accession_evalue'])) { echo $_POST['accession_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>

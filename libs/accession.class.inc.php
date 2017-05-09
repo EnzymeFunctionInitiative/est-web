@@ -1,10 +1,11 @@
 <?php
 
+require_once('family_shared.class.inc.php');
 require_once('option_base.class.inc.php');
 require_once('generate_helper.class.inc.php');
 require_once('file_helper.class.inc.php');
 
-class accession extends option_base {
+class accession extends family_shared {
 
 
     private $change_fasta_exec = "formatcustomfasta.pl";
@@ -38,10 +39,10 @@ class accession extends option_base {
     protected function validate($data) {
         $result = parent::validate($data);
 
-        if (!$this->verify_fraction($data->fraction)) {
-            $result->errors = true;
-            $result->message .= "<br><b>Please enter a valid fraction</b></br>";
-        }
+        //if (!$this->verify_fraction($data->fraction)) {
+        //    $result->errors = true;
+        //    $result->message .= "<br><b>Please enter a valid fraction</b></br>";
+        //}
         if (!$this->verify_accession_file($data->uploaded_filename)) {
             $result->errors = true;
             $result->message .= "<br><b>Please upload a valid fasta file.  The file extension must be .txt, .fasta, or .fa</b></br>";
@@ -97,17 +98,22 @@ class accession extends option_base {
     }
 
     protected function get_run_script_args($out) {
-        $parms = array();
-        $parms = generate_helper::get_run_script_args($out, $parms);
-        #$parms["-blast"] = strtolower($this->get_program());
+        $parms = parent::get_run_script_args($out);
+        //$parms = array();
+        //$parms = generate_helper::get_run_script_args($out, $parms);
+        //$parms["-blast"] = strtolower($this->get_program());
         $parms["-useraccession"] = $this->file_helper->get_results_input_file();
-        $parms["-fraction"] = $this->get_fraction();
+        //$parms["-fraction"] = $this->get_fraction();
         return $parms;
     }
     
     public function get_job_info($eol = "\r\n") {
         $message = "EFI-EST ID: " . $this->get_id() . $eol;
         $message .= "Uploaded Accession File: " . $this->file_helper->get_uploaded_filename() . $eol;
+        if (count($this->get_families())) {
+            $message .= "PFAM/Interpro Families: ";
+            $message .= $this->get_families_comma() . $eol;
+        }
         $message .= "E-Value: " . $this->get_evalue() . $eol;
         $message .= "Fraction: " . $this->get_fraction() . $eol;
         $message .= "Selected Program: " . $this->get_program() . $eol;

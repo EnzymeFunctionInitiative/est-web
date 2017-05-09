@@ -100,6 +100,7 @@ if (isset($_POST['submit'])) {
             else {
                 $accession = new accession($db);
                 
+                $input->families = $_POST['families_input'];
                 $input->tmp_file = $_FILES['accession_file']['tmp_name'];
                 $input->uploaded_filename = $_FILES['accession_file']['name'];
  
