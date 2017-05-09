@@ -20,6 +20,14 @@ class accession extends option_base {
     public function __destruct() {
     }
 
+    public function get_uploaded_filename() { return $this->file_helper->get_uploaded_filename(); }
+    public function get_no_matches_download_path() {
+        return functions::get_web_root() . "/" .
+            functions::get_results_dirname() . "/" . 
+            $this->get_output_dir() . "/" . 
+            functions::get_no_matches_filename(); 
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // OVERLOADS
 
@@ -55,9 +63,15 @@ class accession extends option_base {
         return $result;
     }
 
-    protected function post_insert_action($data, $insert_result) {
-        $result = parent::post_insert_action($data, $insert_result);
-        return $this->file_helper->on_post_insert_action($data, $insert_result, $result);
+    protected function post_insert_action($data, $insert_result_id) {
+        $result = parent::post_insert_action($data, $insert_result_id);
+        $result = $this->file_helper->on_post_insert_action($data, $insert_result_id, $result);
+        //if (!$result->errors && !$this->file_helper->copy_file_to_results_dir($insert_result_id)) {
+        //    $result = new validation_result;
+        //    $result->errors = true;
+        //    $result->message = "Unable to move uploaded file to the result directory.";
+        //}
+        return $result;
     }
     
     public function get_insert_array($data) {
@@ -70,7 +84,7 @@ class accession extends option_base {
     //////////////////////////////
     
     protected function post_output_structure_create() {
-        if (!$this->file_helper->copy_file_to_output()) {
+        if (!$this->file_helper->copy_file_to_results_dir()) {
             $this->set_status(__FAILED__);
             return 'Accession file did not copy';
         } else {
@@ -85,7 +99,7 @@ class accession extends option_base {
     protected function get_run_script_args($out) {
         $parms = array();
         $parms = generate_helper::get_run_script_args($out, $parms);
-        $parms["-blast"] = strtolower($this->get_program());
+        #$parms["-blast"] = strtolower($this->get_program());
         $parms["-useraccession"] = $this->file_helper->get_results_input_file();
         $parms["-fraction"] = $this->get_fraction();
         return $parms;

@@ -40,6 +40,7 @@ define("__CLUSTER_PROCS__","48");
 define("__BLASTHITS_PROCS__",12);
 define("__FRACTION_DEFAULT__",1);
 define("__RESULTS_DIR__","");
+define("__RESULTS_DIRNAME__","results");
 define("__EFI_MODULE__","");
 define("__EFIDB_MODULE__","");
 
@@ -71,4 +72,6 @@ define("__ENABLE_PROGRAM_SELECTION__",false);
 define("__UPLOADS_DIR__","");
 define("__FASTA_FILETYPES__","txt fasta fa");
 define("__ACCESSION_FILETYPES__","txt");
+define("__NO_MATCHES_FILENAME__", "no_accession_matches.txt");
+define("__TEMP_FASTA_ID_FILENAME__", "fasta.ids");
 ?>

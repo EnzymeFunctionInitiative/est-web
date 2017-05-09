@@ -121,7 +121,7 @@ include_once 'includes/quest_acron.inc';
 
 <hr>
 <?php if (functions::option_e_enabled()) { ?>
-<p class='align_left'><input type='radio' id='option_selected_e' name='option_selected' value='E' onChange='disable_forms();'><b>Option E:</b> THIS DOESN'T WORK YET. Maximum size is <?php echo ini_get('post_max_size'); ?>.
+<p class='align_left'><input type='radio' id='option_selected_e' name='option_selected' value='E' onChange='disable_forms();'><b>Option E:</b> Generate data set using FASTA file headers to obtain node attributes in output. Maximum size is <?php echo ini_get('post_max_size'); ?>.
 <fieldset id='option_e'>
 <p>FASTA File: <input type='file' name='fasta_id_file' id='fasta_id_file' data-url='server/php/'><progress id='progress_bar_fasta_id' max='100' value='0'></progress>
 <br><div id="progressNumberFastaId"></div> 

@@ -47,7 +47,7 @@ abstract class option_base extends stepa {
         $type = $this->get_create_type();
 
         $result = $this->validate($data);
-
+        
         if (!$result->errors) {
             $table_name = "generate";
             $insert_array = $this->get_insert_array($data);
@@ -55,7 +55,7 @@ abstract class option_base extends stepa {
                 foreach ($insert_array as $k => $v) {
                     print "'$k' = $v\n";
                 }
-                $insert_result = 0;
+                $insert_result = 1;
             }
             else {
                 $insert_result = $this->db->build_insert($table_name, $insert_array);

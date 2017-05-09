@@ -5,6 +5,7 @@ include_once 'includes/quest_acron.inc';
 
 
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
+    $web_address = dirname($_SERVER['PHP_SELF']);
     $generate = new stepa($db,$_GET['id']);
     if ($generate->get_key() != $_GET['key']) {
         echo "No EFI-EST Selected. Please go back";

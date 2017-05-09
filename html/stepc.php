@@ -16,7 +16,9 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         $net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td></tr>";
         $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
         $net_info_html .= "<tr><td>Maximum Blast Sequences</td><td>" . number_format($generate->get_submitted_max_sequences()) . "</td></tr>";
-        $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
+        if (functions::get_program_selection_enabled()) {
+            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
+        }
 
     }
     elseif ($generate->get_type() == "FAMILIES") {
@@ -26,7 +28,9 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
         $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
         $net_info_html .= "<tr><td>Domain</td><td>" . $generate->get_domain() . "</td></tr>";
-        $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
+        if (functions::get_program_selection_enabled()) {
+            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
+        }
     }
     elseif ($generate->get_type() == "FASTA") {
         $generate = new fasta($db,$_GET['id']);
@@ -40,8 +44,17 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         }
         $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
         $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
-        $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
-
+        if (functions::get_program_selection_enabled()) {
+            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
+        }
+    }
+    elseif ($generate->get_type() == "ACCESSION") {
+        $generate = new accession($db, $_GET['id']);
+        $net_info_html = "<tr><td>Uploaded Accession ID File</td>";
+        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>";
+        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
+        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
+        $net_info_html .= "<tr><td>No matches file</td><td><a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></td></tr>";
     }
 
     if (time() > $generate->get_unixtime_completed() + functions::get_retention_secs()) {

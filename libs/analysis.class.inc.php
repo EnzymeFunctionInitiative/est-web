@@ -572,7 +572,7 @@ class analysis {
                 break;
     
             case "FASTA_ID":
-                throw new Exception("Not implemented yet");
+                $stepa = new fasta($this->db,$this->get_generate_id(), "E");
                 break;
         }
 

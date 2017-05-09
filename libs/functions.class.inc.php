@@ -65,7 +65,7 @@ class functions {
                 $sql = "SELECT * ";
                 $sql .= "FROM generate ";
                 $sql .= "WHERE generate_status='" . $status . "' ";
-                $sql .= "AND generate_type='FASTA' ";
+                $sql .= "AND (generate_type='FASTA' OR generate_type='FASTA_ID') ";
                 $sql .= "ORDER BY generate_time_created ASC ";
                 $result = $db->query($sql);
                 return $result;
@@ -113,7 +113,10 @@ class functions {
 	}
 	public static function get_results_dir() {
 		return __RESULTS_DIR__;
-	}
+    }
+    public static function get_results_dirname() {
+        return __RESULTS_DIRNAME__;
+    }
 	public static function get_example_dir() {
 		return "examples";
 	}
@@ -281,6 +284,14 @@ class functions {
 
     public static function get_program_selection_enabled() {
         return __ENABLE_PROGRAM_SELECTION__;
+    }
+
+    public static function get_no_matches_filename() {
+        return __NO_MATCHES_FILENAME__;
+    }
+
+    public static function get_temp_fasta_id_filename() {
+        return __TEMP_FASTA_ID_FILENAME__;
     }
 }
 

@@ -3,6 +3,8 @@ DATE=$(date +"%Y-%m-%d %H:%M:%S")
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "$DATE: Start EFI-EST Master script"
 
+#export EFI_DEBUG=1
+
 php $DIR/check_generatedata.php
 
 sleep 1

@@ -7,7 +7,7 @@ function uploadFile() {
     if (document.getElementById('option_selected_a').checked) {
         option_selected = document.getElementById('option_selected_a').value;
         fd.append('blast_input',document.getElementById('blast_input').value);
-        fd.append('blast_evalue',document.getElementById('blast_evalue').value);
+        fd.append('evalue',document.getElementById('blast_evalue').value);
         fd.append('blast_max_seqs',document.getElementById('blast_max_seqs').value);
     }
 
@@ -15,39 +15,44 @@ function uploadFile() {
     else if (document.getElementById('option_selected_b').checked) {
         option_selected = document.getElementById('option_selected_b').value;
         fd.append('families_input',document.getElementById('families_input').value);
-        fd.append('pfam_evalue',document.getElementById('pfam_evalue').value);
-        fd.append('pfam_fraction',document.getElementById('pfam_fraction').value);
+        fd.append('evalue',document.getElementById('pfam_evalue').value);
+        fd.append('fraction',document.getElementById('pfam_fraction').value);
         fd.append('pfam_domain',document.getElementById('pfam_domain').checked);
-        fd.append('program',document.getElementById('option_b_program').value);
+        //TODO: conditionally enable this
+        //fd.append('program',document.getElementById('option_b_program').value);
     }
 
     //Option C Selected
     else if (document.getElementById('option_selected_c').checked) {
         option_selected = document.getElementById('option_selected_c').value;
         fd.append("fasta_file", document.getElementById('fasta_file').files[0]);
-        fd.append('families_input2',document.getElementById('families_input2').value);
-        fd.append('fasta_evalue',document.getElementById('fasta_evalue').value);
-        fd.append('fasta_fraction',document.getElementById('fasta_fraction').value);
-        fd.append('program',document.getElementById('option_c_program').value);
+        fd.append('families_input',document.getElementById('families_input2').value);
+        fd.append('evalue',document.getElementById('fasta_evalue').value);
+        fd.append('fraction',document.getElementById('fasta_fraction').value);
+        //TODO: conditionally enable this
+        //fd.append('program',document.getElementById('option_c_program').value);
     }
 
     //Option D Selected
     else if (document.getElementById('option_selected_d').checked) {
         option_selected = document.getElementById('option_selected_d').value;
         fd.append("accession_file", document.getElementById('accession_file').files[0]);
-        fd.append('accession_evalue',document.getElementById('accession_evalue').value);
-        fd.append('accession_fraction',document.getElementById('accession_fraction').value);
-        fd.append('program',document.getElementById('option_d_program').value);
+        fd.append('evalue',document.getElementById('accession_evalue').value);
+        fd.append('fraction',document.getElementById('accession_fraction').value);
+        //TODO: conditionally enable this
+        //fd.append('program',document.getElementById('option_d_program').value);
         uploadHandler = uploadProgressAccession;
     }
 
     //Option E Selected
     else if (document.getElementById('option_selected_e').checked) {
         option_selected = document.getElementById('option_selected_e').value;
-        fd.append("fasta_id_file", document.getElementById('fasta_id_file').files[0]);
-        fd.append('fasta_id_evalue',document.getElementById('fasta_id_evalue').value);
-        fd.append('fasta_id_fraction',document.getElementById('fasta_id_fraction').value);
-        fd.append('program',document.getElementById('option_e_program').value);
+        fd.append("fasta_file", document.getElementById('fasta_id_file').files[0]);
+        fd.append('families_input',document.getElementById('families_input3').value);
+        fd.append('evalue',document.getElementById('fasta_id_evalue').value);
+        fd.append('fraction',document.getElementById('fasta_id_fraction').value);
+        //TODO: conditionally enable this
+        //fd.append('program',document.getElementById('option_e_program').value);
         uploadHandler = uploadProgressFastaId;
     }
 

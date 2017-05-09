@@ -9,11 +9,13 @@ class fasta extends family_shared {
     private $change_fasta_exec = "formatcustomfasta.pl";
     private $userdat_file = "output.dat";
     private $file_helper;
+    private $option;
     public $subject = "EFI-EST FASTA";
 
     
-    public function __construct($db, $id = 0) {
+    public function __construct($db, $id = 0, $option = "C") {
         $this->file_helper = new file_helper(".fasta", $id);
+        $this->option = $option;
         parent::__construct($db, $id);
     }
 
@@ -54,9 +56,14 @@ class fasta extends family_shared {
         return $result;
     }
 
-    protected function post_insert_action($data, $insert_result) {
-        $result = parent::post_insert_action($data, $insert_result);
-        return $this->file_helper->on_post_insert_action($data, $insert_result, $result);
+    protected function post_insert_action($data, $insert_result_id) {
+        $result = parent::post_insert_action($data, $insert_result_id);
+        $result = $this->file_helper->on_post_insert_action($data, $insert_result_id, $result);
+
+        if (!$result->errors && $this->option == "E") {
+        }
+
+        return $result;
     }
     
     public function get_insert_array($data) {
@@ -69,7 +76,10 @@ class fasta extends family_shared {
     //////////////////////////////
     
     protected function get_create_type() {
-        return "FASTA";
+        if ($this->option == "E")
+            return "FASTA_ID";
+        else
+            return "FASTA";
     }
 
     protected function validate($data) {
@@ -88,12 +98,15 @@ class fasta extends family_shared {
     }
 
     protected function post_output_structure_create() {
-        if (!$this->copy_fasta_to_output()) {
+        if ($this->option != "E" && !$this->reformat_fasta_to_results_dir()) {
             $this->set_status(__FAILED__);
             return 'Fasta file did not copy';
-        } else {
-            return '';
+        } else if ($this->option == "E") {
+            if (!$this->file_helper->copy_file_to_results_dir()) {
+                return "Unable to move uploaded file to the result directory.";
+            }
         }
+        return '';
     }
 
     protected function get_run_script_args($out) {
@@ -101,7 +114,11 @@ class fasta extends family_shared {
 
         // This works because as a part of the import process the fasta file is copied to the results directory.
         $parms["-userfasta"] = $this->get_full_fasta_file_path();
-        $parms["-userdat"] = $out->relative_output_dir . "/" . $this->get_userdat_file();
+        if ($this->option == "E") {
+            $parms["-use-fasta-headers"] = "";
+        } else {
+            $parms["-userdat"] = $out->relative_output_dir . "/" . $this->get_userdat_file();
+        }
 
         return $parms;
     }
@@ -152,18 +169,13 @@ class fasta extends family_shared {
 
     }
 
-    private function copy_fasta_to_output() {
+    private function reformat_fasta_to_results_dir() {
         $filename = $this->get_id() . $this->file_helper->get_file_extension();
-        print "$filename\n";
         $start_path = functions::get_uploads_dir() . "/" . $filename;
-        print "$start_path\n";
         $end_path = functions::get_results_dir() . "/" . $this->get_id() . "/" . $filename;
-        print "$end_path\n";
         $dat_path = $this->get_userdat_file_path();
-        print "$dat_path\n";
         if ((file_exists($start_path)) && (file_exists(dirname($end_path)))) {
             $result = $this->fix_fasta($start_path,$end_path,$dat_path);
-            print "Result: $result\n";
             return $result;
         }
         return false;
@@ -177,9 +189,9 @@ class fasta extends family_shared {
         $exec .= " -dat " . $dat_path;
         $exit_status = 1;
         $output_array = array();
-        print "$exec\n";
+        
         $output = exec($exec,$output_array,$exit_status);
-        print "$output\n";
+       
         if (!$exit_status) {
             return true;
         }

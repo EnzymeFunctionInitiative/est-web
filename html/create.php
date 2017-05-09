@@ -28,27 +28,31 @@ if ($input->is_debug) {
 
 
 
-
-
 $test = "";
 foreach($_POST as $var) {
     $test .= " " . $var;
 
 }
 
+
 if (isset($_POST['submit'])) {
     foreach ($_POST as &$var) {
         $var = trim(rtrim($var));
     }
     $message = "";
-    switch($_POST['option_selected']) {
+    $option = $_POST['option_selected'];
+
+    $input->email = $_POST['email'];
+    $input->evalue = $_POST['evalue'];
+    $input->program = isset($_POST['program']) ? $_POST['program'] : "";
+    $input->fraction = $_POST['fraction'];
+    
+    switch($option) {
         //Option A - Blast Input
         case 'A':
             $blast = new blast($db);
             
-            $input->email = $_POST['email'];
             $input->blast_input = $_POST['blast_input'];
-            $input->evalue = $_POST['blast_evalue'];
             $input->max_seqs = $_POST['blast_max_seqs'];
             
             $result = $blast->create($input);
@@ -58,18 +62,15 @@ if (isset($_POST['submit'])) {
         case 'B':
             $generate = new generate($db);
             
-            $input->email = $_POST['email'];
-            $input->evalue = $_POST['pfam_evalue'];
             $input->families = $_POST['families_input'];
-            $input->fraction = $_POST['pfam_fraction'];
             $input->domain = $_POST['pfam_domain'];
-            $input->program = $_POST['program'];
 
             $result = $generate->create($input);
             break;
 
         //Option C - Fasta Input
         case 'C':
+        case 'E':
             if ($_FILES['fasta_file']['error'] === "") { $_FILES['fasta_file']['error'] = 4; }
     
             if ((isset($_FILES['fasta_file']['error'])) && ($_FILES['fasta_file']['error'] !== 0)) {
@@ -77,13 +78,9 @@ if (isset($_POST['submit'])) {
                 $result['RESULT'] = false;
             }
             else {
-                $fasta = new fasta($db);
+                $fasta = new fasta($db, 0, $option);
  
-                $input->email = $_POST['email'];
-                $input->evalue = $_POST['fasta_evalue'];
-                $input->families = $_POST['families_input2'];
-                $input->fraction = $_POST['fasta_fraction'];
-                $input->program = $_POST['program'];
+                $input->families = $_POST['families_input'];
                 $input->tmp_file = $_FILES['fasta_file']['tmp_name'];
                 $input->uploaded_filename = $_FILES['fasta_file']['name'];
  
@@ -102,11 +99,7 @@ if (isset($_POST['submit'])) {
             }
             else {
                 $accession = new accession($db);
- 
-                $input->email = $_POST['email'];
-                $input->evalue = $_POST['accession_evalue'];
-                $input->fraction = $_POST['accession_fraction'];
-                $input->program = $_POST['program'];
+                
                 $input->tmp_file = $_FILES['accession_file']['tmp_name'];
                 $input->uploaded_filename = $_FILES['accession_file']['name'];
  
