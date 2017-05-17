@@ -32,7 +32,7 @@ foreach ($jobs as $job) {
 		$generate_html .= "<td><a href='../blast.php?blast=" . $job['Blast'] . "' target='_blank' ><span class='glyphicon glyphicon-ok'></span></a>";
 		$generate_html .= "</td>\n";
 	}
-	elseif ($job['Option Selected'] == 'FASTA') {
+	elseif ($job['Option Selected'] == 'FASTA' or $job['Option Selected'] == 'FASTA_ID') {
                 $generate_html .= "<td><a href='fasta.php?id=" . $job['Generate ID'] . "' target='_blank' ><span class='glyphicon glyphicon-ok'></span></a>";
                 $generate_html .= "</td>\n";
 

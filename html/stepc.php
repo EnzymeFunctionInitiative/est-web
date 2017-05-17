@@ -32,7 +32,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
             $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
         }
     }
-    elseif ($generate->get_type() == "FASTA") {
+    elseif ($generate->get_type() == "FASTA" or $generate->get_type() == "FASTA_ID") {
         $generate = new fasta($db,$_GET['id']);
         $net_info_html = "<td>Uploaded Fasta File</td>";
         $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td>";
