@@ -19,7 +19,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         $net_info_html .= "<tr><td>Maximum Blast Sequences</td><td>" . number_format($generate->get_submitted_max_sequences()) . "</td></tr>";
 
     }
-    elseif ($generate->get_type() == "FAMILIES") {
+    elseif ($generate->get_type() == "FAMILIES" || $generate->get_type() == "ACCESSION") {
         $generate = new generate($db,$_GET['id']);
         $net_info_html = "<td>PFam/Interpro Families</td>";
         $net_info_html .= "<td>" . $generate->get_families_comma() . "</td>";
@@ -28,7 +28,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         $net_info_html .= "<tr><td>Domain</td><td>" . $generate->get_domain() . "</td></tr>";
 
     }
-    elseif ($generate->get_type() == "FASTA") {
+    elseif ($generate->get_type() == "FASTA" || $generate->get_type() == "FASTA_ID") {
         $generate = new fasta($db,$_GET['id']);
         $net_info_html = "<td>Uploaded Fasta File</td>";
         $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td>";
@@ -61,7 +61,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         if ($i == 0) {
             $path = functions::get_web_root() . "/results/" . $analysis->get_output_dir() . "/" . $analysis->get_network_dir() . "/" . $stats[$i]['File'];
             $full_network_html = "<tr>";
-            $full_network_html .= "<td style='text-align:center;'><a href='" . $path . "'><button>Download</button></a></td>\n";
+            $full_network_html .= "<td style='text-align:center;'><a href='$path'><button>Download</button></a>  <a href='$path.zip'><button>Download ZIP</button></a></td>\n";
             $full_network_html .= "<td style='text-align:center;'>" . number_format($stats[$i]['Nodes'],0) . "</td>\n";
             $full_network_html .= "<td style='text-align:center;'>" . number_format($stats[$i]['Edges'],0) . "</td>\n";
             $full_network_html .= "<td style='text-align:center;'>" . functions::bytes_to_megabytes($stats[$i]['Size'],0) . " MB</td>\n";
@@ -73,7 +73,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
             $percent_identity = str_replace(".","",$percent_identity);
             $path = functions::get_web_root() . "/results/" . $analysis->get_output_dir() . "/" . $analysis->get_network_dir() . "/" . $stats[$i]['File'];
             $rep_network_html .= "<tr>";
-            $rep_network_html .= "<td style='text-align:center;'><a href='" . $path . "'><button>Download</button></a></td>\n";
+            $rep_network_html .= "<td style='text-align:center;'><a href='$path'><button>Download</button></a>   <a href='$path.zip'><button>Download ZIP</button></a></td>\n";
             $rep_network_html .= "<td style='text-align:center;'>" . $percent_identity . "</td>\n";
             $rep_network_html .= "<td style='text-align:center;'>" . number_format($stats[$i]['Nodes'],0) . "</td>\n";
             $rep_network_html .= "<td style='text-align:center;'>" . number_format($stats[$i]['Edges'],0) . "</td>\n";
