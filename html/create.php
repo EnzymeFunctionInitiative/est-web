@@ -78,7 +78,8 @@ if (isset($_POST['submit'])) {
                 $result['RESULT'] = false;
             }
             else {
-                $fasta = new fasta($db, 0, $option);
+                $useFastaHeaders = $_POST['use_fasta_headers'];
+                $fasta = new fasta($db, 0, $useFastaHeaders == "true" ? "E" : "C");
  
                 $input->families = $_POST['families_input'];
                 $input->tmp_file = $_FILES['fasta_file']['tmp_name'];

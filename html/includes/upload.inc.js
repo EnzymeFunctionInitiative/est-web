@@ -29,6 +29,8 @@ function uploadFile() {
         fd.append('families_input',document.getElementById('families_input2').value);
         fd.append('evalue',document.getElementById('fasta_evalue').value);
         fd.append('fraction',document.getElementById('fasta_fraction').value);
+        // This checkbox replaces Option E
+        fd.append('use_fasta_headers', document.getElementById('fasta_use_headers').checked);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_c_program').value);
     }
@@ -45,17 +47,6 @@ function uploadFile() {
         uploadHandler = uploadProgressAccession;
     }
 
-    //Option E Selected
-    else if (document.getElementById('option_selected_e').checked) {
-        option_selected = document.getElementById('option_selected_e').value;
-        fd.append("fasta_file", document.getElementById('fasta_id_file').files[0]);
-        fd.append('families_input',document.getElementById('families_input3').value);
-        fd.append('evalue',document.getElementById('fasta_id_evalue').value);
-        fd.append('fraction',document.getElementById('fasta_id_fraction').value);
-        //TODO: conditionally enable this
-        //fd.append('program',document.getElementById('option_e_program').value);
-        uploadHandler = uploadProgressFastaId;
-    }
 
     //Global Form Options
     fd.append('option_selected',option_selected);
@@ -150,7 +141,6 @@ function disableForm() {
     document.getElementById("option_b").disabled = true;
     document.getElementById("option_c").disabled = true;
     document.getElementById("option_d").disabled = true;
-    document.getElementById("option_e").disabled = true;
     document.getElementById('email').disabled = true;
     document.getElementById('submit').disabled = true;
 
@@ -161,7 +151,6 @@ function enableForm() {
     document.getElementById("option_b").disabled = false;
     document.getElementById("option_c").disabled = false;
     document.getElementById("option_d").disabled = false;
-    document.getElementById("option_e").disabled = false;
     document.getElementById('email').disabled = false;
     document.getElementById('submit').disabled = false;
 

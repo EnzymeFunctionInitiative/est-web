@@ -87,6 +87,9 @@ include_once 'includes/quest_acron.inc';
 	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
 </select></p>
 <?php    } ?>
+<?php    if (functions::option_e_enabled()) { ?>
+<p class='align_left'>Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1' checked='checked'> Check to use IDs from FASTA headers to retrieve node attributes (default: on)</p>
+<?php    } ?>
 
 </div>
 
@@ -115,33 +118,6 @@ include_once 'includes/quest_acron.inc';
 </select></p>
 <?php    } ?>
 
-
-</div>
-
-</fieldset>
-<?php } ?>
-
-<hr>
-<?php if (functions::option_e_enabled()) { ?>
-<p class='align_left'><input type='radio' id='option_selected_e' name='option_selected' value='E' onChange='disable_forms();'><b>Option E:</b> Generate data set using FASTA file headers to obtain node attributes in output. Maximum size is <?php echo ini_get('post_max_size'); ?>.
-<fieldset id='option_e'>
-<p>FASTA File: <input type='file' name='fasta_id_file' id='fasta_id_file' data-url='server/php/'><progress id='progress_bar_fasta_id' max='100' value='0'></progress>
-<br><div id="progressNumberFastaId"></div> 
-<p>If desired, include a Pfam and/or InterPro families, in the analysis of your FASTA file. For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).</p>
-<input type='text' id='families_input3' name='families_input3' class='blast_inputs' value='<?php if (isset($_POST['families_input3'])) { echo $_POST['families_input3']; } ?>'>
-<p class='align_left'><a href='javascript:toggle_fasta_id_advanced();'>Advanced Options (see tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
-<br><div id="fasta_id_advanced" style="display: none;">
-<p class='align_left'>E-Value: <input type='text' class='small' id='fasta_id_evalue' name='fasta_id_evalue' value='<?php if (isset($_POST['fasta_id_evalue'])) { echo $_POST['fasta_id_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
-<p class='align_left'>Fraction: <input type='text' class='small' id='fasta_id_fraction' name='fasta_id_fraction' value='<?php if (isset($_POST['fasta_id_fraction'])) { echo $_POST['fasta_id_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
-<?php    if (functions::get_program_selection_enabled()) { ?>
-<p class='align_left'>Select Program to use:
-<select name='option_e_program' id='option_e_program'>
-        <option value='BLAST'>Blast</option>
-        <option value='BLAST+'>Blast+</option>
-        <option selected='selected' value='DIAMOND'>Diamond</option>
-	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
-</select></p>
-<?php    } ?>
 
 </div>
 

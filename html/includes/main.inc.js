@@ -65,16 +65,12 @@ function disable_forms() {
         else if (document.getElementById('option_selected_d').checked) {
                 option_selected = document.getElementById('option_selected_d').value;
         }
-        else if (document.getElementById('option_selected_e').checked) {
-                option_selected = document.getElementById('option_selected_e').value;
-        }
 
         if (option_selected == "A") {
 		document.getElementById("option_a").disabled = false;
 		document.getElementById("option_b").disabled = true;
 		document.getElementById("option_c").disabled = true;
 		document.getElementById("option_d").disabled = true;
-		document.getElementById("option_e").disabled = true;
 
         } 
 	else if (option_selected == "B") {
@@ -82,35 +78,30 @@ function disable_forms() {
 		document.getElementById("option_b").disabled = false;
 		document.getElementById("option_c").disabled = true;
 		document.getElementById("option_d").disabled = true;
-		document.getElementById("option_e").disabled = true;
         }
 	else if (option_selected == "C") {
 		document.getElementById("option_a").disabled = true;
 		document.getElementById("option_b").disabled = true;
 		document.getElementById("option_c").disabled = false;
 		document.getElementById("option_d").disabled = true;
-		document.getElementById("option_e").disabled = true;
 	}
 	else if (option_selected == "D") {
 		document.getElementById("option_a").disabled = true;
 		document.getElementById("option_b").disabled = true;
 		document.getElementById("option_c").disabled = true;
 		document.getElementById("option_d").disabled = false;
-		document.getElementById("option_e").disabled = true;
 	}
 	else if (option_selected == "E") {
 		document.getElementById("option_a").disabled = true;
 		document.getElementById("option_b").disabled = true;
 		document.getElementById("option_c").disabled = true;
 		document.getElementById("option_d").disabled = true;
-		document.getElementById("option_e").disabled = false;
 	}
 	else {
                 document.getElementById("option_a").disabled = true;
                 document.getElementById("option_b").disabled = true;
                 document.getElementById("option_c").disabled = true;
                 document.getElementById("option_d").disabled = true;
-                document.getElementById("option_e").disabled = true;
 
 	}
 
