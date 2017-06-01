@@ -124,12 +124,6 @@ include_once 'includes/quest_acron.inc';
 </fieldset>
 <?php } ?>
 
-</div>
-
-</fieldset>
-<?php } ?>
-
-
 
 <hr>
 <p><br><input type="text" id='email' name='email' value='<?php if (isset($_POST['email'])) { echo $_POST['email']; } else { echo "Enter your email address"; } ?>' i
