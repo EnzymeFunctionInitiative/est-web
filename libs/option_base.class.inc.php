@@ -134,6 +134,8 @@ abstract class option_base extends stepa {
     // This gets the arguments for the script.
     protected abstract function get_run_script_args($out);
 
+    protected function additional_exec_modules() { return ""; }
+
     // END OVERLOADABLE FUNCTIONS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -167,6 +169,7 @@ abstract class option_base extends stepa {
         $exec = "source /etc/profile\n";
         $exec .= "module load " . functions::get_efi_module() . "\n";
         $exec .= "module load " . functions::get_efidb_module() . "\n";
+        $exec .= $this->additional_exec_modules();
         $exec .= $this->get_run_script() . " ";
         foreach ($parms as $key => $value) {
             $exec .= " " . $key . " " . $value;
@@ -204,7 +207,7 @@ abstract class option_base extends stepa {
             return array('RESULT' => true, 'PBS_NUMBER' => $pbs_job_number, 'EXIT_STATUS' => $exit_status, 'MESSAGE' => 'Job Successfully Submitted');
         }
         else {
-            functions::log_message("There was an error");
+            functions::log_message("There was an error: " . $output . "  exit status: $exit_status" . "  " . join(',', $output_array));
             return array('RESULT' => false, 'EXIT_STATUS' => $exit_status, 'MESSAGE' => $output_array[18]);
         }
     }

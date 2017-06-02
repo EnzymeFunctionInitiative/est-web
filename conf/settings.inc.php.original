@@ -43,6 +43,7 @@ define("__RESULTS_DIR__","");
 define("__RESULTS_DIRNAME__","results");
 define("__EFI_MODULE__","");
 define("__EFIDB_MODULE__","");
+define("__EFI_GNT_MODULE__","");
 
 ////////Blast Settings/////////////
 define("__EVALUE__","5");
@@ -68,10 +69,18 @@ define("__ENABLE_B__",true);
 define("__ENABLE_C__",true);
 define("__ENABLE_D__",true);
 define("__ENABLE_E__",true);
+define("__ENABLE_COLORSSN__",true);
 define("__ENABLE_PROGRAM_SELECTION__",false);
 define("__UPLOADS_DIR__","");
-define("__FASTA_FILETYPES__","txt fasta fa");
+define("__FASTA_FILETYPES__","txt fasta fa zip");
 define("__ACCESSION_FILETYPES__","txt");
+define("__COLORSSN_FILETYPES__","xgmml zip");
 define("__NO_MATCHES_FILENAME__", "no_accession_matches.txt");
 define("__TEMP_FASTA_ID_FILENAME__", "fasta.ids");
+
+define("__DEFAULT_NEIGHBOR_SIZE__",10);
+define("__COOCCURRENCE__",20);
+define("__COLORSSN_MAP_DIR_NAME__","clusterdata");
+define("__COLORSSN_MAP_FILE_NAME__","nodedata.txt");
+
 ?>

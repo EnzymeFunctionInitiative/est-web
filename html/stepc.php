@@ -56,6 +56,13 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
         $net_info_html .= "<tr><td>No matches file</td><td><a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></td></tr>";
     }
+    elseif ($generate->get_type() == "COLORSSN") {
+        $generate = new colorssn($db, $_GET['id']);
+        $net_info_html = "<tr><td>Uploaded XGMML File</td>";
+        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>";
+        $net_info_html .= "<tr><td>Neighborhood Size</td><td>" . $generate->get_neighborhood_size() . "</td></tr>";
+        $net_info_html .= "<tr><td>Cooccurrence</td><td>" . $generate->get_cooccurrence() . "</td</tr>";
+    }
 
     if (time() > $generate->get_unixtime_completed() + functions::get_retention_secs()) {
         echo "<p class='center'><br>Your job results are only retained for a period of " . functions::get_retention_days(). " days";

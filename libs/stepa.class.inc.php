@@ -248,6 +248,10 @@ class stepa {
         $mail->send($to,$headers,$body);
     }
 
+    // This can be overridden.
+    protected function get_generate_results_script() {
+        return "stepc.php";
+    }
 
     public function email_complete() {
 
@@ -255,7 +259,7 @@ class stepa {
         $to = $this->get_email();
         $from = "EFI-EST <" .functions::get_admin_email() . ">";
 
-        $url = functions::get_web_root() . "/stepc.php";
+        $url = functions::get_web_root() . "/" . $this->get_generate_results_script();
         $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
             'key'=>$this->get_key()));
 

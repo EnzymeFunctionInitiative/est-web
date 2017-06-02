@@ -27,6 +27,9 @@ class input_data {
 
     // This flag is set to true if the script is called from the command line.
     public $is_debug;
+
+    //public $cooccurrence;
+    //public $neighborhood_size;
 }
 
 class validation_result {

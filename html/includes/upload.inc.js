@@ -25,7 +25,7 @@ function uploadFile() {
     //Option C Selected
     else if (document.getElementById('option_selected_c').checked) {
         option_selected = document.getElementById('option_selected_c').value;
-        fd.append("fasta_file", document.getElementById('fasta_file').files[0]);
+        fd.append("file", document.getElementById('fasta_file').files[0]);
         fd.append('families_input',document.getElementById('families_input2').value);
         fd.append('evalue',document.getElementById('fasta_evalue').value);
         fd.append('fraction',document.getElementById('fasta_fraction').value);
@@ -38,13 +38,21 @@ function uploadFile() {
     //Option D Selected
     else if (document.getElementById('option_selected_d').checked) {
         option_selected = document.getElementById('option_selected_d').value;
-        fd.append("accession_file", document.getElementById('accession_file').files[0]);
+        fd.append("file", document.getElementById('accession_file').files[0]);
         fd.append('evalue',document.getElementById('accession_evalue').value);
         fd.append('fraction',document.getElementById('accession_fraction').value);
         fd.append('families_input',document.getElementById('families_input4').value);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_d_program').value);
         uploadHandler = uploadProgressAccession;
+    }
+
+    else if (document.getElementById('option_selected_colorssn').checked) {
+        option_selected = document.getElementById('option_selected_colorssn').value;
+        fd.append("file", document.getElementById('colorssn_file').files[0]);
+        //fd.append("cooccurrence", document.getElementById('cooccurrence').value);
+        //fd.append("neighborhood_size", document.getElementById('neighbor_size').value);
+        uploadHandler = uploadProgressColorSsn;
     }
 
 
@@ -122,6 +130,17 @@ function uploadProgressAccession(evt) {
         document.getElementById('progressNumberAccession').innerHTML = 'unable to compute';
     }
 }
+function uploadProgressColorSsn(evt) {
+    if (evt.lengthComputable) {
+        var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+        document.getElementById('progressNumberColorSsn').innerHTML = "Uploading File: " + percentComplete.toString() + '%';
+        var bar = document.getElementById('progress_bar_colorssn');
+        bar.value = percentComplete;
+    }
+    else {
+        document.getElementById('progressNumberColorSsn').innerHTML = 'unable to compute';
+    }
+}
 
 function uploadComplete(evt) {
     /* This event is raised when the server send back a response */
@@ -141,6 +160,7 @@ function disableForm() {
     document.getElementById("option_b").disabled = true;
     document.getElementById("option_c").disabled = true;
     document.getElementById("option_d").disabled = true;
+    document.getElementById("option_colorssn").disabled = true;
     document.getElementById('email').disabled = true;
     document.getElementById('submit').disabled = true;
 
@@ -151,6 +171,7 @@ function enableForm() {
     document.getElementById("option_b").disabled = false;
     document.getElementById("option_c").disabled = false;
     document.getElementById("option_d").disabled = false;
+    document.getElementById("option_colorssn").disabled = false;
     document.getElementById('email').disabled = false;
     document.getElementById('submit').disabled = false;
 

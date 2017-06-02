@@ -34,5 +34,11 @@ php $DIR/check_analyzedata.php
 sleep 1
 php $DIR/analyzedata.php
 
+sleep 1
+php $DIR/check_colorssn.php
+
+sleep 1
+php $DIR/colorssn.php
+
 DATE=$(date +"%Y-%m-%d %H:%M:%S")
 echo "$DATE: Finish EFI-EST Master script"
