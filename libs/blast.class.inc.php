@@ -50,7 +50,7 @@ class blast extends option_base {
     protected function get_insert_array($data) {
         $insert_array = parent::get_insert_array($data);
         $insert_array['generate_blast_max_sequence'] = $data->max_seqs;
-        $formatted_blast = $this->format_blast($data->blast_input);
+        $formatted_blast = $this->format_blast($data->field_input);
         $insert_array['generate_blast'] = $formatted_blast;
         return $insert_array;
     }
@@ -59,7 +59,7 @@ class blast extends option_base {
     protected function validate($data) {
         $result = parent::validate($data);
 
-        if (($data->blast_input != "") && (!$this->verify_blast_input($data->blast_input))) {
+        if (($data->field_input != "") && (!$this->verify_blast_input($data->field_input))) {
             $result->errors = true;
             $result->message .= "<br><b>Please enter a valid blast input</b></br>";
         }
@@ -81,26 +81,26 @@ class blast extends option_base {
         $parms["-seq"] = "'" . $this->get_blast_input() . "'";
         $parms["-evalue"] = $this->get_evalue();
         $parms["-np"] = functions::get_blasthits_processors();
-        $parms["-queue"] = functions::get_generate_queue();
-        $parms["-memqueue"] = functions::get_generate_queue();
-        if ($this->get_submitted_max_sequences() != "") {
-            $parms["-nresults"] = $this->get_submitted_max_sequences();
-        }
-        else {
-            $parms["-nresults"] = functions::get_default_blast_seq();
-        }
-        $parms["-tmpdir"] = $out->relative_output_dir;
+            $parms["-queue"] = functions::get_generate_queue();
+            $parms["-memqueue"] = functions::get_generate_queue();
+            if ($this->get_submitted_max_sequences() != "") {
+                $parms["-nresults"] = $this->get_submitted_max_sequences();
+            }
+            else {
+                $parms["-nresults"] = functions::get_default_blast_seq();
+            }
+            $parms["-tmpdir"] = $out->relative_output_dir;
 
-        return $parms;
-    }
-
-    protected function load_generate($id) {
-        $result = parent::load_generate($id);
-        if (! $result) {
-            return;
+            return $parms;
         }
 
-        $this->blast_input = $result[0]['generate_blast'];
+        protected function load_generate($id) {
+            $result = parent::load_generate($id);
+            if (! $result) {
+                return;
+            }
+
+            $this->blast_input = $result[0]['generate_blast'];
         $this->blast_sequence_max = $result[0]['generate_blast_max_sequence'];
 
         return $result;

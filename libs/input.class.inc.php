@@ -8,8 +8,8 @@ class input_data {
     public $fraction;
     public $max_seqs;
 
-    // For option A
-    public $blast_input;
+    // For option A, C, D, and E
+    public $field_input;
 
     // For option B
     public $domain;
@@ -21,9 +21,6 @@ class input_data {
     // For option C+D+E
     public $tmp_file;
     public $uploaded_filename;
-
-    // For options C+E
-    public $fasta_input;
 
     public $minimum;
     public $maximum;

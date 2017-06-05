@@ -102,6 +102,12 @@ for ($i=3;$i<=20;$i++) {
             IPRxxxxxx (six digits).
         </p>
         <input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input2'])) { echo $_POST['families_input2']; } ?>'>
+<?php    if (functions::option_e_enabled()) { ?>
+            <p class='align_left'>
+                Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1' checked='checked'>
+                Check to use IDs from FASTA headers to retrieve node attributes (default: on)
+            </p>
+<?php    } ?>
         <p class='align_left'>
             <a href='javascript:toggle_fasta_advanced();'>Advanced Options (see
                 tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a>
@@ -125,43 +131,55 @@ for ($i=3;$i<=20;$i++) {
                 </select>
             </p>
 <?php    } ?>
-<?php    if (functions::option_e_enabled()) { ?>
-            <p class='align_left'>
-                Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1' checked='checked'>
-                Check to use IDs from FASTA headers to retrieve node attributes (default: on)
-            </p>
-<?php    } ?>
         </div>
     </fieldset>
+</p>
 <?php } ?>
 
 <?php if (functions::option_d_enabled()) { ?>
 <hr>
-
-<p class='align_left'><input type='radio' id='option_selected_d' name='option_selected' value='D' onChange='disable_forms();'><b>Option D:</b> Generate data set from a file with a list of Uniprot, NCBI, or Genbank sequence accession IDs. Maximum size is <?php echo ini_get('post_max_size'); ?>.
-<fieldset id='option_d'>
-<p>Accession ID File: <input type='file' name='accession_file' id='accession_file' data-url='server/php/'><progress id='progress_bar_accession' max='100' value='0'></progress>
-<br><div id="progressNumberAccession"></div> 
-<p>If desired, include a Pfam and/or InterPro families, in the analysis of your file. For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).</p>
-<input type='text' id='families_input4' name='families_input4' class='blast_inputs' value='<?php if (isset($_POST['families_input4'])) { echo $_POST['families_input4']; } ?>'>
-<p class='align_left'><a href='javascript:toggle_accession_advanced();'>Advanced Options (see tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
-<br><div id="accession_advanced" style="display: none;">
-<p class='align_left'>E-Value: <input type='text' class='small' id='accession_evalue' name='accession_evalue' value='<?php if (isset($_POST['accession_evalue'])) { echo $_POST['accession_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
-<p class='align_left'>Fraction: <input type='text' class='small' id='accession_fraction' name='accession_fraction' value='<?php if (isset($_POST['accession_fraction'])) { echo $_POST['accession_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
+<p class='align_left'>
+    <input type='radio' id='option_selected_d' name='option_selected' value='D' onChange='disable_forms();'>
+    <b>Option D:</b> Generate data set from a file with a list of Uniprot, NCBI, or Genbank sequence accession IDs.
+    Maximum size is <?php echo ini_get('post_max_size'); ?>.
+    <fieldset id='option_d'>
+        <p>
+            Input a list of Uniprot, NCBI, or Genbank sequence accession IDs, and/or upload a text file containing
+            the accession IDs.
+        </p>
+        <textarea class="blast_inputs" id='accession_input' name='accession_input'><?php if (isset($_POST['accession_input'])) { echo $_POST['accession_input']; } ?></textarea>
+        <p>
+            Accession ID File: <input type='file' name='accession_file' id='accession_file' data-url='server/php/'>
+            <progress id='progress_bar_accession' max='100' value='0'></progress>
+            <br><div id="progressNumberAccession"></div>
+        </p>
+        <p>
+            If desired, include a Pfam and/or InterPro families, in the analysis of your file. For Pfam families,
+            the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is
+            IPRxxxxxx (six digits).
+        </p>
+        <input type='text' id='families_input4' name='families_input4' class='blast_inputs' value='<?php if (isset($_POST['families_input4'])) { echo $_POST['families_input4']; } ?>'>
+        <p class='align_left'>
+            <a href='javascript:toggle_accession_advanced();'>Advanced Options (see 
+                tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a>
+        </p>
+        <br>
+        <div id="accession_advanced" style="display: none;">
+            <p class='align_left'>E-Value: <input type='text' class='small' id='accession_evalue' name='accession_evalue' value='<?php if (isset($_POST['accession_evalue'])) { echo $_POST['accession_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
+            <p class='align_left'>Fraction: <input type='text' class='small' id='accession_fraction' name='accession_fraction' value='<?php if (isset($_POST['accession_fraction'])) { echo $_POST['accession_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
 <?php    if (functions::get_program_selection_enabled()) { ?>
-<p class='align_left'>Select Program to use:
-<select name='option_d_program' id='option_d_program'>
-        <option value='BLAST'>Blast</option>
-        <option value='BLAST+'>Blast+</option>
-        <option selected='selected' value='DIAMOND'>Diamond</option>
-	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
-</select></p>
+            <p class='align_left'>Select Program to use:
+                <select name='option_d_program' id='option_d_program'>
+                    <option value='BLAST'>Blast</option>
+                    <option value='BLAST+'>Blast+</option>
+                    <option selected='selected' value='DIAMOND'>Diamond</option>
+                	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
+                </select>
+            </p>
 <?php    } ?>
-
-
-</div>
-
-</fieldset>
+        </div>
+    </fieldset>
+</p>
 <?php } ?>
 
 <?php //////////////////////////////////////////////////////////////////////////////////////////////////// ?>

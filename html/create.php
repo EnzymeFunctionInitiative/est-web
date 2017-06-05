@@ -54,7 +54,7 @@ if (isset($_POST['submit'])) {
         case 'A':
             $blast = new blast($db);
             
-            $input->blast_input = $_POST['blast_input'];
+            $input->field_input = $_POST['blast_input'];
             $input->max_seqs = $_POST['blast_max_seqs'];
             
             $result = $blast->create($input);
@@ -87,10 +87,11 @@ if (isset($_POST['submit'])) {
                 if ($option == "C" || $option == "E") {
                     $useFastaHeaders = $_POST['use_fasta_headers'];
                     $obj = new fasta($db, 0, $useFastaHeaders == "true" ? "E" : "C");
-                    $input->fasta_input = $_POST['fasta_input'];
+                    $input->field_input = $_POST['fasta_input'];
                     $input->families = $_POST['families_input'];
                 } else if ($option == "D") {
                     $obj = new accession($db);
+                    $input->field_input = $_POST['accession_input'];
                     $input->families = $_POST['families_input'];
                 } else if ($option == "colorssn") {
                     $obj = new colorssn($db);
@@ -115,7 +116,6 @@ if (isset($_POST['submit'])) {
         //    else {
         //        $input->tmp_file = $_FILES['accession_file']['tmp_name'];
         //        $input->uploaded_filename = $_FILES['accession_file']['name'];
- 
         //        $result = $accession->create($input);
         //    }
 

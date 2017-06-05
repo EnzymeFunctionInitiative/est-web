@@ -31,7 +31,7 @@ function uploadFile() {
         fd.append('fraction',document.getElementById('fasta_fraction').value);
         // This checkbox replaces Option E
         fd.append('use_fasta_headers', document.getElementById('fasta_use_headers').checked);
-        fd.append("fasta_input", document.getElementById('fasta_input').value);
+        fd.append('fasta_input', document.getElementById('fasta_input').value);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_c_program').value);
     }
@@ -43,6 +43,7 @@ function uploadFile() {
         fd.append('evalue',document.getElementById('accession_evalue').value);
         fd.append('fraction',document.getElementById('accession_fraction').value);
         fd.append('families_input',document.getElementById('families_input4').value);
+        fd.append('accession_input', document.getElementById('accession_input').value);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_d_program').value);
         uploadHandler = uploadProgressAccession;
