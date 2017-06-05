@@ -98,13 +98,8 @@ class fasta extends family_shared {
     }
 
     protected function post_output_structure_create() {
-        if ($this->option != "E" && !$this->reformat_fasta_to_results_dir()) {
-            $this->set_status(__FAILED__);
-            return 'Fasta file did not copy';
-        } else if ($this->option == "E") {
-            if (!$this->file_helper->copy_file_to_results_dir()) {
-                return "Unable to move uploaded file to the result directory.";
-            }
+        if (!$this->file_helper->copy_file_to_results_dir()) {
+            return "Unable to move uploaded file to the result directory.";
         }
         return '';
     }
