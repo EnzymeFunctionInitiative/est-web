@@ -84,6 +84,7 @@ if (isset($_POST['submit'])) {
                 $input->families = $_POST['families_input'];
                 $input->tmp_file = $_FILES['fasta_file']['tmp_name'];
                 $input->uploaded_filename = $_FILES['fasta_file']['name'];
+                $input->fasta_input = $_POST['fasta_input'];
  
                 $result = $fasta->create($input);
             }

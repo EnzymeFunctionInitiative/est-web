@@ -34,10 +34,13 @@ class file_helper {
     }
 
     public function on_post_insert_action($data, $id, $parent_result) {
+        $this->uploaded_filename = $id . $this->get_file_extension();
 
-        if (!$this->move_upload_file($data->tmp_file, $id, $data->is_debug)) {
-            $parent_result->errors = true;
-            $parent_result->message = "Error moving file";
+        if ($data->tmp_file) {
+            if (!$this->move_upload_file($data->tmp_file, $id, $data->is_debug)) {
+                $parent_result->errors = true;
+                $parent_result->message = "Error moving file";
+            }
         }
 
         return $parent_result;
@@ -54,7 +57,7 @@ class file_helper {
     }
 
     protected function move_upload_file($tmp_file, $id, $is_debug) {
-        $full_path = functions::get_uploads_dir() . "/" . $id . $this->get_file_extension();
+        $full_path = $this->get_full_uploaded_path();
         if ($is_debug) {
             print "If this was not run through the console, we would move $tmp_file to $full_path. But we aren't going to try that because it will likely fail.\n";
             $result = true;

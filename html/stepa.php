@@ -68,32 +68,58 @@ include_once 'includes/quest_acron.inc';
 
 <hr>
 <?php if (functions::option_c_enabled()) { ?>
-<p class='align_left'><input type='radio' id='option_selected_c' name='option_selected' value='C' onChange='disable_forms();'><b>Option C:</b> Generate data set with custom FASTA file with header information. Maximum size is <?php echo ini_get('post_max_size'); ?>.
-<fieldset id='option_c'>
-<p>FASTA File: <input type='file' name='fasta_file' id='fasta_file' data-url='server/php/'><progress id='progress_bar_fasta' max='100' value='0'></progress>
-<br><div id="progressNumberFasta"></div> 
-<p>If desired, include a Pfam and/or InterPro families, in the analysis of your FASTA file. For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).</p>
-<input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input2'])) { echo $_POST['families_input2']; } ?>'>
-<p class='align_left'><a href='javascript:toggle_fasta_advanced();'>Advanced Options (see tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
-<br><div id="fasta_advanced" style="display: none;">
-<p class='align_left'>E-Value: <input type='text' class='small' id='fasta_evalue' name='fasta_evalue' value='<?php if (isset($_POST['fasta_evalue'])) { echo $_POST['fasta_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
-<p class='align_left'>Fraction: <input type='text' class='small' id='fasta_fraction' name='fasta_fraction' value='<?php if (isset($_POST['fasta_fraction'])) { echo $_POST['fasta_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
+<p class='align_left'>
+    <input type='radio' id='option_selected_c' name='option_selected' value='C' onChange='disable_forms();'>
+    <b>Option C:</b> Generate data set with custom FASTA file with header information. Maximum size is
+    <?php echo ini_get('post_max_size'); ?>.
+    <fieldset id='option_c'>
+        <p>
+            Input a list of protein sequences in the FASTA format with headers, and/or upload a FASTA file.
+        </p>
+        <textarea class="blast_inputs" id='fasta_input' name='fasta_input'><?php if (isset($_POST['fasta_input'])) { echo $_POST['fasta_input']; } ?></textarea>
+        <p>
+            FASTA File:
+            <input type='file' name='fasta_file' id='fasta_file' data-url='server/php/'>
+            <progress id='progress_bar_fasta' max='100' value='0'></progress>
+            <br><div id="progressNumberFasta"></div> 
+        </p>
+        <p>
+            If desired, include a Pfam and/or InterPro families, in the analysis of your FASTA file. For Pfam families,
+            the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is
+            IPRxxxxxx (six digits).
+        </p>
+        <input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input2'])) { echo $_POST['families_input2']; } ?>'>
+        <p class='align_left'>
+            <a href='javascript:toggle_fasta_advanced();'>Advanced Options (see
+                tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a>
+        </p>
+        <br>
+        <div id="fasta_advanced" style="display: none;">
+            <p class='align_left'>
+                E-Value: <input type='text' class='small' id='fasta_evalue' name='fasta_evalue' value='<?php if (isset($_POST['fasta_evalue'])) { echo $_POST['fasta_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)
+            </p>
+            <p class='align_left'>
+                Fraction: <input type='text' class='small' id='fasta_fraction' name='fasta_fraction' value='<?php if (isset($_POST['fasta_fraction'])) { echo $_POST['fasta_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)
+            </p>
 <?php    if (functions::get_program_selection_enabled()) { ?>
-<p class='align_left'>Select Program to use:
-<select name='option_c_program' id='option_c_program'>
-        <option value='BLAST'>Blast</option>
-        <option value='BLAST+'>Blast+</option>
-        <option selected='selected' value='DIAMOND'>Diamond</option>
-	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
-</select></p>
+            <p class='align_left'>
+                Select Program to use:
+                <select name='option_c_program' id='option_c_program'>
+                    <option value='BLAST'>Blast</option>
+                    <option value='BLAST+'>Blast+</option>
+                    <option selected='selected' value='DIAMOND'>Diamond</option>
+                	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
+                </select>
+            </p>
 <?php    } ?>
 <?php    if (functions::option_e_enabled()) { ?>
-<p class='align_left'>Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1' checked='checked'> Check to use IDs from FASTA headers to retrieve node attributes (default: on)</p>
+            <p class='align_left'>
+                Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1' checked='checked'>
+                Check to use IDs from FASTA headers to retrieve node attributes (default: on)
+            </p>
 <?php    } ?>
-
-</div>
-
-</fieldset>
+        </div>
+    </fieldset>
 <?php } ?>
 
 <hr>
