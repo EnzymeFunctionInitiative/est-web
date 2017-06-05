@@ -31,6 +31,7 @@ function uploadFile() {
         fd.append('fraction',document.getElementById('fasta_fraction').value);
         // This checkbox replaces Option E
         fd.append('use_fasta_headers', document.getElementById('fasta_use_headers').checked);
+        fd.append("fasta_input", document.getElementById('fasta_input').value);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_c_program').value);
     }
