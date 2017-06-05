@@ -63,9 +63,9 @@ class fasta extends family_shared {
         if (!$result->errors && $this->option == "E") {
         }
 
-        if ($data->fasta_input) {
+        if ($data->field_input) {
             $file = $this->file_helper->get_full_uploaded_path();
-            file_put_contents($file, "\n\n\n\n\n" . $data->fasta_input . "\n", FILE_APPEND);
+            file_put_contents($file, "\n\n\n\n\n" . $data->field_input . "\n", FILE_APPEND);
         }
 
         return $result;
@@ -97,7 +97,7 @@ class fasta extends family_shared {
         if ($data->uploaded_filename && !$this->verify_fasta($data->uploaded_filename)) {
             $result->errors = true;
             $result->message .= "<br><b>Please upload a valid fasta file.  The file extension must be .txt, .fasta, or .fa</b></br>";
-        } else if (!$data->fasta_input && !$data->uploaded_filename) {
+        } else if (!$data->field_input && !$data->uploaded_filename) {
             $result->errors = true;
             $result->message .= "<br><b>Please input FASTA sequences or upload a valid fasta file.  The file extension must be .txt, .fasta, or .fa</b></br>";
         }

@@ -52,7 +52,7 @@ if (isset($_POST['submit'])) {
         case 'A':
             $blast = new blast($db);
             
-            $input->blast_input = $_POST['blast_input'];
+            $input->field_input = $_POST['blast_input'];
             $input->max_seqs = $_POST['blast_max_seqs'];
             
             $result = $blast->create($input);
@@ -84,7 +84,7 @@ if (isset($_POST['submit'])) {
                 $input->families = $_POST['families_input'];
                 $input->tmp_file = $_FILES['fasta_file']['tmp_name'];
                 $input->uploaded_filename = $_FILES['fasta_file']['name'];
-                $input->fasta_input = $_POST['fasta_input'];
+                $input->field_input = $_POST['fasta_input'];
  
                 $result = $fasta->create($input);
             }
@@ -105,6 +105,7 @@ if (isset($_POST['submit'])) {
                 $input->families = $_POST['families_input'];
                 $input->tmp_file = $_FILES['accession_file']['tmp_name'];
                 $input->uploaded_filename = $_FILES['accession_file']['name'];
+                $input->field_input = $_POST['accession_input'];
  
                 $result = $accession->create($input);
             }

@@ -43,9 +43,12 @@ class accession extends family_shared {
         //    $result->errors = true;
         //    $result->message .= "<br><b>Please enter a valid fraction</b></br>";
         //}
-        if (!$this->verify_accession_file($data->uploaded_filename)) {
+        if ($data->uploaded_filename && !$this->verify_accession_file($data->uploaded_filename)) {
             $result->errors = true;
-            $result->message .= "<br><b>Please upload a valid fasta file.  The file extension must be .txt, .fasta, or .fa</b></br>";
+            $result->message .= "<br><b>Please upload a valid accession ID file.  The file extension must be .txt</b></br>";
+        } else if (!$data->field_input && !$data->uploaded_filename) {
+            $result->errors = true;
+            $result->message .= "<br><b>Please specify a list of accession IDs and/or upload a valid accession ID file.  The file extension must be .txt.</b></br>";
         }
 
         return $result;
@@ -67,11 +70,12 @@ class accession extends family_shared {
     protected function post_insert_action($data, $insert_result_id) {
         $result = parent::post_insert_action($data, $insert_result_id);
         $result = $this->file_helper->on_post_insert_action($data, $insert_result_id, $result);
-        //if (!$result->errors && !$this->file_helper->copy_file_to_results_dir($insert_result_id)) {
-        //    $result = new validation_result;
-        //    $result->errors = true;
-        //    $result->message = "Unable to move uploaded file to the result directory.";
-        //}
+
+        if ($data->field_input) {
+            $file = $this->file_helper->get_full_uploaded_path();
+            file_put_contents($file, "\n" . $data->field_input . "\n", FILE_APPEND);
+        }
+
         return $result;
     }
     
