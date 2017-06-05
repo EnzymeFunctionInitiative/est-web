@@ -18,9 +18,12 @@ class input_data {
     // For option B+C
     public $families;
 
-    // For otion C+D+E
+    // For option C+D+E
     public $tmp_file;
     public $uploaded_filename;
+
+    // For options C+E
+    public $fasta_input;
 
     public $minimum;
     public $maximum;

@@ -87,6 +87,7 @@ if (isset($_POST['submit'])) {
                 if ($option == "C" || $option == "E") {
                     $useFastaHeaders = $_POST['use_fasta_headers'];
                     $obj = new fasta($db, 0, $useFastaHeaders == "true" ? "E" : "C");
+                    $input->fasta_input = $_POST['fasta_input'];
                     $input->families = $_POST['families_input'];
                 } else if ($option == "D") {
                     $obj = new accession($db);
