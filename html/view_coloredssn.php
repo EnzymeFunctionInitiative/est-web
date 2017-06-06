@@ -66,13 +66,13 @@ else {
     </td>
 </tr>
 <tr>
-    <td>Node-Cluster Table</td>
+    <td>UniProt ID-Color-Cluster Number Table</td>
     <td>
         <a href="<?php echo "$baseUrl/$tableFile"; ?>"><button>Download</button></a>
     </td>
 </tr>
 <tr>
-    <td>Node Lists per Cluster</td>
+    <td>UniProt ID Lists per Cluster</td>
     <td>
         <a href="<?php echo "$baseUrl/$nodeFilesZip"; ?>"><button>Download All (ZIP)</button></a>
     </td>
