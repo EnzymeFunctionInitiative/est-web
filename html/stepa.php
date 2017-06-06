@@ -78,7 +78,7 @@ include_once 'includes/quest_acron.inc';
         </p>
 <?php    if (functions::option_e_enabled()) { ?>
             <p>
-                Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1' checked='unchecked'>
+                Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1'>
                 Check to use IDs from FASTA headers to retrieve node attributes when possible (default: off).
             </p>
 <?php    } ?>
