@@ -83,12 +83,18 @@ for ($i=3;$i<=20;$i++) {
 <?php if (functions::option_c_enabled()) { ?>
 <p class='align_left'>
     <input type='radio' id='option_selected_c' name='option_selected' value='C' onChange='disable_forms();'>
-    <b>Option C:</b> Generate data set with custom FASTA file with header information. Maximum size is
+    <b>Option C:</b> Generate data set with custom FASTA file. Maximum size is
     <?php echo ini_get('post_max_size'); ?>.
     <fieldset id='option_c'>
         <p>
             Input a list of protein sequences in the FASTA format with headers, and/or upload a FASTA file.
         </p>
+<?php    if (functions::option_e_enabled()) { ?>
+            <p>
+                Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1'>
+                Check to use IDs from FASTA headers to retrieve node attributes when possible (default: off).
+            </p>
+<?php    } ?>
         <textarea class="blast_inputs" id='fasta_input' name='fasta_input'><?php if (isset($_POST['fasta_input'])) { echo $_POST['fasta_input']; } ?></textarea>
         <p>
             FASTA File:
@@ -102,12 +108,6 @@ for ($i=3;$i<=20;$i++) {
             IPRxxxxxx (six digits).
         </p>
         <input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input2'])) { echo $_POST['families_input2']; } ?>'>
-<?php    if (functions::option_e_enabled()) { ?>
-            <p class='align_left'>
-                Read FASTA headers: <input type='checkbox' id='fasta_use_headers' name='fasta_use_headers' value='1' checked='checked'>
-                Check to use IDs from FASTA headers to retrieve node attributes (default: on)
-            </p>
-<?php    } ?>
         <p class='align_left'>
             <a href='javascript:toggle_fasta_advanced();'>Advanced Options (see
                 tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a>
