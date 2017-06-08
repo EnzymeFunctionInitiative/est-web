@@ -14,7 +14,7 @@ class accession extends family_shared {
 
 
     public function __construct($db,$id = 0) {
-        $this->file_helper = new file_helper(".acc.txt", $id);
+        $this->file_helper = new file_helper(".txt", $id);
         parent::__construct($db, $id);
     }
 
