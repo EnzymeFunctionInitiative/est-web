@@ -299,16 +299,19 @@ class analysis {
 
     }
 
-    public function email_failed($from_email,$web_root,$footer) {
+    public function email_failed() { //$from_email,$web_root,$footer) {
+        $web_root = "";
+        $footer = "";
+
         $generate = new stepa($this->db,$this->get_generate_id());
         $subject = "EFI-EST PFAM/Interpro Analysis Failed";
         $to = $generate->get_email();
-        $url = $web_root . "/stepa.php";
+        //$url = $web_root . "/stepa.php";
 
 
         $message = "<br>Your EFI-EST PFAM/Interpro Generation Failed\r\n";
         $message .= "<br>Sorry it failed.\r\n";
-        $message .= "Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
+        //$message .= "Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
 
         if ($generate->get_blast_input() != "") {
             $message .= "<br>Blast Input: \r\n";

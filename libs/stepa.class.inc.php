@@ -73,6 +73,8 @@ class stepa {
     public function get_output_dir() {
         return $this->get_id() . "/" . $this->output_dir;
     }
+    public function get_blast_input() { return ""; }
+    public function get_families() { return array(); }
 
 
     public function set_pbs_number($pbs_number) {
