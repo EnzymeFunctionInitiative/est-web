@@ -24,6 +24,7 @@ class file_helper {
     }
     
     public function on_append_insert_array($data, $insert_array) {
+        $data->uploaded_filename = mb_ereg_replace("([^A-Za-z0-9_\-\.])", "_", $data->uploaded_filename);
         $insert_array['generate_fasta_file'] = $data->uploaded_filename;
         return $insert_array;
     }

@@ -9,59 +9,78 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         echo "No EFI-EST Selected. Please go back";
         exit;
     }
+
+    $gen_type = $generate->get_type();
+    if ($gen_type == "BLAST") {
+        $gen_type = "Option A";
+    } else if ($gen_type == "FAMILIES") {
+        $gen_type = "Option B";
+    } else if ($gen_type == "ACCESSION") {
+        $gen_type = "Option D";
+    } else if ($gen_type == "FASTA") {
+        $gen_type = "Option C (no FASTA header reading)";
+    } else if ($gen_type == "FASTA_ID") {
+        $gen_type = "Option C (with FASTA header reading)";
+    }
+
+    $gen_id = $generate->get_id();
+
+
     $net_info_html = "";
+    $net_info_html = "";
+    $net_info_html .= "<tr><td>Input Option</td><td>$gen_type</td></tr>\n";
+    $net_info_html .= "<tr><td>Job Number</td><td>$gen_id</td></tr>\n";
+
     if ($generate->get_type() == "BLAST") {
         $generate = new blast($db,$_GET['id']);
-        $net_info_html = "<tr><td>Blast Sequence</td>";
-        $net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td></tr>";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Maximum Blast Sequences</td><td>" . number_format($generate->get_submitted_max_sequences()) . "</td></tr>";
+        $net_info_html .= "<tr><td>Blast Sequence</td>";
+        $net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td></tr>\n";
+        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>\n";
+        $net_info_html .= "<tr><td>Maximum Blast Sequences</td><td>" . number_format($generate->get_submitted_max_sequences()) . "</td></tr>\n";
         if (functions::get_program_selection_enabled()) {
-            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
+            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>\n";
         }
 
     }
     elseif ($generate->get_type() == "FAMILIES") {
         $generate = new generate($db,$_GET['id']);
-        $net_info_html = "<tr><td>PFam/Interpro Families</td>";
-        $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
-        $net_info_html .= "<tr><td>Domain</td><td>" . $generate->get_domain() . "</td></tr>";
+        $net_info_html .= "<tr><td>PFam/Interpro Families</td>";
+        $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>\n";
+        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>\n";
+        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>\n";
+        $net_info_html .= "<tr><td>Domain</td><td>" . $generate->get_domain() . "</td></tr>\n";
         if (functions::get_program_selection_enabled()) {
-            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
+            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>\n";
         }
     }
     elseif ($generate->get_type() == "FASTA" or $generate->get_type() == "FASTA_ID") {
         $generate = new fasta($db,$_GET['id']);
-        $net_info_html = "<td>Uploaded Fasta File</td>";
+        $net_info_html .= "<td>Uploaded Fasta File</td>";
         $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td>";
         if ($generate->get_families_comma() != "") {
             $net_info_html .= "<tr><td>PFam/Interpro Families</td>";
-            $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
-
-
+            $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>\n";
         }
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
+        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>\n";
+        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>\n";
         if (functions::get_program_selection_enabled()) {
-            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
+            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>\n";
         }
     }
     elseif ($generate->get_type() == "ACCESSION") {
         $generate = new accession($db, $_GET['id']);
-        $net_info_html = "<tr><td>Uploaded Accession ID File</td>";
-        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
-        $net_info_html .= "<tr><td>No matches file</td><td><a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></td></tr>";
+        $net_info_html .= "<tr><td>Uploaded Accession ID File</td>";
+        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>\n";
+        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>\n";
+        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>\n";
+        $net_info_html .= "<tr><td>No matches file</td><td><a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></td></tr>\n";
     }
     elseif ($generate->get_type() == "COLORSSN") {
         $generate = new colorssn($db, $_GET['id']);
-        $net_info_html = "<tr><td>Uploaded XGMML File</td>";
-        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>";
-        $net_info_html .= "<tr><td>Neighborhood Size</td><td>" . $generate->get_neighborhood_size() . "</td></tr>";
-        $net_info_html .= "<tr><td>Cooccurrence</td><td>" . $generate->get_cooccurrence() . "</td</tr>";
+        $net_info_html .= "<tr><td>Uploaded XGMML File</td>";
+        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>\n";
+        $net_info_html .= "<tr><td>Neighborhood Size</td><td>" . $generate->get_neighborhood_size() . "</td></tr>\n";
+        $net_info_html .= "<tr><td>Cooccurrence</td><td>" . $generate->get_cooccurrence() . "</td</tr>\n";
     }
 
     if (time() > $generate->get_unixtime_completed() + functions::get_retention_secs()) {

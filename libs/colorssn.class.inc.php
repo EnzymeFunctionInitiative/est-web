@@ -23,7 +23,10 @@ class colorssn extends option_base {
     public function get_cooccurrence() { return $this->cooccurrence; }
     public function get_colored_xgmml_filename_no_ext() {
         $parts = pathinfo($this->get_uploaded_filename());
-        return $parts['filename'] . "_colored";
+        if (substr_compare($parts['filename'], ".xgmml", -strlen(".xgmml")) === 0) {
+            $parts = pathinfo($parts['filename']);
+        }
+        return $parts['filename'] . "_coloredssn";
     }
 
 
@@ -75,12 +78,12 @@ class colorssn extends option_base {
 
         $parms["-queue"] = functions::get_generate_queue();
         $parms["-ssn-in"] = $this->file_helper->get_results_input_file();
-        $parms["-ssn-out"] = $this->get_colored_xgmml_filename_no_ext() . ".xgmml";
+        $parms["-ssn-out"] = "\"" . $this->get_colored_xgmml_filename_no_ext() . ".xgmml\"";
         //$parms["-nb-size"] = $this->neighborhood_size;
         //$parms["-cooc"] = $this->cooccurrence;
-        $parms["-map-dir-name"] = functions::get_colorssn_map_dir_name();
-        $parms["-map-file-name"] = functions::get_colorssn_map_file_name();
-        $parms["-out-dir"] = $out->relative_output_dir;
+        $parms["-map-dir-name"] = "\"" . functions::get_colorssn_map_dir_name() . "\"";
+        $parms["-map-file-name"] = "\"" . functions::get_colorssn_map_file_name() . "\"";
+        $parms["-out-dir"] = "\"" . $out->relative_output_dir . "\"";
 
         return $parms;
     }

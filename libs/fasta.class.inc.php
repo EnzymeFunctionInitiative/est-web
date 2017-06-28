@@ -116,7 +116,7 @@ class fasta extends family_shared {
         $parms = parent::get_run_script_args($out);
 
         // This works because as a part of the import process the fasta file is copied to the results directory.
-        $parms["-userfasta"] = $this->get_full_fasta_file_path();
+        $parms["-userfasta"] = "\"" . $this->get_full_fasta_file_path() . "\"";
         if ($this->option == "E") {
             $parms["-use-fasta-headers"] = "";
         } else {

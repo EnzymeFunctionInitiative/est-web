@@ -9,11 +9,6 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         echo "No EFI-EST Selected. Please go back";
         exit;
     }
-    $net_info_html = "";
-    $net_info_html = "<tr><td>Uploaded XGMML File</td>";
-    $net_info_html .= "<td>" . $obj->get_uploaded_filename() . "</td></tr>";
-    //$net_info_html .= "<tr><td>Neighborhood Size</td><td>" . $obj->get_neighborhood_size() . "</td></tr>";
-    //$net_info_html .= "<tr><td>Cooccurrence</td><td>" . $obj->get_cooccurrence() . "</td</tr>";
 
     if (time() > $obj->get_unixtime_completed() + functions::get_retention_secs()) {
         echo "<p class='center'><br>Your job results are only retained for a period of " . functions::get_retention_days(). " days";
@@ -22,14 +17,17 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         exit;
     }
 
+    $jobNumber = $obj->get_id();
+    $uploadedFilename = $obj->get_uploaded_filename();
+
     $url = $_SERVER['PHP_SELF'] . "?" . http_build_query(array('id'=>$obj->get_id(), 'key'=>$obj->get_key()));
     $baseUrl = functions::get_web_root() . "/results/" . $obj->get_output_dir();
     
     $ssnFile = $obj->get_colored_xgmml_filename_no_ext();
     $ssnFileZip = "$ssnFile.zip";
     
-    $nodeFilesZip = "${ssnFile}_nodes.zip";
-    $fastaFilesZip = "${ssnFile}_fasta.zip";
+    $nodeFilesZip = "${ssnFile}_UniProt_IDs.zip";
+    $fastaFilesZip = "${ssnFile}_FASTA.zip";
     $tableFile = $ssnFile . "_" . functions::get_colorssn_map_file_name();
     
     $ssnFile = "$ssnFile.xgmml";
@@ -49,7 +47,18 @@ else {
 
 <h4>Network Information</h4>
 <table width="100%" border="1">
-    <?php echo $net_info_html; ?>
+    <tr>
+        <td>Input Option</td>
+        <td>Color SSN</td>
+    </tr>
+    <tr>
+        <td>Job Number</td>
+        <td><?php echo $jobNumber ?></td>
+    </tr>
+    <tr>
+        <td>Uploaded XGMML File</td>
+        <td><?php echo $uploadedFilename ?></td>
+    </tr>
 </table>
 
 <p>&nbsp;</p>
@@ -66,7 +75,7 @@ else {
     </td>
 </tr>
 <tr>
-    <td>UniProt ID-Color-Cluster Number Table</td>
+    <td>UniProt ID-Color-Cluster Number Mapping Table</td>
     <td>
         <a href="<?php echo "$baseUrl/$tableFile"; ?>"><button>Download</button></a>
     </td>
