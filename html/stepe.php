@@ -89,7 +89,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         }
         else {
             $percent_identity = substr($stats[$i]['File'],strpos($stats[$i]['File'],'-')+1);
-            $percent_identity = substr($percent_identity,0,strrpos($percent_identity,'.'));
+            $percent_identity = substr($percent_identity,0,strrpos($percent_identity,'_'));
             $percent_identity = str_replace(".","",$percent_identity);
             $path = functions::get_web_root() . "/results/" . $analysis->get_output_dir() . "/" . $analysis->get_network_dir() . "/" . $stats[$i]['File'];
             $rep_network_html .= "<tr>";
