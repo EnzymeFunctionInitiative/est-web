@@ -2,6 +2,19 @@
 include_once 'includes/main.inc.php';
 include_once 'includes/header.inc.php'; 
 include_once 'includes/quest_acron.inc';
+include_once '../libs/functions.class.inc.php';
+
+
+$neighbor_size_html = "";
+$default_neighbor_size = functions::get_default_neighbor_size();
+for ($i=3;$i<=20;$i++) {
+	if ($i == $default_neighbor_size) {
+		$neighbor_size_html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
+	}
+	else {
+		$neighbor_size_html .= "<option value='" . $i . "'>" . $i . "</option>";
+	}
+}
 
 ?>
 
@@ -123,8 +136,8 @@ include_once 'includes/quest_acron.inc';
 </p>
 <?php } ?>
 
-<hr>
 <?php if (functions::option_d_enabled()) { ?>
+<hr>
 <p class='align_left'>
     <input type='radio' id='option_selected_d' name='option_selected' value='D' onChange='disable_forms();'>
     <b>Option D:</b> Generate data set from a file with a list of Uniprot, NCBI, or Genbank sequence accession IDs.
@@ -168,6 +181,75 @@ include_once 'includes/quest_acron.inc';
     </fieldset>
 </p>
 <?php } ?>
+
+<?php //////////////////////////////////////////////////////////////////////////////////////////////////// ?>
+<?php if (functions::colorssn_enabled()) { ?>
+
+<hr>
+<p class='align_left'>
+    <input type='radio' id='option_selected_colorssn' name='option_selected' value='colorssn' onChange='disable_forms();'>
+    <b>Color SSN:</b> Color an input SSN and return associated cluster data.
+    Maximum size is <?php echo ini_get('post_max_size'); ?>.
+    <fieldset id='option_colorssn'>
+        <p>
+            XGMML File:
+            <input type='file' name='colorssn_file' id='colorssn_file' data-url='server/php/'>
+            <progress id='progress_bar_colorssn' max='100' value='0'></progress>
+            <br>
+            <div id="progressNumberColorSsn"></div>
+<?php /* ?>
+            <p>
+                Neighborhood Size (default: <?php echo $default_neighbor_size; ?>)
+                <select name='neighbor_size' id='neighbor_size'>
+                    <?php echo $neighbor_size_html; ?>
+                </select>
+            </p>
+            <p>
+                <label for='cooccurrence_input'>
+                    Input % Co-Occurrence Lower Limit (Default: <?php echo functions::get_default_cooccurrence(); ?>, Valid 1-100):
+                </label>
+                <input type='text' id='cooccurrence' name='cooccurrence' maxlength='3' value='<?php echo functions::get_default_cooccurrence(); ?>'><br>
+            </p>
+            <p>
+                If desired, include a Pfam and/or InterPro families, in the analysis of your file. For Pfam families,
+                the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is 
+                IPRxxxxxx (six digits).
+            </p>
+            <input type='text' id='families_input4' name='families_input4' class='blast_inputs' value='<?php if (isset($_POST['families_input4'])) { echo $_POST['families_input4']; } ?>'>
+            <p class='align_left'>
+                <a href='javascript:toggle_accession_advanced();'>Advanced Options (see
+                tutorial)<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a>
+            </p>
+            <br>
+            <div id="accession_advanced" style="display: none;">
+                <p class='align_left'>
+                    E-Value: 
+                    <input type='text' class='small' id='accession_evalue' name='accession_evalue' value='<?php if (isset($_POST['accession_evalue'])) { echo $_POST['accession_evalue']; } else { echo functions::get_evalue(); } ?>'>
+                    Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)
+                </p>
+                <p class='align_left'>
+                    Fraction:
+                    <input type='text' class='small' id='accession_fraction' name='accession_fraction' value='<?php if (isset($_POST['accession_fraction'])) { echo $_POST['accession_fraction']; } else { echo functions::get_fraction(); } ?>'>
+                    Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)
+                </p>
+<?php    if (functions::get_program_selection_enabled()) { ?>
+                <p class='align_left'>Select Program to use:
+                    <select name='option_d_program' id='option_d_program'>
+                        <option value='BLAST'>Blast</option>
+                        <option value='BLAST+'>Blast+</option>
+                        <option selected='selected' value='DIAMOND'>Diamond</option>
+                	    <option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
+                    </select>
+                </p>
+<?php    } ?>
+            </div>
+<?php */ ?>
+        </p>
+    </fieldset>
+</p>
+
+<?php } ?>
+
 
 <hr>
 <p><br><input type="text" id='email' name='email' value='<?php if (isset($_POST['email'])) { echo $_POST['email']; } else { echo "Enter your email address"; } ?>' i

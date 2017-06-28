@@ -73,6 +73,8 @@ class stepa {
     public function get_output_dir() {
         return $this->get_id() . "/" . $this->output_dir;
     }
+    public function get_blast_input() { return ""; }
+    public function get_families() { return array(); }
 
 
     public function set_pbs_number($pbs_number) {
@@ -248,6 +250,10 @@ class stepa {
         $mail->send($to,$headers,$body);
     }
 
+    // This can be overridden.
+    protected function get_generate_results_script() {
+        return "stepc.php";
+    }
 
     public function email_complete() {
 
@@ -255,7 +261,7 @@ class stepa {
         $to = $this->get_email();
         $from = "EFI-EST <" .functions::get_admin_email() . ">";
 
-        $url = functions::get_web_root() . "/stepc.php";
+        $url = functions::get_web_root() . "/" . $this->get_generate_results_script();
         $full_url = $url . "?" . http_build_query(array('id'=>$this->get_id(),
             'key'=>$this->get_key()));
 

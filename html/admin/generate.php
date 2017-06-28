@@ -12,12 +12,18 @@ if (isset($_GET['year'])) {
         $year = $_GET['year'];
 }
 $generate_page = functions::get_web_root() . "/stepc.php";
+$colorssn_page = functions::get_web_root() . "/view_coloredssn.php";
 $jobs = statistics::get_generate($db,$month,$year);
 
 $generate_html = "";
 foreach ($jobs as $job) {
-	$get_array = array('id'=>$job['Generate ID'],'key'=>$job['Key']);
-	$url = $generate_page . "?" . http_build_query($get_array);
+    $get_array = array('id'=>$job['Generate ID'],'key'=>$job['Key']);
+    if ($job['Option Selected'] == "COLORSSN") {
+        $url = $colorssn_page;
+    } else {
+        $url = $generate_page;
+    }
+	$url = $url . "?" . http_build_query($get_array);
 	$generate_html .= "<tr>";
 	if (time() < $job['Time Completed'] + __RETENTION_DAYS__) {
 		$generate_html .= "<td>&nbsp</td>";

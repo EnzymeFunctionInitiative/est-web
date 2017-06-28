@@ -31,7 +31,6 @@ if ($input->is_debug) {
 $test = "";
 foreach($_POST as $var) {
     $test .= " " . $var;
-
 }
 
 
@@ -43,9 +42,12 @@ if (isset($_POST['submit'])) {
     $option = $_POST['option_selected'];
 
     $input->email = $_POST['email'];
-    $input->evalue = $_POST['evalue'];
-    $input->program = isset($_POST['program']) ? $_POST['program'] : "";
-    $input->fraction = $_POST['fraction'];
+    if (array_key_exists('evalue', $_POST))
+        $input->evalue = $_POST['evalue'];
+    if (array_key_exists('program', $_POST))
+        $input->program = isset($_POST['program']) ? $_POST['program'] : "";
+    if (array_key_exists('fraction', $_POST))
+        $input->fraction = $_POST['fraction'];
     
     switch($option) {
         //Option A - Blast Input
@@ -71,46 +73,73 @@ if (isset($_POST['submit'])) {
         //Option C - Fasta Input
         case 'C':
         case 'E':
-            if ($_FILES['fasta_file']['error'] === "") { $_FILES['fasta_file']['error'] = 4; }
+        //Option D - accession list
+        case 'D':
+        //Option color SSN
+        case 'colorssn':
+            if ($_FILES['file']['error'] === "") { $_FILES['file']['error'] = 4; }
     
-            if ((isset($_FILES['fasta_file']['error'])) && ($_FILES['fasta_file']['error'] !== 0)) {
-                $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['fasta_file']['error']);
+            if ((isset($_FILES['file']['error'])) && ($_FILES['file']['error'] !== 0)) {
+                $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['file']['error']);
                 $result['RESULT'] = false;
             }
             else {
-                $useFastaHeaders = $_POST['use_fasta_headers'];
-                $fasta = new fasta($db, 0, $useFastaHeaders == "true" ? "E" : "C");
+                if ($option == "C" || $option == "E") {
+                    $useFastaHeaders = $_POST['use_fasta_headers'];
+                    $obj = new fasta($db, 0, $useFastaHeaders == "true" ? "E" : "C");
+                    $input->field_input = $_POST['fasta_input'];
+                    $input->families = $_POST['families_input'];
+                } else if ($option == "D") {
+                    $obj = new accession($db);
+                    $input->field_input = $_POST['accession_input'];
+                    $input->families = $_POST['families_input'];
+                } else if ($option == "colorssn") {
+                    $obj = new colorssn($db);
+                    //$input->cooccurrence = $_POST['cooccurrence'];
+                    //$input->neighborhood_size = $_POST['neighborhood_size'];
+                }
  
-                $input->families = $_POST['families_input'];
-                $input->tmp_file = $_FILES['fasta_file']['tmp_name'];
-                $input->uploaded_filename = $_FILES['fasta_file']['name'];
-                $input->field_input = $_POST['fasta_input'];
- 
-                $result = $fasta->create($input);
+                $input->tmp_file = $_FILES['file']['tmp_name'];
+                $input->uploaded_filename = $_FILES['file']['name'];
+                $result = $obj->create($input);
             }
 
             break;
             
-        //Option D - accession list
-        case 'D':
-            if ($_FILES['accession_file']['error'] === "") { $_FILES['accession_file']['error'] = 4; }
+        //case 'D':
+        //    if ($_FILES['accession_file']['error'] === "") { $_FILES['accession_file']['error'] = 4; }
     
-            if ((isset($_FILES['accession_file']['error'])) && ($_FILES['accession_file']['error'] !== 0)) {
-                $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['accession_file']['error']);
-                $result['RESULT'] = false;
-            }
-            else {
-                $accession = new accession($db);
-                
-                $input->families = $_POST['families_input'];
-                $input->tmp_file = $_FILES['accession_file']['tmp_name'];
-                $input->uploaded_filename = $_FILES['accession_file']['name'];
-                $input->field_input = $_POST['accession_input'];
- 
-                $result = $accession->create($input);
-            }
+        //    if ((isset($_FILES['accession_file']['error'])) && ($_FILES['accession_file']['error'] !== 0)) {
+        //        $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['accession_file']['error']);
+        //        $result['RESULT'] = false;
+        //    }
+        //    else {
+        //        $input->tmp_file = $_FILES['accession_file']['tmp_name'];
+        //        $input->uploaded_filename = $_FILES['accession_file']['name'];
+        //        $result = $accession->create($input);
+        //    }
 
-            break;
+        //    break;
+
+        //case 'colorssn':
+        //    if ($_FILES['colorssn_file']['error'] === "") { $_FILES['colorssn_file']['error'] = 4; }
+    
+        //    if ((isset($_FILES['colorssn_file']['error'])) && ($_FILES['colorssn_file']['error'] !== 0)) {
+        //        $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['colorssn_file']['error']);
+        //        $result['RESULT'] = false;
+        //    }
+        //    else {
+        //        $colorssn = new colorssn($db);
+        //        
+        //        $input->tmp_file = $_FILES['colorssn_file']['tmp_name'];
+        //        $input->uploaded_filename = $_FILES['colorssn_file']['name'];
+        //        $input->cooccurrence = $_POST['cooccurrence'];
+        //        $input->neighbor_size = $_POST['neighbor_size'];
+ 
+        //        $result = $colorssn->create($input);
+        //    }
+
+        //    break;
 
 
         default:

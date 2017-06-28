@@ -12,14 +12,21 @@ if (isset($_GET['year'])) {
         $year = $_GET['year'];
 }
 $analysis_page = functions::get_web_root() . "/stepe.php";
+$colorssn_page = functions::get_web_root() . "/view_coloredssn.php";
 $jobs = statistics::get_generate($db,$month,$year);
 
 
 $analysis_jobs = statistics::get_analysis($db,$month,$year);
 $analysis_html = "";
 foreach ($analysis_jobs as $job) {
-        $get_array = array('id'=>$job['Generate ID'],'key'=>$job['Key'],'analysis_id'=>$job['Analysis ID']);
-        $url = $analysis_page . "?" . http_build_query($get_array);
+    $get_array = array('id'=>$job['Generate ID'],'key'=>$job['Key'],'analysis_id'=>$job['Analysis ID']);
+    if ($job['Option Selected'] == "COLORSSN") {
+        $url = $colorssn_page;
+    } else {
+        $url = $analysis_page;
+    }
+    $url = $url . "?" . http_build_query($get_array);
+    
 	$analysis_html .= "<tr>";
 	if (time() < $job['Time Completed'] + __RETENTION_DAYS__) {
 		$analysis_html .= "<td>&nbsp</td>\n";
