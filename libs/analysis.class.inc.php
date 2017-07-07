@@ -28,6 +28,8 @@ class analysis {
     private $num_pbs_jobs = 16;
     private $filter_sequences;
     private $eol = PHP_EOL;
+    private $db_version;
+
     ///////////////Public Functions///////////
 
     public function __construct($db,$id = 0) {
@@ -35,8 +37,6 @@ class analysis {
 
         if ($id) {
             $this->load_analysis($id);
-
-
         }
     }
 
@@ -61,6 +61,10 @@ class analysis {
     public function get_sequence_file() {
         return $this->sequence_file;
     }
+    public function get_time_completed_formatted() {
+        return functions::format_datetime(functions::parse_datetime($this->time_completed));
+    }
+    public function get_db_version() { return $this->db_version; }
 
     public function get_output_dir() {
         return $this->get_generate_id() . "/" . $this->output_dir;
@@ -444,7 +448,7 @@ class analysis {
 
 
     private function load_analysis($id) {
-        $sql = "SELECT * FROM analysis WHERE analysis_id='" . $id . "' ";
+        $sql = "SELECT * FROM analysis INNER JOIN generate ON analysis_generate_id = generate_id WHERE analysis_id='" . $id . "' ";
         $sql .= "LIMIT 1";
         $result = $this->db->query($sql);
         if ($result) {
@@ -461,6 +465,7 @@ class analysis {
             $this->time_started = $result[0]['analysis_time_started'];
             $this->time_completed = $result[0]['analysis_time_completed'];
             $this->filter_sequences = $result[0]['analysis_filter_sequences'];
+            $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);
         }
 
     }

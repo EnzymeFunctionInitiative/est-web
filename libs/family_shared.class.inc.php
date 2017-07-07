@@ -86,7 +86,7 @@ abstract class family_shared extends option_base {
         $interpro_families = implode(",",$this->get_interpro_families());
 
         $parms = array();
-        $parms = generate_helper::get_run_script_args($outDir, $parms);
+        $parms = generate_helper::get_run_script_args($outDir, $parms, $this);
         #$parms["-blast"] = strtolower($this->get_program());
         if (strlen($interpro_families)) {
             $parms["-ipro"] = $interpro_families;

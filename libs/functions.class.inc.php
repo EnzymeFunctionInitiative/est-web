@@ -91,6 +91,16 @@ class functions {
 
     }
 
+
+    public static function parse_datetime($datetimeString) {
+        return DateTime::createFromFormat("Y-m-d H:i:s", $datetimeString);
+    }
+
+    public static function format_datetime($datetimeObject) {
+        return $datetimeObject->format("m/d/Y g:i A, T");
+    }
+
+
     # recursively remove a directory
     public static function rrmdir($dir) {
         foreach(glob($dir . '/*') as $file) {
@@ -271,9 +281,45 @@ class functions {
     public static function get_databases($db) {
         $sql = "SELECT * FROM db_version";
         return $db->query($sql);
-
-
     }
+
+    public static function get_encoded_db_version() {
+        $ver = ((int)str_replace("_", "", functions::get_uniprot_version())) * 1000;
+        $ver += ((int)str_replace(".", "", functions::get_interpro_version()));
+        return $ver;
+    }
+
+    public static function decode_db_version($ver) {
+        if (empty($ver)) {
+            return "";
+        }
+
+        $ipv = ($ver % 1000) / 10;
+        $upvYear = intval($ver / 100000);
+        $upvMon = intval(intval($ver / 1000) % 100);
+        return sprintf("UniProt: %d-%02d / Interpro: %.1f", $upvYear, $upvMon, $ipv);
+    }
+
+
+    public static function safe_filename($filename) {
+        return mb_ereg_replace("([^A-Za-z0-9_\-\.])", "_", $filename);
+    }
+
+    public static function format_job_type($gen_type) {
+        if ($gen_type == "BLAST") {
+            $gen_type = "Option A";
+        } else if ($gen_type == "FAMILIES") {
+            $gen_type = "Option B";
+        } else if ($gen_type == "ACCESSION") {
+            $gen_type = "Option D";
+        } else if ($gen_type == "FASTA") {
+            $gen_type = "Option C (no FASTA header reading)";
+        } else if ($gen_type == "FASTA_ID") {
+            $gen_type = "Option C (with FASTA header reading)";
+        }
+        return $gen_type;
+    }
+
 
     public static function add_database($db,$db_date,$interpro,$unipro,$default = 0) {
         $sql = "INSERT INTO db_version(db_version_date,db_version_interpro,db_version_unipro,db_version_default) ";

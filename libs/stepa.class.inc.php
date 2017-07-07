@@ -26,6 +26,7 @@ class stepa {
     protected $num_pbs_jobs = 1;
     protected $program;
     protected $fraction;
+    protected $db_version;
 
     //private $alignment_length = "r_quartile_align.png";
     //private $length_histogram = "r_hist_length.png";
@@ -43,8 +44,6 @@ class stepa {
 
         if ($id) {
             $this->load_generate($id);
-
-
         }
     }
 
@@ -60,6 +59,9 @@ class stepa {
     public function get_pbs_number() { return $this->pbs_number; }
     public function get_time_started() { return $this->time_started; }
     public function get_time_completed() { return $this->time_completed; }
+    public function get_time_completed_formatted() {
+        return functions::format_datetime(functions::parse_datetime($this->time_completed));
+    }
     public function get_unixtime_completed() { return strtotime($this->time_completed); }
     public function get_num_sequences() { return $this->num_sequences; }
     public function get_program() { return $this->program; }
@@ -75,6 +77,7 @@ class stepa {
     }
     public function get_blast_input() { return ""; }
     public function get_families() { return array(); }
+    public function get_db_version() { return $this->db_version; }
 
 
     public function set_pbs_number($pbs_number) {
@@ -142,7 +145,7 @@ class stepa {
         $num_seq = 0;
         if (file_exists($full_path)) {
 
-            $exec = "grep '>' " . $full_path . " | wc -l ";
+            $exec = "grep '>' " . $full_path . " | sort | uniq | wc -l ";
             $output = exec($exec);
             $output = trim(rtrim($output));
             list($num_seq,) = explode(" ",$output);
@@ -412,6 +415,7 @@ class stepa {
             $this->num_sequences = $result[0]['generate_num_sequences'];
             $this->email = $result[0]['generate_email'];
             $this->program = $result[0]['generate_program'];
+            $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);
         }
 
         return $result;

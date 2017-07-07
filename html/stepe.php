@@ -1,72 +1,101 @@
 <?php 
 include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php'; 
-include_once 'includes/quest_acron.inc';
+include_once '../libs/table_builder.class.inc.php';
 
 
-if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
-    $web_address = dirname($_SERVER['PHP_SELF']);
-    $generate = new stepa($db,$_GET['id']);
-    if ($generate->get_key() != $_GET['key']) {
-        echo "No EFI-EST Selected. Please go back";
-        exit;
+if ((!isset($_GET['id'])) || (!is_numeric($_GET['id']))) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+    exit;
+}
+
+$generate = new stepa($db,$_GET['id']);
+$gen_id = $generate->get_id();
+
+if ($generate->get_key() != $_GET['key']) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+    //echo "No EFI-EST Selected. Please go back";
+    exit;
+}
+
+$analysis_id = $_GET['analysis_id'];
+$analysis = new analysis($db, $analysis_id);
+
+
+$table_format = "html";
+if (isset($_GET["as-table"])) {
+    $table_format = "tab";
+}
+$table = new table_builder($table_format);
+
+
+$web_address = dirname($_SERVER['PHP_SELF']);
+$dateCompleted = $generate->get_time_completed_formatted();
+$dbVersion = $generate->get_db_version();
+
+
+$gen_type = $generate->get_type();
+$gen_type = functions::format_job_type();
+
+$table->add_row("Date Completed", $dateCompleted);
+if (!empty($dbVersion)) {
+    $table->add_row("Database Version", $dbVersion);
+}
+$table->add_row("Input Option", $gen_type);
+$table->add_row("Job Number", $gen_id);
+
+
+if ($generate->get_type() == "BLAST") {
+    $generate = new blast($db,$_GET['id']);
+    $code = $generate->get_blast_input();
+    if ($table_format == "html") {
+        $code = "<a href='blast.php?blast=$code' target='_blank'>View Sequence</a>";
     }
-
-    $gen_type = $generate->get_type();
-    if ($gen_type == "BLAST") {
-        $gen_type = "Option A";
-    } else if ($gen_type == "FAMILIES") {
-        $gen_type = "Option B";
-    } else if ($gen_type == "ACCESSION") {
-        $gen_type = "Option D";
-    } else if ($gen_type == "FASTA") {
-        $gen_type = "Option C (no FASTA header reading)";
-    } else if ($gen_type == "FASTA_ID") {
-        $gen_type = "Option C (with FASTA header reading)";
+    $table->add_row("Blast Sequence", $code);
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Maximum Blast Sequences", number_format($generate->get_submitted_max_sequences()));
+}
+elseif ($generate->get_type() == "FAMILIES" || $generate->get_type() == "ACCESSION") {
+    $generate = new generate($db,$_GET['id']);
+    $table->add_row("PFam/Interpro Families", $generate->get_families_comma());
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Fraction", $generate->get_fraction());
+    $table->add_row("Domain", $generate->get_domain());
+}
+elseif ($generate->get_type() == "FASTA" || $generate->get_type() == "FASTA_ID") {
+    $generate = new fasta($db,$_GET['id']);
+    $table->add_row("Uploaded Fasta File", $generate->get_uploaded_filename());
+    if ($generate->get_families_comma() != "") {
+        $table->add_row("PFam/Interpro Families", $generate->get_families_comma());
     }
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Fraction", $generate->get_fraction());
+}
 
-    $gen_id = $generate->get_id();
+$table->add_row("Network Name", $analysis->get_name());
+$table->add_row("Alignment Score", $analysis->get_evalue());
+$table->add_row("Minimum Length", number_format($analysis->get_min_length()));
+$table->add_row("Maximum Length", number_format($analysis->get_max_length()));
+$table->add_row("Number of Filtered Sequences", number_format($analysis->get_num_sequences_post_filter()));
+$table->add_row("Total Number of Sequences", number_format($generate->get_num_sequences()));
 
-    $net_info_html = "";
-    $net_info_html .= "<tr><td>Input Option</td><td>$gen_type</td></tr>\n";
-    $net_info_html .= "<tr><td>Job Number</td><td>$gen_id</td></tr>\n";
 
-    if ($generate->get_type() == "BLAST") {
-        $generate = new blast($db,$_GET['id']);
-        $net_info_html .= "<tr><td>Blast Sequence</td>";
-        $net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td></tr>\n";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Maximum Blast Sequences</td><td>" . number_format($generate->get_submitted_max_sequences()) . "</td></tr>\n";
+$table_string = $table->as_string();
 
-    }
-    elseif ($generate->get_type() == "FAMILIES" || $generate->get_type() == "ACCESSION") {
-        $generate = new generate($db,$_GET['id']);
-        $net_info_html .= "<tr><td>PFam/Interpro Families</td>";
-        $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>\n";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>\n";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>\n";
-        $net_info_html .= "<tr><td>Domain</td><td>" . $generate->get_domain() . "</td></tr>\n";
+if (isset($_GET["as-table"])) {
+    $table_filename = functions::safe_filename($analysis->get_name()) . "_settings.txt";
 
-    }
-    elseif ($generate->get_type() == "FASTA" || $generate->get_type() == "FASTA_ID") {
-        $generate = new fasta($db,$_GET['id']);
-        $net_info_html .= "<tr><td>Uploaded Fasta File</td>";
-        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>\n";
-        if ($generate->get_families_comma() != "") {
-            $net_info_html .= "<tr><td>PFam/Interpro Families</td>";
-            $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>\n";
-
-        }
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>\n";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td></tr>\n";
-
-    }
-
-    $analysis_id = $_GET['analysis_id'];
-    $analysis = new analysis($db,$analysis_id);
+    header('Pragma: public');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="' . $table_filename . '"');
+    header('Content-Length: ' . strlen($table_string));
+    ob_clean();
+    echo $table_string;
+}
+else {
 
     if (time() > $analysis->get_unixtime_completed() + functions::get_retention_secs()) {
-
         echo "<p class='center'><br>Your job results are only retained for a period of " . functions::get_retention_days() . " days.";
         echo "<br>Your job was completed on " . $analysis->get_time_completed();
         echo "<br>Please go back to the <a href='" . functions::get_server_name() . "'>homepage</a></p>";
@@ -102,16 +131,9 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         }
     }
 
-
-}
-
-else {
-
-    echo "No EFI-EST Select.  Please go back";
-    exit;
-
-}
-
+    include_once 'includes/header.inc.php'; 
+    include_once 'includes/quest_acron.inc';
+    
 
 ?>	
 
@@ -125,38 +147,12 @@ else {
     <p>&nbsp;</p>
     <h4>Network Information</h4>
     <p>
-        <b>TO-DO:</b> Generation and Analysis Summary Table
-        <a href='<?php echo $analysis->get_stats_full_path(); ?>'><button>Download</button></a>
+        Generation and Analysis Summary Table
+        <a href='<?php echo $_SERVER['PHP_SELF'] . "?id=" . $_GET['id'] . "&key=" . $_GET['key'] . "&analysis_id=" . $_GET['analysis_id'] . "&as-table=1" ?>'><button>Download</button></a>
     </p>
 
     <table width="100%" border="1">
-        <?php echo $net_info_html; ?>
-    <tr>
-        <td>Network Name</td>
-        <td><?php echo $analysis->get_name(); ?></td>
-    </tr>
-    <tr>
-        <td>Alignment Score</td>
-        <td><?php echo $analysis->get_evalue(); ?></td>
-    </tr>
-    <tr>
-        <td>Minimum Length</td>
-        <td><?php echo number_format($analysis->get_min_length()); ?></td>
-    </tr>
-    <tr>
-        <td>Maximum Length</td>
-        <td><?php echo number_format($analysis->get_max_length()); ?></td>
-    </tr>
-    <tr>
-
-        <td>Number of Filtered Sequences</td>
-        <td><?php echo number_format($analysis->get_num_sequences_post_filter()); ?></td>
-
-    </tr>
-    <tr>
-        <td>Total Number of Sequences</td>
-        <td><?php echo number_format($generate->get_num_sequences()); ?></td>
-    </tr>
+        <?php echo $table_string; ?>
     </table>
 
     <h4>Full Network <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>
@@ -193,5 +189,11 @@ else {
 
   </div>
 <center><p><a href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3'>New to Cytoscape</a></p></center>
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php
+
+    include_once 'includes/footer.inc.php';
+
+} // as-table block
+
+?>
 

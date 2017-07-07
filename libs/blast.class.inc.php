@@ -1,6 +1,7 @@
 <?php
 
 require_once('option_base.class.inc.php');
+require_once('generate_helper.class.inc.php');
 
 class blast extends option_base {
 
@@ -20,10 +21,10 @@ class blast extends option_base {
     }
 
     public function get_submitted_max_sequences() { return $this->blast_sequence_max; }
-    public function get_blast_input() { return $this->blast_input; }
-    public function get_finish_file() { 
-        return $this->get_output_dir() . "/" . $this->finish_file; 
-    }
+        public function get_blast_input() { return $this->blast_input; }
+        public function get_finish_file() { 
+            return $this->get_output_dir() . "/" . $this->finish_file; 
+        }
     public function get_fail_file() {
         return $this->get_output_dir() . "/" . $this->fail_file;
     }
@@ -75,32 +76,28 @@ class blast extends option_base {
         return "blasthits-new.pl";
     }
 
-    protected function get_run_script_args($out) {
+    protected function get_run_script_args($outDir) {
         $parms = array();
+        $parms = generate_helper::get_run_script_args($outDir, $parms, $this);
 
         $parms["-seq"] = "'" . $this->get_blast_input() . "'";
-        $parms["-evalue"] = $this->get_evalue();
-        $parms["-np"] = functions::get_blasthits_processors();
-            $parms["-queue"] = functions::get_generate_queue();
-            $parms["-memqueue"] = functions::get_generate_queue();
-            if ($this->get_submitted_max_sequences() != "") {
-                $parms["-nresults"] = $this->get_submitted_max_sequences();
-            }
-            else {
-                $parms["-nresults"] = functions::get_default_blast_seq();
-            }
-            $parms["-tmpdir"] = $out->relative_output_dir;
-
-            return $parms;
+        if ($this->get_submitted_max_sequences() != "") {
+            $parms["-nresults"] = $this->get_submitted_max_sequences();
+        }
+        else {
+            $parms["-nresults"] = functions::get_default_blast_seq();
         }
 
-        protected function load_generate($id) {
-            $result = parent::load_generate($id);
-            if (! $result) {
-                return;
-            }
+        return $parms;
+    }
 
-            $this->blast_input = $result[0]['generate_blast'];
+    protected function load_generate($id) {
+        $result = parent::load_generate($id);
+        if (! $result) {
+            return;
+        }
+
+        $this->blast_input = $result[0]['generate_blast'];
         $this->blast_sequence_max = $result[0]['generate_blast_max_sequence'];
 
         return $result;

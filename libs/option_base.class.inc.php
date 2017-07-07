@@ -87,6 +87,7 @@ abstract class option_base extends stepa {
             'generate_evalue' => $data->evalue,
             'generate_fraction' => $data->fraction,
             'generate_program' => $data->program,
+            'generate_db_version' => functions::get_encoded_db_version(),
         );
         return $insert_array;
     }
