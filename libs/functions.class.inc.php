@@ -320,6 +320,10 @@ class functions {
         return $gen_type;
     }
 
+    public static function get_release_status() {
+        return defined(__BETA_RELEASE__) ? __BETA_RELEASE__ . " " : "";
+    }
+
 
     public static function add_database($db,$db_date,$interpro,$unipro,$default = 0) {
         $sql = "INSERT INTO db_version(db_version_date,db_version_interpro,db_version_unipro,db_version_default) ";
@@ -373,6 +377,9 @@ class functions {
         return __COLORSSN_MAP_FILE_NAME__;
     }
 
+    public static function get_accession_counts_filename() {
+        return defined(__ACC_COUNT_FILENAME__) ? __ACC_COUNT_FILENAME__ : "";
+    }
 }
 
 ?>

@@ -31,19 +31,21 @@ $dbVersion = $generate->get_db_version();
 
 
 $gen_type = $generate->get_type();
-$gen_type = functions::format_job_type($gen_type);
+$formatted_gen_type = functions::format_job_type($gen_type);
 
 $table->add_row("Date Completed", $dateCompleted);
 if (!empty($dbVersion)) {
     $table->add_row("Database Version", $dbVersion);
 }
-$table->add_row("Input Option", $gen_type);
+$table->add_row("Input Option", $formatted_gen_type);
 $table->add_row("Job Number", $gen_id);
 
 $job_name = $gen_id . "_" . $gen_type;
 
+$uploaded_file = "";
+$included_family = "";
 
-if ($generate->get_type() == "BLAST") {
+if ($gen_type == "BLAST") {
     $generate = new blast($db,$_GET['id']);
     $code = $generate->get_blast_input();
     if ($table_format == "html") {
@@ -54,31 +56,38 @@ if ($generate->get_type() == "BLAST") {
     $table->add_row("Maximum Blast Sequences", number_format($generate->get_submitted_max_sequences()));
     if (functions::get_program_selection_enabled()) { $table->add_row("Program Used", $generate->get_program()); }
 }
-elseif ($generate->get_type() == "FAMILIES" || $generate->get_type() == "ACCESSION" || $generate->get_type() == "FASTA" || $generate->get_type() == "FASTA_ID") {
-    if ($generate->get_type() == "FASTA" || $generate->get_type() == "FASTA_ID") {
+elseif ($gen_type == "FAMILIES" || $gen_type == "ACCESSION" || $gen_type == "FASTA" || $gen_type == "FASTA_ID") {
+    if ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
         $generate = new fasta($db,$_GET['id']);
-        $table->add_row("Uploaded Fasta File", $generate->get_uploaded_filename());
+        $uploaded_file = $generate->get_uploaded_filename();
+        if ($uploaded_file) $table->add_row("Uploaded Fasta File", $uploaded_file);
+    } else if ($gen_type == "ACCESSION") {
+        $generate = new accession($db,$_GET['id']);
+        $uploaded_file = $generate->get_uploaded_filename();
+        if ($uploaded_file) $table->add_row("Uploaded Accession ID File", $uploaded_file);
     } else {
         $generate = new generate($db,$_GET['id']);
-        if ($generate->get_type() == "ACCESSION") { $table->add_row("Uploaded Accession ID File", $generate->get_uploaded_filename()); }
     }
 
-    if ($generate->get_families_comma() != "") { $table->add_row("PFam/Interpro Families", $generate->get_families_comma()); }
+    $included_family = $generate->get_families_comma();
+    if ($included_family != "") $table->add_row("PFam/Interpro Families", $included_family);
     
     $table->add_row("E-Value", $generate->get_evalue());
     $table->add_row("Fraction", $generate->get_fraction());
     
-    if ($generate->get_type() == "FAMILIES") { $table->add_row("Domain", $generate->get_domain()); }
+    if ($gen_type == "FAMILIES") { $table->add_row("Domain", $generate->get_domain()); }
     if (functions::get_program_selection_enabled()) { $table->add_row("Program Used", $generate->get_program()); }
 }
-elseif ($generate->get_type() == "COLORSSN") {
+elseif ($gen_type == "COLORSSN") {
     $generate = new colorssn($db, $_GET['id']);
     $table->add_row("Uploaded XGMML File", $generate->get_uploaded_filename());
     $table->add_row("Neighborhood Size", $generate->get_neighborhood_size());
     $table->add_row("Cooccurrence", $generate->get_cooccurrence());
 }
 
-$table->add_row("Total Number of Sequences", number_format($generate->get_num_sequences()));
+if ($uploaded_file) $table->add_row("Number of Sequences in Uploaded File", number_format($generate->get_num_file_sequences()));
+if ($included_family) $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
+$table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
 
 
 $table_string = $table->as_string();

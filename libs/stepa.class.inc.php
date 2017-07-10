@@ -21,7 +21,10 @@ class stepa {
     protected $output_dir = "output";
     protected $type;
     protected $num_sequences;
+    protected $num_file_sequences;
+    protected $num_family_sequences;
     protected $accession_file = "allsequences.fa";
+    protected $counts_file;
     protected $eol = PHP_EOL;
     protected $num_pbs_jobs = 1;
     protected $program;
@@ -45,6 +48,8 @@ class stepa {
         if ($id) {
             $this->load_generate($id);
         }
+
+        $this->counts_file = functions::get_accession_counts_filename();
     }
 
     public function __destruct() {
@@ -64,6 +69,8 @@ class stepa {
     }
     public function get_unixtime_completed() { return strtotime($this->time_completed); }
     public function get_num_sequences() { return $this->num_sequences; }
+    public function get_num_file_sequences() { return $this->num_file_sequences; }
+    public function get_num_family_sequences() { return $this->num_family_sequences; }
     public function get_program() { return $this->program; }
     public function get_fraction() { return $this->fraction; }
     public function get_finish_file() { 
@@ -71,6 +78,9 @@ class stepa {
     }
     public function get_accession_file() {
         return $this->get_output_dir() . "/".  $this->accession_file;
+    }
+    public function get_accession_counts_file() {
+        return $this->get_output_dir() . "/".  $this->counts_file;
     }
     public function get_output_dir() {
         return $this->get_id() . "/" . $this->output_dir;
@@ -141,26 +151,59 @@ class stepa {
 
     public function get_num_sequence_from_file() {
         $results_path = functions::get_results_dir();
+        $full_count_path = $results_path . "/" . $this->get_accession_counts_file();
         $full_path = $results_path . "/" . $this->get_accession_file();
-        $num_seq = 0;
-        if (file_exists($full_path)) {
+        $num_seq = array(0, 0, 0);
 
+        if (file_exists($full_count_path)) {
+            $lines = file($full_count_path);
+            foreach ($lines as $line) {
+                list($key, $val) = split("\t", rtrim($line));
+                if (!$val)
+                    $num_seq[0] = int($key);
+                else if ($key == "Total")
+                    $num_seq[0] = int($val);
+                else if($key == "File")
+                    $num_seq[1] = int($val);
+                else if ($key == "Family")
+                    $num_seq[2] = int($val);
+            }
+        } else if (file_exists($full_path)) {
             $exec = "grep '>' " . $full_path . " | sort | uniq | wc -l ";
             $output = exec($exec);
             $output = trim(rtrim($output));
             list($num_seq,) = explode(" ",$output);
-
         }
+
         return $num_seq;
     }
 
     public function set_num_sequences($num_seq) {
         $sql = "UPDATE generate ";
-        $sql .= "SET generate_num_sequences='" . $num_seq . "' ";
+        
+        if (is_array($num_seq)) {
+            $sql .= "SET generate_num_sequences='" . $num_seq[0] . "' ";
+            $sql .= "SET generate_num_file_sequences='" . $num_seq[1] . "' ";
+            $sql .= "SET generate_num_family_sequences='" . $num_seq[2] . "' ";
+        } else {
+            $sql .= "SET generate_num_sequences='" . $num_seq . "' ";
+        }
+        
         $sql .= "WHERE generate_id='" . $this->get_id() . "' LIMIT 1";
+        
         $result = $this->db->non_select_query($sql);
+
         if ($result) {
-            $this->num_sequences = $num_seq;
+            if (is_array($num_seq)) {
+                $this->num_sequences = $num_seq[0];
+                $this->num_file_sequences = $num_seq[1];
+                $this->num_family_sequences = $num_seq[2];
+            }
+            else {
+                $this->num_sequences = $num_seq;
+                $this->num_file_sequences = 0;
+                $this->num_family_sequences = 0;
+            }
             return true;
         }
         return false;
@@ -413,6 +456,8 @@ class stepa {
             $this->time_completed = $result[0]['generate_time_completed'];
             $this->type = $result[0]['generate_type'];
             $this->num_sequences = $result[0]['generate_num_sequences'];
+            $this->num_file_sequences = $result[0]['generate_num_file_sequences'];
+            $this->num_family_sequences = $result[0]['generate_num_family_sequences'];
             $this->email = $result[0]['generate_email'];
             $this->program = $result[0]['generate_program'];
             $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);
