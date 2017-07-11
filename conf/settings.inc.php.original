@@ -20,6 +20,7 @@ define("__VERSION__","Beta");
 define("__TIMEZONE__","America/Chicago");
 define("__ADMIN_EMAIL__","");
 define("__WEB_ROOT__","");
+define("__GNT_WEB_ROOT__","");
 define("__ENABLE_LOG__",true);
 define("__LOG_FILE__","");
 define("__INTERPRO_VERSION__","53.0");

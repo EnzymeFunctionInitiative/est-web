@@ -95,6 +95,7 @@ abstract class family_shared extends option_base {
             $parms["-pfam"] = $pfam_families;
         }
         $parms["-fraction"] = $this->get_fraction();
+        $parms["-seq-count-file"] = $this->get_accession_counts_file_full_path();
 
         return $parms;
     }

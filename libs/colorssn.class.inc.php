@@ -26,7 +26,7 @@ class colorssn extends option_base {
         if (substr_compare($parts['filename'], ".xgmml", -strlen(".xgmml")) === 0) {
             $parts = pathinfo($parts['filename']);
         }
-        return $parts['filename'] . "_coloredssn";
+        return $this->get_id() . "_" . $parts['filename'] . "_coloredssn";
     }
 
 
@@ -103,8 +103,8 @@ class colorssn extends option_base {
     }
 
     public function get_job_info($eol = "\r\n") {
-        $message = "EFI-EST ID: " . $this->get_id() . $eol;
-        $message .= "Color SSN" . $eol;
+        $message = "EFI-EST Job ID: " . $this->get_id() . $eol;
+        $message .= "Computation Type: Color SSN" . $eol;
         return $message;
     }
 
@@ -132,17 +132,6 @@ class colorssn extends option_base {
 
     // END OVERLOADS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private function get_email_info_txt() {
-        return strip_tags($this->get_email_info_html());
-    }
-
-    private function get_email_info_html() {
-        $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-        $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-        $message .= functions::get_email_footer();
-        return $message;
-    }
 
     private function verify_cooccurrence($cooccurrence) {
         return ($cooccurrence >= 1 && $cooccurrence <= 100);

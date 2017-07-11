@@ -1,5 +1,5 @@
 <div class="clear"></div>
-<p class="suggestions" style='font-size:14px'><a href="http://enzymefunction.org/content/sequence-similarity-networks-tool-feedback" target="_blank">Need help or have suggestions or comments?   Please click here to submit »</a></p>
+<p class="suggestions" style='font-size:20px'><a href="http://enzymefunction.org/content/sequence-similarity-networks-tool-feedback" target="_blank">Need help or have suggestions or comments?   Please click here to submit »</a></p>
 </div>
 
 

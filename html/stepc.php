@@ -65,6 +65,7 @@ elseif ($gen_type == "FAMILIES" || $gen_type == "ACCESSION" || $gen_type == "FAS
         $generate = new accession($db,$_GET['id']);
         $uploaded_file = $generate->get_uploaded_filename();
         if ($uploaded_file) $table->add_row("Uploaded Accession ID File", $uploaded_file);
+        $table->add_row("No matches file", "<a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></a>", true);
     } else {
         $generate = new generate($db,$_GET['id']);
     }
@@ -169,8 +170,6 @@ else {
 <p>&nbsp;</p>
 
 <hr>
-
-
 
 <h4>1: Analyze your data set<a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
 <p><strong>Important! </strong>View plots and histogram to determine the appropriate lengths and alignment score before continuing.</p>

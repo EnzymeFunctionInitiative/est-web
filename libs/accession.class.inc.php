@@ -112,15 +112,22 @@ class accession extends family_shared {
     }
     
     public function get_job_info($eol = "\r\n") {
-        $message = "EFI-EST ID: " . $this->get_id() . $eol;
-        $message .= "Uploaded Accession File: " . $this->file_helper->get_uploaded_filename() . $eol;
-        if (count($this->get_families())) {
-            $message .= "PFAM/Interpro Families: ";
-            $message .= $this->get_families_comma() . $eol;
+        $message = "EFI-EST Job ID: " . $this->get_id() . $eol;
+        $message .= "Computation Type: " . functions::format_job_type($this->get_type()) . $eol;
+
+        $upl_file = $this->file_helper->get_uploaded_filename();
+        if ($upl_file) {
+            $message .= "Uploaded Accession File: $upl_file" . $eol;
         }
+
+        if (count($this->get_families())) {
+            $message .= "PFAM/Interpro Families: " . $this->get_families_comma() . $eol;
+        }
+
         $message .= "E-Value: " . $this->get_evalue() . $eol;
         $message .= "Fraction: " . $this->get_fraction() . $eol;
-        $message .= "Selected Program: " . $this->get_program() . $eol;
+        //$message .= "Selected Program: " . $this->get_program() . $eol;
+
         return $message;
     }
 

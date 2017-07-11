@@ -87,6 +87,7 @@ class blast extends option_base {
         else {
             $parms["-nresults"] = functions::get_default_blast_seq();
         }
+        $parms["-seq-count-file"] = $this->get_accession_count_file_full_path();
 
         return $parms;
     }
@@ -104,13 +105,14 @@ class blast extends option_base {
     }
 
     public function get_job_info($eol = "\r\n") {
-
         $message = "EFI-EST ID: " . $this->get_id() . $eol;
+        $message .= "Computation Type: " . functions::format_job_type($this->get_type()) . $eol;
         $message .= "Blast Sequence: " . $eol;
         $message .= $this->get_formatted_blast() . $eol;
         $message .= "E-Value: " . $this->get_evalue() . $eol;
         $message .= "Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . $eol;
-        $message .= "Selected Program: " . $this->get_program() . $eol;
+        //$message .= "Selected Program: " . $this->get_program() . $eol;
+        
         return $message;
     }
 
@@ -185,26 +187,6 @@ class blast extends option_base {
         }
         functions::log_message($msg);
         return $result;
-    }
-
-
-    private function get_email_info_txt() {
-        return strip_tags($this->get_email_info_html());
-
-    }
-
-    private function get_email_info_html() {
-        $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-        $message .= "<br>Blast Sequence: \r\n";
-        $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-        $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-        $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
-        $message .= "<br><br>";
-        $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-        $message .= functions::get_email_footer();
-        return $message;
-
-
     }
 
 }

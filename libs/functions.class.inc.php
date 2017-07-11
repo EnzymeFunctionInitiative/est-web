@@ -168,6 +168,9 @@ class functions {
     public static function get_web_root() {
         return __WEB_ROOT__;
     }
+    public static function get_gnt_web_root() {
+        return __GNT_WEB_ROOT__;
+    }
     public static function get_admin_email() {
         return __ADMIN_EMAIL__;
     }
@@ -284,7 +287,7 @@ class functions {
     }
 
     public static function get_encoded_db_version() {
-        $ver = ((int)str_replace("_", "", functions::get_uniprot_version())) * 1000;
+        $ver = ((int)str_replace("_", "", functions::get_uniprot_version())) * 10000;
         $ver += ((int)str_replace(".", "", functions::get_interpro_version()));
         return $ver;
     }
@@ -294,9 +297,9 @@ class functions {
             return "";
         }
 
-        $ipv = ($ver % 1000) / 10;
-        $upvYear = intval($ver / 100000);
-        $upvMon = intval(intval($ver / 1000) % 100);
+        $ipv = ($ver % 10000) / 10;
+        $upvYear = intval($ver / 1000000);
+        $upvMon = intval(intval($ver / 10000) % 100);
         return sprintf("UniProt: %d-%02d / Interpro: %.1f", $upvYear, $upvMon, $ipv);
     }
 
@@ -321,7 +324,7 @@ class functions {
     }
 
     public static function get_release_status() {
-        return defined(__BETA_RELEASE__) ? __BETA_RELEASE__ . " " : "";
+        return __BETA_RELEASE__ ? (__BETA_RELEASE__ . " ") : "";
     }
 
 
@@ -378,7 +381,7 @@ class functions {
     }
 
     public static function get_accession_counts_filename() {
-        return defined(__ACC_COUNT_FILENAME__) ? __ACC_COUNT_FILENAME__ : "";
+        return __ACC_COUNT_FILENAME__ ? __ACC_COUNT_FILENAME__ : "";
     }
 }
 
