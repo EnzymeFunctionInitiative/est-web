@@ -73,6 +73,15 @@ class colorssn extends option_base {
         return "make_colorssn_job.pl";
     }
 
+    protected function get_completion_email_subject_line() {
+        return "SSN colored";
+    }
+
+    protected function get_completion_email_body() {
+        $plain_email = "The SSN has been colored. To view it, please go to THE_URL" . $this->eol . $this->eol;
+        return $plain_email;
+    }
+
     protected function get_run_script_args($out) {
         $parms = array();
 

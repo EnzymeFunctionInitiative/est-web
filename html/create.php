@@ -106,42 +106,6 @@ if (isset($_POST['submit'])) {
 
             break;
             
-        //case 'D':
-        //    if ($_FILES['accession_file']['error'] === "") { $_FILES['accession_file']['error'] = 4; }
-    
-        //    if ((isset($_FILES['accession_file']['error'])) && ($_FILES['accession_file']['error'] !== 0)) {
-        //        $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['accession_file']['error']);
-        //        $result['RESULT'] = false;
-        //    }
-        //    else {
-        //        $input->tmp_file = $_FILES['accession_file']['tmp_name'];
-        //        $input->uploaded_filename = $_FILES['accession_file']['name'];
-        //        $result = $accession->create($input);
-        //    }
-
-        //    break;
-
-        //case 'colorssn':
-        //    if ($_FILES['colorssn_file']['error'] === "") { $_FILES['colorssn_file']['error'] = 4; }
-    
-        //    if ((isset($_FILES['colorssn_file']['error'])) && ($_FILES['colorssn_file']['error'] !== 0)) {
-        //        $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['colorssn_file']['error']);
-        //        $result['RESULT'] = false;
-        //    }
-        //    else {
-        //        $colorssn = new colorssn($db);
-        //        
-        //        $input->tmp_file = $_FILES['colorssn_file']['tmp_name'];
-        //        $input->uploaded_filename = $_FILES['colorssn_file']['name'];
-        //        $input->cooccurrence = $_POST['cooccurrence'];
-        //        $input->neighbor_size = $_POST['neighbor_size'];
- 
-        //        $result = $colorssn->create($input);
-        //    }
-
-        //    break;
-
-
         default:
             $result['RESULT'] = false;
             $result['MESSAGE'] = "You need to select one of the above options.";

@@ -311,8 +311,20 @@ class stepa {
         return "stepc.php";
     }
 
+    protected function get_completion_email_subject_line() {
+        return "Initial calculation complete";
+    }
+
+    protected function get_completion_email_body() {
+        $plain_email = "The initial information needed for the generation of the data set has been fetched and ";
+        $plain_email .= "processed. The similarity between sequences has been calculated." . $this->eol . $this->eol;
+        $plain_email .= "To finalize your SSN, please go to THE_URL" . $this->eol . $this->eol;
+        return $plain_email;
+    }
+
+
     public function email_complete() {
-        $subject = $this->beta . "EFI-EST - Initial calculation complete";
+        $subject = $this->beta . "EFI-EST - " . $this->get_completion_email_subject_line();
         $to = $this->get_email();
         $from = "EFI-EST <" .functions::get_admin_email() . ">";
 
@@ -323,12 +335,10 @@ class stepa {
         if ($this->beta) $plain_email = "Thank you for using the beta site of EFI-EST." . $this->eol;
 
         //plain text email
-        $plain_email .= "The initial information needed for the generation of the data set has been fetched and ";
-        $plain_email .= "processed. The similarity between sequences has been calculated." . $this->eol . $this->eol;
-        $plain_email .= "To finalize your SSN, please go to THE_URL" . $this->eol . $this->eol;
+        $plain_email .= $this->get_completion_email_body();
         $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
         $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
-        $plain_email .= "This data will only be retained for " . functions::get_retention_days() . " days." . $this->eol . $this->eol;
+        $plain_email .= "These data will only be retained for " . functions::get_retention_days() . " days." . $this->eol . $this->eol;
         $plain_email .= functions::get_email_footer() . $this->eol;
 
         $html_email = nl2br($plain_email, false);

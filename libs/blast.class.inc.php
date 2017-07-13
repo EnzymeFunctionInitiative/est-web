@@ -87,7 +87,7 @@ class blast extends option_base {
         else {
             $parms["-nresults"] = functions::get_default_blast_seq();
         }
-        $parms["-seq-count-file"] = $this->get_accession_count_file_full_path();
+        $parms["-seq-count-file"] = $this->get_accession_counts_file_full_path();
 
         return $parms;
     }
