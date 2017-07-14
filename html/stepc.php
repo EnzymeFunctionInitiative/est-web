@@ -181,8 +181,13 @@ else {
 
 <hr>
 
-<h4>1: Analyze your data set<a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
-<p><strong>Important! </strong>View plots and histogram to determine the appropriate lengths and alignment score before continuing.</p>
+<h4><b>Parameters for SSN Finalization</b></h4>
+
+To finalize the generation of an SSN, a similarity threshold that defines which protein sequences
+should or should not be connected in a network is needed. This will determine the segregation of proteins into clusters.
+
+<h4>Analyze your data set<a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
+<p>View plots and histogram to determine the appropriate lengths and alignment score before continuing.</p>
 <table>
     <tr>
         <td><p>Number of Edges Histogram</p></td>
@@ -233,8 +238,8 @@ else {
 
 
 <hr><p><br></p>
-<h4>2: Choose alignment score for output<a href="tutorial_analysis.php" class="question" target="_blank">?</a>
-<span style='color:red'>Required</span></h4>
+<h4><b>Finalization Parameters</b></h4>
+<h4>1: Alignment score for output <a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
 <p>Select a lower limit for the aligment score for the output files. You will input an integer which represents the exponent of 10<sup>-X</sup> where X is the integer.</p>
 
 <form name="define_length" method="post" action="<?php echo $url; ?>" class="align_left">
@@ -244,10 +249,13 @@ else {
     echo "value='" . $_POST['evalue'] ."'"; }
 ?>
         > alignment score</p>
-<hr><p><br></p>
-    <h4>3: Define length range<a href="tutorial_analysis.php" class="question" target="_blank">?</a>
+
+This score is the similarity threshold which determine the connection of proteins with each other. All pairs of proteins with a similarity score below this number will not be connected. Sets of connected proteins will form clusters.
+
+<hr>
+    <h4>2: Sequence length restriction  <a href="tutorial_analysis.php" class="question" target="_blank">?</a>
     <span style='color:red'>Optional</span></h4>
-    <p>If protein length needs to be restricted.</p>
+    <p> This option can be used to restrict sequences used based on their length.</p>
 
        <p><input type="text" name="minimum" maxlength='20' 
 <?php if (isset($_POST['minimum'])) { 
@@ -263,7 +271,7 @@ else {
 
 
       <hr>
-    <h4>4: Provide Network Name <span style='color:red'>Required</span></h4>
+    <h4>3: Provide Network Name</h4>
 
 
       <p><input type="text" name="network_name" 
@@ -272,16 +280,24 @@ else {
 }
 ?>
         > Name
+</p>
 
+This name will be displayed in Cytoscape.
 
         <p>
         <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
-      <input type="submit" name="analyze_data" value="Analyze Data" class="css_btn_class_recalc">
+</p>
 
-        </p>
+<hr>
+
+<center>
+      <input type="submit" name="analyze_data" value="Create SSN" class="css_btn_class_recalc">
+
     <p><?php if (isset($result['MESSAGE'])) { echo $result['MESSAGE']; } ?>
-    </form>
 
+<h4><b><span style="color: blue">BETA</span></b></h4>
+</center>
+    </form>
 
 
   </div>

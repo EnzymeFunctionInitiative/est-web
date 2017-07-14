@@ -8,7 +8,7 @@
 <script src='includes/jquery-ui-1.11.4.custom/jquery-ui.js' type='text/javascript'></script>
 <script src='includes/main.inc.js' type='text/javascript'></script>
 <script src='includes/upload.inc.js' type='text/javascript'></script>
-<title>EFI - Enzyme Similarity Tool</title>
+<title>EFI - Enzyme Similarity Tool - BETA</title>
 
 </head>
 

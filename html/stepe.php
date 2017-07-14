@@ -82,7 +82,7 @@ $table->add_row("Network Name", $analysis->get_name());
 $table->add_row("Alignment Score", $analysis->get_evalue());
 $table->add_row("Minimum Length", number_format($analysis->get_min_length()));
 $table->add_row("Maximum Length", number_format($analysis->get_max_length()));
-if ($uploaded_file) $table->add_row("Number of Sequences in Uploaded File", number_format($generate->get_num_file_sequences()));
+if ($uploaded_file) $table->add_row("Number of Sequences in Uploaded File", number_format($generate->get_total_num_file_sequences()));
 if ($included_family) $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
 $table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
 //$table->add_row("Final Number of Filtered Sequences", number_format($analysis->get_num_sequences_post_filter()));
@@ -126,7 +126,7 @@ else {
             $full_network_html .= "</tr>";
         }
         else {
-            $percent_identity = substr($stats[$i]['File'],strpos($stats[$i]['File'],'-')+1);
+            $percent_identity = substr($stats[$i]['File'],strrpos($stats[$i]['File'],'-')+1);
             $percent_identity = substr($percent_identity,0,strrpos($percent_identity,'_'));
             $percent_identity = str_replace(".","",$percent_identity);
             $path = functions::get_web_root() . "/results/" . $analysis->get_output_dir() . "/" . $analysis->get_network_dir() . "/" . $stats[$i]['File'];
