@@ -85,7 +85,7 @@ $table->add_row("Maximum Length", number_format($analysis->get_max_length()));
 if ($uploaded_file) $table->add_row("Number of Sequences in Uploaded File", number_format($generate->get_num_file_sequences()));
 if ($included_family) $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
 $table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
-$table->add_row("Final Number of Filtered Sequences", number_format($analysis->get_num_sequences_post_filter()));
+//$table->add_row("Final Number of Filtered Sequences", number_format($analysis->get_num_sequences_post_filter()));
 
 
 $table_string = $table->as_string();

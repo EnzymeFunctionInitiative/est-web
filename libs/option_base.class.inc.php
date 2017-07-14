@@ -215,7 +215,7 @@ abstract class option_base extends stepa {
 
     public function set_sequence_max($num_seq) {
         $sql ="UPDATE generate ";
-        $sql .= "SET generate_sequence_max='1',generate_num_sequences='" . $num_seq . "' ";
+        $sql .= "SET generate_sequence_max='1',generate_num_seq='" . $num_seq . "' ";
         $sql .= "WHERE generate_id='" . $this->get_id() . "' LIMIT 1";
         $result = $this->db->non_select_query($sql);
         if ($result) {

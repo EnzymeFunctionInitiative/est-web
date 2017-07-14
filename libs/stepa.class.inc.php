@@ -21,7 +21,9 @@ class stepa {
     protected $output_dir = "output";
     protected $type;
     protected $num_sequences;
-    protected $num_file_sequences;
+    protected $total_num_file_sequences;
+    protected $num_matched_file_sequences;
+    protected $num_unmatched_file_sequences;
     protected $num_family_sequences;
     protected $accession_file = "allsequences.fa";
     protected $counts_file;
@@ -71,7 +73,9 @@ class stepa {
     }
     public function get_unixtime_completed() { return strtotime($this->time_completed); }
     public function get_num_sequences() { return $this->num_sequences; }
-    public function get_num_file_sequences() { return $this->num_file_sequences; }
+    public function get_total_num_file_sequences() { return $this->total_num_file_sequences; }
+    public function get_num_matched_file_sequences() { return $this->num_matched_file_sequences; }
+    public function get_num_unmatched_file_sequences() { return $this->num_unmatched_file_sequences; }
     public function get_num_family_sequences() { return $this->num_family_sequences; }
     public function get_program() { return $this->program; }
     public function get_fraction() { return $this->fraction; }
@@ -160,7 +164,7 @@ class stepa {
         $full_path = $results_path . "/" . $this->get_accession_file();
 
         if (file_exists($full_count_path)) {
-            $num_seq = array(0, 0, 0);
+            $num_seq = array(0, 0, 0, 0, 0);
             $lines = file($full_count_path);
             foreach ($lines as $line) {
                 list($key, $val) = explode("\t", rtrim($line));
@@ -168,10 +172,14 @@ class stepa {
                     $num_seq[0] = intval($key);
                 else if ($key == "Total")
                     $num_seq[0] = intval($val);
-                else if($key == "File")
+                else if($key == "FileTotal")
                     $num_seq[1] = intval($val);
-                else if ($key == "Family")
+                else if($key == "FileMatched")
                     $num_seq[2] = intval($val);
+                else if($key == "FileUnmatched")
+                    $num_seq[3] = intval($val);
+                else if ($key == "Family")
+                    $num_seq[4] = intval($val);
             }
         } else if (file_exists($full_path)) {
             $exec = "grep '>' " . $full_path . " | sort | uniq | wc -l ";
@@ -189,11 +197,13 @@ class stepa {
         $sql = "UPDATE generate SET ";
         
         if (is_array($num_seq)) {
-            $sql .= "generate_num_sequences='" . $num_seq[0] . "', ";
-            $sql .= "generate_num_file_sequences='" . $num_seq[1] . "', ";
-            $sql .= "generate_num_family_sequences='" . $num_seq[2] . "' ";
+            $sql .= "generate_num_seq='" . $num_seq[0] . "', ";
+            $sql .= "generate_total_num_file_seq='" . $num_seq[1] . "', ";
+            $sql .= "generate_num_matched_file_seq='" . $num_seq[2] . "', ";
+            $sql .= "generate_num_unmatched_file_seq='" . $num_seq[3] . "', ";
+            $sql .= "generate_num_family_seq='" . $num_seq[4] . "' ";
         } else {
-            $sql .= "SET generate_num_sequences='" . $num_seq . "' ";
+            $sql .= "SET generate_num_seq='" . $num_seq . "' ";
         }
         
         $sql .= "WHERE generate_id='" . $this->get_id() . "' LIMIT 1";
@@ -205,12 +215,16 @@ class stepa {
         if ($result) {
             if (is_array($num_seq)) {
                 $this->num_sequences = $num_seq[0];
-                $this->num_file_sequences = $num_seq[1];
-                $this->num_family_sequences = $num_seq[2];
+                $this->total_num_file_sequences = $num_seq[1];
+                $this->num_matched_file_sequences = $num_seq[2];
+                $this->num_unmatched_file_sequences = $num_seq[3];
+                $this->num_family_sequences = $num_seq[4];
             }
             else {
                 $this->num_sequences = $num_seq;
-                $this->num_file_sequences = 0;
+                $this->total_num_file_sequences = 0;
+                $this->num_matched_file_sequences = 0;
+                $this->num_unmatched_file_sequences = 0;
                 $this->num_family_sequences = 0;
             }
             return true;
@@ -465,9 +479,11 @@ class stepa {
             $this->time_started = $result[0]['generate_time_started'];
             $this->time_completed = $result[0]['generate_time_completed'];
             $this->type = $result[0]['generate_type'];
-            $this->num_sequences = $result[0]['generate_num_sequences'];
-            $this->num_file_sequences = $result[0]['generate_num_file_sequences'];
-            $this->num_family_sequences = $result[0]['generate_num_family_sequences'];
+            $this->num_sequences = $result[0]['generate_num_seq'];
+            $this->total_num_file_sequences = $result[0]['generate_total_num_file_seq'];
+            $this->num_matched_file_sequences = $result[0]['generate_num_matched_file_seq'];
+            $this->num_unmatched_file_sequences = $result[0]['generate_num_unmatched_file_seq'];
+            $this->num_family_sequences = $result[0]['generate_num_family_seq'];
             $this->email = $result[0]['generate_email'];
             $this->program = $result[0]['generate_program'];
             $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);

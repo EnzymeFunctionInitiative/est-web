@@ -86,8 +86,18 @@ elseif ($gen_type == "COLORSSN") {
     $table->add_row("Cooccurrence", $generate->get_cooccurrence());
 }
 
-if ($uploaded_file) $table->add_row("Number of Sequences in Uploaded File", number_format($generate->get_num_file_sequences()));
-if ($included_family) $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
+if ($uploaded_file) {
+    $term = "IDs";
+    if ($gen_type == "FASTA") $term = "Sequences";
+    
+    $table->add_row("Number of $term in Uploaded File", number_format($generate->get_total_num_file_sequences()));
+
+    if ($gen_type != "FASTA") {
+        $table->add_row("Number of $term in Uploaded File with UniProt Match", number_format($generate->get_num_matched_file_sequences()));
+        $table->add_row("Number of $term in Uploaded File without UniProt Match", number_format($generate->get_num_unmatched_file_sequences()));
+    }
+}
+if ($included_family) $table->add_row("Number of IDs in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
 $table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
 
 
