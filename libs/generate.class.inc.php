@@ -70,13 +70,14 @@ class generate extends family_shared {
     }
 
     public function get_job_info($eol = "\r\n") {
-
-        $message = "EFI-EST ID: " . $this->get_id() . $eol;
+        $message = "EFI-EST Job ID: " . $this->get_id() . $eol;
+        $message .= "Computation Type: " . functions::format_job_type($this->get_type()) . $eol;
         $message .= "PFAM/Interpro Families: " . $this->get_families_comma() . $eol;
         $message .= "E-Value: " . $this->get_evalue() . $eol;
         $message .= "Fraction: " . $this->get_fraction() . $eol;
         $message .= "Enable Domain: " . $this->get_domain() . $eol;
-        $message .= "Selected Program: " . $this->get_program() . $eol;
+        //$message .= "Selected Program: " . $this->get_program() . $eol;
+        
         return $message;
 
     }

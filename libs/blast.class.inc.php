@@ -1,6 +1,7 @@
 <?php
 
 require_once('option_base.class.inc.php');
+require_once('generate_helper.class.inc.php');
 
 class blast extends option_base {
 
@@ -20,10 +21,10 @@ class blast extends option_base {
     }
 
     public function get_submitted_max_sequences() { return $this->blast_sequence_max; }
-    public function get_blast_input() { return $this->blast_input; }
-    public function get_finish_file() { 
-        return $this->get_output_dir() . "/" . $this->finish_file; 
-    }
+        public function get_blast_input() { return $this->blast_input; }
+        public function get_finish_file() { 
+            return $this->get_output_dir() . "/" . $this->finish_file; 
+        }
     public function get_fail_file() {
         return $this->get_output_dir() . "/" . $this->fail_file;
     }
@@ -75,45 +76,43 @@ class blast extends option_base {
         return "blasthits-new.pl";
     }
 
-    protected function get_run_script_args($out) {
+    protected function get_run_script_args($outDir) {
         $parms = array();
+        $parms = generate_helper::get_run_script_args($outDir, $parms, $this);
 
         $parms["-seq"] = "'" . $this->get_blast_input() . "'";
-        $parms["-evalue"] = $this->get_evalue();
-        $parms["-np"] = functions::get_blasthits_processors();
-            $parms["-queue"] = functions::get_generate_queue();
-            $parms["-memqueue"] = functions::get_generate_queue();
-            if ($this->get_submitted_max_sequences() != "") {
-                $parms["-nresults"] = $this->get_submitted_max_sequences();
-            }
-            else {
-                $parms["-nresults"] = functions::get_default_blast_seq();
-            }
-            $parms["-tmpdir"] = $out->relative_output_dir;
+        if ($this->get_submitted_max_sequences() != "") {
+            $parms["-nresults"] = $this->get_submitted_max_sequences();
+        }
+        else {
+            $parms["-nresults"] = functions::get_default_blast_seq();
+        }
+        $parms["-seq-count-file"] = $this->get_accession_counts_file_full_path();
 
-            return $parms;
+        return $parms;
+    }
+
+    protected function load_generate($id) {
+        $result = parent::load_generate($id);
+        if (! $result) {
+            return;
         }
 
-        protected function load_generate($id) {
-            $result = parent::load_generate($id);
-            if (! $result) {
-                return;
-            }
-
-            $this->blast_input = $result[0]['generate_blast'];
+        $this->blast_input = $result[0]['generate_blast'];
         $this->blast_sequence_max = $result[0]['generate_blast_max_sequence'];
 
         return $result;
     }
 
     public function get_job_info($eol = "\r\n") {
-
         $message = "EFI-EST ID: " . $this->get_id() . $eol;
+        $message .= "Computation Type: " . functions::format_job_type($this->get_type()) . $eol;
         $message .= "Blast Sequence: " . $eol;
         $message .= $this->get_formatted_blast() . $eol;
         $message .= "E-Value: " . $this->get_evalue() . $eol;
         $message .= "Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . $eol;
-        $message .= "Selected Program: " . $this->get_program() . $eol;
+        //$message .= "Selected Program: " . $this->get_program() . $eol;
+        
         return $message;
     }
 
@@ -188,26 +187,6 @@ class blast extends option_base {
         }
         functions::log_message($msg);
         return $result;
-    }
-
-
-    private function get_email_info_txt() {
-        return strip_tags($this->get_email_info_html());
-
-    }
-
-    private function get_email_info_html() {
-        $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-        $message .= "<br>Blast Sequence: \r\n";
-        $message .= "<br>" . $this->get_formatted_blast() . "\r\n";
-        $message .= "<br>E-Value: " . $this->get_evalue() . "\r\n";
-        $message .= "<br>Maximum Blast Sequences: " . $this->get_submitted_max_sequences() . "\r\n";
-        $message .= "<br><br>";
-        $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-        $message .= functions::get_email_footer();
-        return $message;
-
-
     }
 
 }

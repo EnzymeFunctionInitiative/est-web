@@ -28,6 +28,9 @@ class analysis {
     private $num_pbs_jobs = 16;
     private $filter_sequences;
     private $eol = PHP_EOL;
+    private $db_version;
+    private $beta;
+
     ///////////////Public Functions///////////
 
     public function __construct($db,$id = 0) {
@@ -35,9 +38,9 @@ class analysis {
 
         if ($id) {
             $this->load_analysis($id);
-
-
         }
+
+        $this->beta = functions::get_release_status();
     }
 
     public function __destruct() {
@@ -61,6 +64,10 @@ class analysis {
     public function get_sequence_file() {
         return $this->sequence_file;
     }
+    public function get_time_completed_formatted() {
+        return functions::format_datetime(functions::parse_datetime($this->time_completed));
+    }
+    public function get_db_version() { return $this->db_version; }
 
     public function get_output_dir() {
         return $this->get_generate_id() . "/" . $this->output_dir;
@@ -258,32 +265,53 @@ class analysis {
     public function email_complete() {
 
         $stepa = new stepa($this->db,$this->get_generate_id());	
-        $subject = "EFI-EST PFAM/Interpro Analysis Complete";
+        $subject = $this->beta . "EFI-EST - Your SSN has now been completed and is available for download";
         $from = "EFI-EST <" .functions::get_admin_email() . ">";
         $to = $stepa->get_email();
-        $url = functions::get_web_root() . "/stepe.php";
+
+        $web_root = functions::get_web_root();
+        $url = $web_root . "/stepe.php";
         $full_url = $url . "?" . http_build_query(array('id'=>$this->get_generate_id(),
             'key'=>$stepa->get_key(),'analysis_id'=>$this->get_id()));
+        $gnt_url = functions::get_gnt_web_root();
 
+        $plain_email = "";
+        if ($this->beta) $plain_email = "Thank you for using the beta site of EFI-EST." . $this->eol;
 
         //plain text email
-        $plain_email = "Your EFI-EST PFAM/Interpro Analysis is Complete" . $this->eol;
-        $plain_email .= "To view results, please go to " . $full_url . $this->eol . $this->eol;
-        $plain_email .= $this->get_stepa_job_info();
-        $plain_email .= $this->get_job_info();
-        $plain_email .= $this->eol;
-        $plain_email .= "This data will only be retained for " . functions::get_retention_days() . " days." . $this->eol;
-        $plain_email .= $this->eol;
+        $plain_email .= "Your EFI-EST SSN has been generated and is available for download." . $this->eol . $this->eol;
+        $plain_email .= "To access the results, please go to THE_URL" . $this->eol;
+        $plain_email .= "This data will only be retained for " . functions::get_retention_days() . " days." . $this->eol . $this->eol;
+        $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
+        $plain_email .= $this->get_stepa_job_info() . $this->eol;
+        $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
+
+        $plain_email .= "The coloring utility recently developed will help downstream analysis of your SSN. Try it! ";
+        $plain_email .= "It can be found at the bottom of the $web_root page." . $this->eol . $this->eol;
+        $plain_email .= "Have you tried exploring Genome Neighborhood Networks (GNTs) from your favorite SSNs? ";
+        $plain_email .= "GNT_URL" . $this->eol . $this->eol;
+
+        $plain_email .= "Cite us:" . $this->eol . $this->eol;
+        $plain_email .= "John A. Gerlt, Jason T. Bouvier, Daniel B. Davidson, Heidi J. Imker, Boris Sadkhin, David R. ";
+        $plain_email .= "Slater, Katie L. Whalen, Enzyme Function Initiative-Enzyme Similarity Tool (EFI-EST): A web tool ";
+        $plain_email .= "for generating protein sequence similarity networks, Biochimica et Biophysica Acta (BBA) - Proteins ";
+        $plain_email .= "and Proteomics, Volume 1854, Issue 8, 2015, Pages 1019-1037, ISSN 1570-9639, ";
+        $plain_email .= "DX_URL ";
+        $plain_email .= "(SCI_URL)" . $this->eol . $this->eol;
         $plain_email .= functions::get_email_footer() . $this->eol;
 
-        //html email
-        $html_email = "<br>Your EFI-EST PFAM/Interpro Analysis is Complete" . $this->eol;
-        $html_email .= "<br>To view results, please go to <a href='" . htmlentities($full_url) . "'>" . $full_url . "</a>" . $this->eol;
-        $html_email .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
-        $html_email .= "<br>" . nl2br($this->get_job_info(),false);
-        $html_email .= "<br>" . $this->eol;
-        $html_email .= "<br>This data will only be retained for " . functions::get_retention_days() . " days." . $this->eol;
-        $html_email .= "<br>" . nl2br(functions::get_email_footer(),false);
+        $dx_url = "http://dx.doi.org/10.1016/j.bbapap.2015.04.015";
+        $sci_url = "http://www.sciencedirect.com/science/article/pii/S1570963915001120";
+
+        $html_email = nl2br($plain_email, false);
+        $plain_email = str_replace("THE_URL", $full_url, $plain_email);
+        $plain_email = str_replace("GNT_URL", $gnt_url, $plain_email);
+        $plain_email = str_replace("DX_URL", $dx_url, $plain_email);
+        $plain_email = str_replace("SCI_URL", $sci_url, $plain_email);
+        $html_email = str_replace("THE_URL", "<a href=\"" . htmlentities($full_url) . "\">" . $full_url . "</a>", $html_email);
+        $html_email = str_replace("GNT_URL", "<a href=\"" . htmlentities($gnt_url) . "\">" . $gnt_url . "</a>", $html_email);
+        $html_email = str_replace("DX_URL", "<a href=\"" . htmlentities($dx_url) . "\">" . $dx_url. "</a>", $html_email);
+        $html_email = str_replace("SCI_URL", "<a href=\"" . htmlentities($sci_url) . "\">" . $sci_url. "</a>", $html_email);
 
         $message = new Mail_mime(array("eol"=>$this->eol));
         $message->setTXTBody($plain_email);
@@ -304,28 +332,20 @@ class analysis {
         $footer = "";
 
         $generate = new stepa($this->db,$this->get_generate_id());
-        $subject = "EFI-EST PFAM/Interpro Analysis Failed";
+        $subject = $this->beta . "EFI-EST - SSN finalization failed";
         $to = $generate->get_email();
         //$url = $web_root . "/stepa.php";
 
+        $plain_email = "";
+        if ($this->beta) $plain_email = "Thank you for using the beta site of EFI-EST." . $this->eol;
 
-        $message = "<br>Your EFI-EST PFAM/Interpro Generation Failed\r\n";
-        $message .= "<br>Sorry it failed.\r\n";
-        //$message .= "Please restart by going to <a href='" . $url . "'>" . $url . "</a>\r\n";
-
-        if ($generate->get_blast_input() != "") {
-            $message .= "<br>Blast Input: \r\n";
-            $message .= $generate->get_formatted_blast();
-
-        }
-        elseif (count($generate->get_families())) {
-            $message .= "<br>PFAM/Interpro Families: ";
-            $message .= implode(", ",$generate->get_families());
-
-        }
-        $message .= nl2br($this->get_job_info(),false);
-        $message .= "<br><br>";
-        $message .= $footer;
+        $plain_email .= "The SSN finalization failed. Please contact us with the EFI-EST Job ID to determine ";
+        $plain_email .= "why this occurred." . $this->eol . $this->eol;
+        $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
+        $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
+        $plain_email .= functions::get_email_footer() . $this->eol;
+        
+        $html_email = nl2br($plain_email, false);
 
         $message = new Mail_mime(array("eol"=>$this->eol));
         $message->setTXTBody($plain_email);
@@ -343,26 +363,27 @@ class analysis {
     }
 
     public function email_started() {
-        $boundary = "------------" .  uniqid('np');
         $stepa = new stepa($this->db,$this->get_generate_id());
-        $subject = "EFI-EST PFAM/Interpro Analysis Started";
+        $subject = $this->beta . "EFI-EST - Your SSN is being finalized";
         $from = "EFI-EST <" .functions::get_admin_email() . ">";
         $to = $stepa->get_email();
 
+        $plain_email = "";
+        if ($this->beta) $plain_email = "Thank you for using the beta site of EFI-EST." . $this->eol;
+
         //plain text email
-        $plain_email = "Your EFI-EST PFAM/Interpro Analysis has started" . $this->eol;
+        $plain_email .= "Your SSN is being finalized." . $this->eol;
         $plain_email .= "You will receive an email once it is completed." . $this->eol . $this->eol;
+        $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
         $plain_email .= $this->get_stepa_job_info();
-        $plain_email .= $this->get_job_info();
-        $plain_email .= $this->eol;
+        $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
+        $plain_email .= "If no new email is received after 48 hours, please contact us and mention the EFi-EST ";
+        $plain_email .= "Job ID that corresponds to this email." . $this->eol . $this->eol;
         $plain_email .= functions::get_email_footer() . $this->eol;
 
-        //html email
-        $html_email = "<br>Your EFI-EST PFAM/Interpro Analysis has started" . $this->eol;
-        $html_email .= "<br>You will receive an email once it is completed." . $this->eol;
-        $html_email .= "<br><br>" . nl2br($this->get_stepa_job_info(),false);
-        $html_email .= nl2br($this->get_job_info(),false);
-        $html_email .= "<br>" . nl2br(functions::get_email_footer(),false) . $this->eol;
+        $html_email = nl2br($plain_email, false);
+        $plain_email = str_replace("THE_URL", $full_url, $plain_email);
+        $html_email = str_replace("THE_URL", "<a href=\"" . htmlentities($full_url) . "\">" . $full_url . "</a>", $html_email);
 
         $message = new Mail_mime(array("eol"=>$this->eol));
         $message->setTXTBody($plain_email);
@@ -401,6 +422,7 @@ class analysis {
                 $exec .= "-title " . $this->get_name() . " ";
                 $exec .= "-minval " . $this->get_evalue() . " ";
                 $exec .= "-tmp " . $relative_output_dir . " ";
+                $exec .= "-job-id " . $this->get_generate_id() . " ";
                 $exec .= "-queue " . functions::get_analyse_queue() . " 2>&1 ";
 
                 $exit_status = 1;
@@ -444,7 +466,7 @@ class analysis {
 
 
     private function load_analysis($id) {
-        $sql = "SELECT * FROM analysis WHERE analysis_id='" . $id . "' ";
+        $sql = "SELECT * FROM analysis INNER JOIN generate ON analysis_generate_id = generate_id WHERE analysis_id='" . $id . "' ";
         $sql .= "LIMIT 1";
         $result = $this->db->query($sql);
         if ($result) {
@@ -461,6 +483,7 @@ class analysis {
             $this->time_started = $result[0]['analysis_time_started'];
             $this->time_completed = $result[0]['analysis_time_completed'];
             $this->filter_sequences = $result[0]['analysis_filter_sequences'];
+            $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);
         }
 
     }

@@ -23,7 +23,10 @@ class colorssn extends option_base {
     public function get_cooccurrence() { return $this->cooccurrence; }
     public function get_colored_xgmml_filename_no_ext() {
         $parts = pathinfo($this->get_uploaded_filename());
-        return $parts['filename'] . "_colored";
+        if (substr_compare($parts['filename'], ".xgmml", -strlen(".xgmml")) === 0) {
+            $parts = pathinfo($parts['filename']);
+        }
+        return $this->get_id() . "_" . $parts['filename'] . "_coloredssn";
     }
 
 
@@ -70,17 +73,26 @@ class colorssn extends option_base {
         return "make_colorssn_job.pl";
     }
 
+    protected function get_completion_email_subject_line() {
+        return "SSN colored";
+    }
+
+    protected function get_completion_email_body() {
+        $plain_email = "The SSN has been colored. To view it, please go to THE_URL" . $this->eol . $this->eol;
+        return $plain_email;
+    }
+
     protected function get_run_script_args($out) {
         $parms = array();
 
         $parms["-queue"] = functions::get_generate_queue();
         $parms["-ssn-in"] = $this->file_helper->get_results_input_file();
-        $parms["-ssn-out"] = $this->get_colored_xgmml_filename_no_ext() . ".xgmml";
+        $parms["-ssn-out"] = "\"" . $this->get_colored_xgmml_filename_no_ext() . ".xgmml\"";
         //$parms["-nb-size"] = $this->neighborhood_size;
         //$parms["-cooc"] = $this->cooccurrence;
-        $parms["-map-dir-name"] = functions::get_colorssn_map_dir_name();
-        $parms["-map-file-name"] = functions::get_colorssn_map_file_name();
-        $parms["-out-dir"] = $out->relative_output_dir;
+        $parms["-map-dir-name"] = "\"" . functions::get_colorssn_map_dir_name() . "\"";
+        $parms["-map-file-name"] = "\"" . functions::get_colorssn_map_file_name() . "\"";
+        $parms["-out-dir"] = "\"" . $out->relative_output_dir . "\"";
 
         return $parms;
     }
@@ -100,8 +112,8 @@ class colorssn extends option_base {
     }
 
     public function get_job_info($eol = "\r\n") {
-        $message = "EFI-EST ID: " . $this->get_id() . $eol;
-        $message .= "Color SSN" . $eol;
+        $message = "EFI-EST Job ID: " . $this->get_id() . $eol;
+        $message .= "Computation Type: Color SSN" . $eol;
         return $message;
     }
 
@@ -129,17 +141,6 @@ class colorssn extends option_base {
 
     // END OVERLOADS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private function get_email_info_txt() {
-        return strip_tags($this->get_email_info_html());
-    }
-
-    private function get_email_info_html() {
-        $message .= "<br>EFI-EST ID: " . $this->get_id() . "\r\n";
-        $message .= "<br>This data will only be retained for " . functions::get_retention_days() . " days.\r\n";
-        $message .= functions::get_email_footer();
-        return $message;
-    }
 
     private function verify_cooccurrence($cooccurrence) {
         return ($cooccurrence >= 1 && $cooccurrence <= 100);

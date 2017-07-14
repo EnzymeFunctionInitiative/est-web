@@ -13,3 +13,5 @@
 
 <h2>EFI - Enzyme Similarity Tool</h2>
 
+<center><h4><b><span style="color: blue">BETA</span></b></h4></center>
+

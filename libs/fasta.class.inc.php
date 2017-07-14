@@ -116,7 +116,7 @@ class fasta extends family_shared {
         $parms = parent::get_run_script_args($out);
 
         // This works because as a part of the import process the fasta file is copied to the results directory.
-        $parms["-userfasta"] = $this->get_full_fasta_file_path();
+        $parms["-userfasta"] = "\"" . $this->get_full_fasta_file_path() . "\"";
         if ($this->option == "E") {
             $parms["-use-fasta-headers"] = "";
         } else {
@@ -127,17 +127,24 @@ class fasta extends family_shared {
     }
 
     public function get_job_info($eol = "\r\n") {
-        $message = "EFI-EST ID: " . $this->get_id() . $eol;
-        $message .= "Uploaded Fasta File: " . $this->file_helper->get_uploaded_filename() . $eol;
+        $message = "EFI-EST Job ID: " . $this->get_id() . $eol;
+        $message .= "Computation Type: " . functions::format_job_type($this->get_type()) . $eol;
+
+        $upl_file = $this->file_helper->get_uploaded_filename();
+        if ($upl_file) {
+            $message .= "Uploaded Fasta File: $upl_file" . $eol;
+        }
+
         if (count($this->get_families())) {
             $message .= "PFAM/Interpro Families: ";
             $message .= $this->get_families_comma() . $eol;
         }
+
         $message .= "E-Value: " . $this->get_evalue() . $eol;
         $message .= "Fraction: " . $this->get_fraction() . $eol;
-        $message .= "Selected Program: " . $this->get_program() . $eol;
-        return $message;
+        //$message .= "Selected Program: " . $this->get_program() . $eol;
 
+        return $message;
     }
 
     // END OVERLOADS

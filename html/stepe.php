@@ -1,52 +1,110 @@
 <?php 
 include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php'; 
-include_once 'includes/quest_acron.inc';
+include_once '../libs/table_builder.class.inc.php';
 
 
-if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
-    $web_address = dirname($_SERVER['PHP_SELF']);
-    $generate = new stepa($db,$_GET['id']);
-    if ($generate->get_key() != $_GET['key']) {
-        echo "No EFI-EST Selected. Please go back";
-        exit;
+if ((!isset($_GET['id'])) || (!is_numeric($_GET['id']))) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+    exit;
+}
+
+$generate = new stepa($db,$_GET['id']);
+$gen_id = $generate->get_id();
+
+if ($generate->get_key() != $_GET['key']) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+    //echo "No EFI-EST Selected. Please go back";
+    exit;
+}
+
+$analysis_id = $_GET['analysis_id'];
+$analysis = new analysis($db, $analysis_id);
+
+
+$table_format = "html";
+if (isset($_GET["as-table"])) {
+    $table_format = "tab";
+}
+$table = new table_builder($table_format);
+
+
+$web_address = dirname($_SERVER['PHP_SELF']);
+$dateCompleted = $generate->get_time_completed_formatted();
+$dbVersion = $generate->get_db_version();
+
+
+$gen_type = $generate->get_type();
+$formatted_gen_type = functions::format_job_type($gen_type);
+
+$table->add_row("Date Completed", $dateCompleted);
+if (!empty($dbVersion)) {
+    $table->add_row("Database Version", $dbVersion);
+}
+$table->add_row("Input Option", $formatted_gen_type);
+$table->add_row("Job Number", $gen_id);
+
+$uploaded_file = "";
+$included_family = "";
+
+if ($gen_type == "BLAST") {
+    $generate = new blast($db,$_GET['id']);
+    $code = $generate->get_blast_input();
+    if ($table_format == "html") {
+        $code = "<a href='blast.php?blast=$code' target='_blank'>View Sequence</a>";
     }
-    if ($generate->get_type() == "BLAST") {
-        $generate = new blast($db,$_GET['id']);
-        $net_info_html = "<td>Blast Sequence</td>";
-        $net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td>";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Maximum Blast Sequences</td><td>" . number_format($generate->get_submitted_max_sequences()) . "</td></tr>";
-
-    }
-    elseif ($generate->get_type() == "FAMILIES" || $generate->get_type() == "ACCESSION") {
-        $generate = new generate($db,$_GET['id']);
-        $net_info_html = "<td>PFam/Interpro Families</td>";
-        $net_info_html .= "<td>" . $generate->get_families_comma() . "</td>";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
-        $net_info_html .= "<tr><td>Domain</td><td>" . $generate->get_domain() . "</td></tr>";
-
-    }
-    elseif ($generate->get_type() == "FASTA" || $generate->get_type() == "FASTA_ID") {
+    $table->add_row("Blast Sequence", $code);
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Maximum Blast Sequences", number_format($generate->get_submitted_max_sequences()));
+}
+elseif ($gen_type == "FAMILIES" || $gen_type == "ACCESSION" || $gen_type == "FASTA" || $gen_type == "FASTA_ID") {
+    if ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
         $generate = new fasta($db,$_GET['id']);
-        $net_info_html = "<td>Uploaded Fasta File</td>";
-        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td>";
-        if ($generate->get_families_comma() != "") {
-            $net_info_html .= "<tr><td>PFam/Interpro Families</td>";
-            $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
-
-        }
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
-
+        $uploaded_file = $generate->get_uploaded_filename();
+        if ($uploaded_file) $table->add_row("Uploaded Fasta File", $uploaded_file);
+    } else if ($gen_type == "ACCESSION") {
+        $generate = new accession($db,$_GET['id']);
+        $uploaded_file = $generate->get_uploaded_filename();
+        if ($uploaded_file) $table->add_row("Uploaded Accession ID File", $uploaded_file);
+    } else {
+        $generate = new generate($db,$_GET['id']);
     }
 
-    $analysis_id = $_GET['analysis_id'];
-    $analysis = new analysis($db,$analysis_id);
+    $included_family = $generate->get_families_comma();
+    if ($included_family != "") $table->add_row("PFam/Interpro Families", $included_family);
+    
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Fraction", $generate->get_fraction());
+    
+    if ($gen_type == "FAMILIES") { $table->add_row("Domain", $generate->get_domain()); }
+}
+
+$table->add_row("Network Name", $analysis->get_name());
+$table->add_row("Alignment Score", $analysis->get_evalue());
+$table->add_row("Minimum Length", number_format($analysis->get_min_length()));
+$table->add_row("Maximum Length", number_format($analysis->get_max_length()));
+if ($uploaded_file) $table->add_row("Number of Sequences in Uploaded File", number_format($generate->get_total_num_file_sequences()));
+if ($included_family) $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
+$table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
+//$table->add_row("Final Number of Filtered Sequences", number_format($analysis->get_num_sequences_post_filter()));
+
+
+$table_string = $table->as_string();
+
+if (isset($_GET["as-table"])) {
+    $table_filename = functions::safe_filename($analysis->get_name()) . "_settings.txt";
+
+    header('Pragma: public');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="' . $table_filename . '"');
+    header('Content-Length: ' . strlen($table_string));
+    ob_clean();
+    echo $table_string;
+}
+else {
 
     if (time() > $analysis->get_unixtime_completed() + functions::get_retention_secs()) {
-
         echo "<p class='center'><br>Your job results are only retained for a period of " . functions::get_retention_days() . " days.";
         echo "<br>Your job was completed on " . $analysis->get_time_completed();
         echo "<br>Please go back to the <a href='" . functions::get_server_name() . "'>homepage</a></p>";
@@ -68,8 +126,8 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
             $full_network_html .= "</tr>";
         }
         else {
-            $percent_identity = substr($stats[$i]['File'],strpos($stats[$i]['File'],'-')+1);
-            $percent_identity = substr($percent_identity,0,strrpos($percent_identity,'.'));
+            $percent_identity = substr($stats[$i]['File'],strrpos($stats[$i]['File'],'-')+1);
+            $percent_identity = substr($percent_identity,0,strrpos($percent_identity,'_'));
             $percent_identity = str_replace(".","",$percent_identity);
             $path = functions::get_web_root() . "/results/" . $analysis->get_output_dir() . "/" . $analysis->get_network_dir() . "/" . $stats[$i]['File'];
             $rep_network_html .= "<tr>";
@@ -82,16 +140,9 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         }
     }
 
-
-}
-
-else {
-
-    echo "No EFI-EST Select.  Please go back";
-    exit;
-
-}
-
+    include_once 'includes/header.inc.php'; 
+    include_once 'includes/quest_acron.inc';
+    
 
 ?>	
 
@@ -104,39 +155,13 @@ else {
     <p><b>If you use an SSN from EFI-EST, please cite <a href='tutorial_references.php'>Reference #6 Gerlt <i>et al.</i></a></b></p>
     <p>&nbsp;</p>
     <h4>Network Information</h4>
-        <table width="100%" border="1">
-    <tr>
-        <?php echo $net_info_html; ?>
-    </tr>
-    <tr>
-        <td>Network Name</td>
-        <td><?php echo $analysis->get_name(); ?></td>
-    </tr>
-    <tr>
-        <td>Alignment Score</td>
-        <td><?php echo $analysis->get_evalue(); ?></td>
-    </tr>
-    <tr>
-        <td>Minimum Length</td>
-        <td><?php echo number_format($analysis->get_min_length()); ?></td>
-    </tr>
-    <tr>
-        <td>Maximum Length</td>
-        <td><?php echo number_format($analysis->get_max_length()); ?></td>
-    </tr>
-    <tr>
+    <p>
+        Generation and Analysis Summary Table
+        <a href='<?php echo $_SERVER['PHP_SELF'] . "?id=" . $_GET['id'] . "&key=" . $_GET['key'] . "&analysis_id=" . $_GET['analysis_id'] . "&as-table=1" ?>'><button>Download</button></a>
+    </p>
 
-        <td>Number of Filtered Sequences</td>
-        <td><?php echo number_format($analysis->get_num_sequences_post_filter()); ?></td>
-
-    </tr>
-    <tr>
-        <td>Total Number of Sequences</td>
-        <td><?php echo number_format($generate->get_num_sequences()); ?></td>
-    </tr>
-    <tr>
-        <td>Download Statistics</td>
-        <td><a href='<?php echo $analysis->get_stats_full_path(); ?>'><button>Download</button></a></td> 
+    <table width="100%" border="1">
+        <?php echo $table_string; ?>
     </table>
 
     <h4>Full Network <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>
@@ -173,5 +198,11 @@ else {
 
   </div>
 <center><p><a href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3'>New to Cytoscape</a></p></center>
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php
+
+    include_once 'includes/footer.inc.php';
+
+} // as-table block
+
+?>
 

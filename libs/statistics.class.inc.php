@@ -71,7 +71,7 @@ class statistics
 		$sql .= "generate.generate_blast as Blast, ";
 		$sql .= "generate.generate_families as Families, ";
 		$sql .= "generate_status as 'Generate Step Status', ";
-		$sql .= "generate_num_sequences as 'Number of Sequences', ";
+		$sql .= "generate_num_seq as 'Number of Sequences', ";
 		$sql .= "generate_time_started as 'Generate Time Started', ";
 		$sql .= "generate_time_completed as 'Generate Time Completed', ";
 		$sql .= "analysis.analysis_status as 'Analysis Step Status', ";
@@ -98,7 +98,7 @@ class statistics
                 $sql .= "generate.generate_blast as Blast, ";
                 $sql .= "generate.generate_families as Families, ";
                 $sql .= "generate_status as 'Generate Step Status', ";
-                $sql .= "generate_num_sequences as 'Number of Sequences', ";
+                $sql .= "generate_num_seq as 'Number of Sequences', ";
                 $sql .= "generate_time_created as 'Time Submitted', ";
 		$sql .= "generate_time_started as 'Time Started', ";
 		$sql .= "generate_time_completed as 'Time Completed', ";

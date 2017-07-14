@@ -1,68 +1,125 @@
+
 <?php 
 include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php'; 
-include_once 'includes/quest_acron.inc';
+include_once '../libs/table_builder.class.inc.php';
 
-if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
-    $generate = new stepa($db,$_GET['id']);
-    if ($generate->get_key() != $_GET['key']) {
-        echo "No EFI-EST Selected. Please go back";
-        exit;
-    }
-    $net_info_html = "";
-    if ($generate->get_type() == "BLAST") {
-        $generate = new blast($db,$_GET['id']);
-        $net_info_html = "<tr><td>Blast Sequence</td>";
-        $net_info_html .= "<td><a href='blast.php?blast=" . $generate->get_blast_input() . "' target='_blank'>View Sequence</a></td></tr>";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Maximum Blast Sequences</td><td>" . number_format($generate->get_submitted_max_sequences()) . "</td></tr>";
-        if (functions::get_program_selection_enabled()) {
-            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
-        }
 
+if ((!isset($_GET['id'])) || (!is_numeric($_GET['id']))) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+    exit;
+}
+
+$generate = new stepa($db,$_GET['id']);
+$gen_id = $generate->get_id();
+
+if ($generate->get_key() != $_GET['key']) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+    exit;
+}
+
+
+$table_format = "html";
+if (isset($_GET["as-table"])) {
+    $table_format = "tab";
+}
+$table = new table_builder($table_format);
+
+
+$web_address = dirname($_SERVER['PHP_SELF']);
+$dateCompleted = $generate->get_time_completed_formatted();
+$dbVersion = $generate->get_db_version();
+
+
+$gen_type = $generate->get_type();
+$formatted_gen_type = functions::format_job_type($gen_type);
+
+$table->add_row("Date Completed", $dateCompleted);
+if (!empty($dbVersion)) {
+    $table->add_row("Database Version", $dbVersion);
+}
+$table->add_row("Input Option", $formatted_gen_type);
+$table->add_row("Job Number", $gen_id);
+
+$job_name = $gen_id . "_" . $gen_type;
+
+$uploaded_file = "";
+$included_family = "";
+
+if ($gen_type == "BLAST") {
+    $generate = new blast($db,$_GET['id']);
+    $code = $generate->get_blast_input();
+    if ($table_format == "html") {
+        $code = "<a href='blast.php?blast=$code' target='_blank'>View Sequence</a>";
     }
-    elseif ($generate->get_type() == "FAMILIES") {
-        $generate = new generate($db,$_GET['id']);
-        $net_info_html = "<tr><td>PFam/Interpro Families</td>";
-        $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
-        $net_info_html .= "<tr><td>Domain</td><td>" . $generate->get_domain() . "</td></tr>";
-        if (functions::get_program_selection_enabled()) {
-            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
-        }
-    }
-    elseif ($generate->get_type() == "FASTA" or $generate->get_type() == "FASTA_ID") {
+    $table->add_row("Blast Sequence", $code);
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Maximum Blast Sequences", number_format($generate->get_submitted_max_sequences()));
+    if (functions::get_program_selection_enabled()) { $table->add_row("Program Used", $generate->get_program()); }
+}
+elseif ($gen_type == "FAMILIES" || $gen_type == "ACCESSION" || $gen_type == "FASTA" || $gen_type == "FASTA_ID") {
+    if ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
         $generate = new fasta($db,$_GET['id']);
-        $net_info_html = "<td>Uploaded Fasta File</td>";
-        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td>";
-        if ($generate->get_families_comma() != "") {
-            $net_info_html .= "<tr><td>PFam/Interpro Families</td>";
-            $net_info_html .= "<td>" . $generate->get_families_comma() . "</td></tr>";
+        $uploaded_file = $generate->get_uploaded_filename();
+        if ($uploaded_file) $table->add_row("Uploaded Fasta File", $uploaded_file);
+    } else if ($gen_type == "ACCESSION") {
+        $generate = new accession($db,$_GET['id']);
+        $uploaded_file = $generate->get_uploaded_filename();
+        if ($uploaded_file) $table->add_row("Uploaded Accession ID File", $uploaded_file);
+        $table->add_row("No matches file", "<a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></a>", true);
+    } else {
+        $generate = new generate($db,$_GET['id']);
+    }
+
+    $included_family = $generate->get_families_comma();
+    if ($included_family != "") $table->add_row("PFam/Interpro Families", $included_family);
+    
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Fraction", $generate->get_fraction());
+    
+    if ($gen_type == "FAMILIES") { $table->add_row("Domain", $generate->get_domain()); }
+    if (functions::get_program_selection_enabled()) { $table->add_row("Program Used", $generate->get_program()); }
+}
+elseif ($gen_type == "COLORSSN") {
+    $generate = new colorssn($db, $_GET['id']);
+    $table->add_row("Uploaded XGMML File", $generate->get_uploaded_filename());
+    $table->add_row("Neighborhood Size", $generate->get_neighborhood_size());
+    $table->add_row("Cooccurrence", $generate->get_cooccurrence());
+}
+
+if ($uploaded_file) {
+    $term = "IDs";
+    if ($gen_type == "FASTA") $term = "Sequences";
+    
+    $table->add_row("Number of $term in Uploaded File", number_format($generate->get_total_num_file_sequences()));
+
+    if ($gen_type != "FASTA") {
+        $table->add_row("Number of $term in Uploaded File with UniProt Match", number_format($generate->get_num_matched_file_sequences()));
+        $table->add_row("Number of $term in Uploaded File without UniProt Match", number_format($generate->get_num_unmatched_file_sequences()));
+    }
+}
+if ($included_family) $table->add_row("Number of IDs in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
+$table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
 
 
-        }
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
-        if (functions::get_program_selection_enabled()) {
-            $net_info_html .= "<tr><td>Program Used</td><td>" . $generate->get_program() . "</td></tr>";
-        }
-    }
-    elseif ($generate->get_type() == "ACCESSION") {
-        $generate = new accession($db, $_GET['id']);
-        $net_info_html = "<tr><td>Uploaded Accession ID File</td>";
-        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>";
-        $net_info_html .= "<tr><td>E-Value</td><td>" . $generate->get_evalue() . "</td></tr>";
-        $net_info_html .= "<tr><td>Fraction</td><td>" . $generate->get_fraction() . "</td</tr>";
-        $net_info_html .= "<tr><td>No matches file</td><td><a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></td></tr>";
-    }
-    elseif ($generate->get_type() == "COLORSSN") {
-        $generate = new colorssn($db, $_GET['id']);
-        $net_info_html = "<tr><td>Uploaded XGMML File</td>";
-        $net_info_html .= "<td>" . $generate->get_uploaded_filename() . "</td></tr>";
-        $net_info_html .= "<tr><td>Neighborhood Size</td><td>" . $generate->get_neighborhood_size() . "</td></tr>";
-        $net_info_html .= "<tr><td>Cooccurrence</td><td>" . $generate->get_cooccurrence() . "</td</tr>";
-    }
+$table_string = $table->as_string();
+
+if (isset($_GET["as-table"])) {
+    $table_filename = functions::safe_filename($job_name) . "_settings.txt";
+
+    header('Pragma: public');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="' . $table_filename . '"');
+    header('Content-Length: ' . strlen($table_string));
+    ob_clean();
+    echo $table_string;
+}
+else {
+
+    include_once 'includes/header.inc.php'; 
+    include_once 'includes/quest_acron.inc';
+
 
     if (time() > $generate->get_unixtime_completed() + functions::get_retention_secs()) {
         echo "<p class='center'><br>Your job results are only retained for a period of " . functions::get_retention_days(). " days";
@@ -70,6 +127,10 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         echo "<br>Please go back to the <a href='" . functions::get_server_name() . "'>homepage</a></p>";
         exit;
     }
+
+
+    $dateCompleted = $generate->get_time_completed_formatted();
+    $dbVersion = $generate->get_db_version();
 
     $url = $_SERVER['PHP_SELF'] . "?" . http_build_query(array('id'=>$generate->get_id(),
         'key'=>$generate->get_key()));
@@ -98,59 +159,58 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
         }
     }
 
-}
-else {
-
-    echo "No EFI-EST Select. Please go back";
-    exit;
-}
-
 
 ?>	
 
 <img src="images/quest_stages_c.jpg" width="990" height="119" alt="stage 1">
 <hr>
 
-    <h3>Data set Completed</h3>
-    <p>&nbsp;</p>
-            <h4>Network Information</h4>
-            <table width="100%" border="1">
-                <?php echo $net_info_html; ?>
-    <tr>
-        <td>Total Number of Sequences</td>
-        <td><?php echo number_format($generate->get_num_sequences()); ?>
-    </tr>
-    </table>
+<h3>Data set Completed</h3>
 <p>&nbsp;</p>
+<h4>Network Information</h4>
+
+<p>
+    Generation Summary Table
+    <a href='<?php echo $_SERVER['PHP_SELF'] . "?id=" . $_GET['id'] . "&key=" . $_GET['key'] . "&as-table=1" ?>'><button>Download</button></a>
+</p>
+
+<table width="100%" border="1">
+    <?php echo $table_string; ?>
+</table>
+<p>&nbsp;</p>
+
 <hr>
-    <h4>1: Analyze your data set<a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
-    <p><strong>Important! </strong>View plots and histogram to determine the appropriate lengths and alignment score before continuing.</p>
-    <table>
-            <tr>
+
+<h4><b>Parameters for SSN Finalization</b></h4>
+
+To finalize the generation of an SSN, a similarity threshold that defines which protein sequences
+should or should not be connected in a network is needed. This will determine the segregation of proteins into clusters.
+
+<h4>Analyze your data set<a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
+<p>View plots and histogram to determine the appropriate lengths and alignment score before continuing.</p>
+<table>
+    <tr>
         <td><p>Number of Edges Histogram</p></td>
         <td><a href='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_number_edges_plot(); ?>'
-                class="view_download" target='_blank'>View</a></td>
-                <td><form method='post' action='graphs.php'>
-                <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
-                <input type='hidden' name='type' value='EDGES'>
-                <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
-                <input type='submit' name='download_plot' value='Download' class='view_download'>
-                </form>
+            class="view_download" target='_blank'>View</a></td>
+        <td><form method='post' action='graphs.php'>
+            <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
+            <input type='hidden' name='type' value='EDGES'>
+            <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
+            <input type='submit' name='download_plot' value='Download' class='view_download'>
+            </form>
         </td>
-        </tr>
+    </tr>
     <tr>
         <td><p>Length Histogram</p></td>
         <td><a href="<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_length_histogram_plot(); ?>" class="view_download" target='_blank'>View</a></td>
-    <td><form method='post' action='graphs.php'>
+        <td><form method='post' action='graphs.php'>
                 <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
                 <input type='hidden' name='type' value='HISTOGRAM'>
                 <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
                 <input type='submit' name='download_plot' value='Download' class='view_download'>
                 </form>
-
-
-</td>
-
+        </td>
     </tr>
     <tr>
         <td><p>Alignment Length Quartile Plot</p></td>
@@ -161,11 +221,9 @@ else {
                 <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
                 <input type='submit' name='download_plot' value='Download' class='view_download'>
                 </form>
-
-
-</td>
+        </td>
     </tr>
-        <tr>
+    <tr>
         <td><p>Percent Identity Quartile Plot</p></td>
         <td><a href="<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_percent_identity_plot(); ?>" class="view_download" target='_blank'>View</a></td>
         <td><form method='post' action='graphs.php'>
@@ -174,28 +232,30 @@ else {
                 <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
                 <input type='submit' name='download_plot' value='Download' class='view_download'>
                 </form>
-
-
-</td>    
+        </td>    
     </tr>
-    </table>
+</table>
 
 
-    <hr><p><br></p>
-    <h4>2: Choose alignment score for output<a href="tutorial_analysis.php" class="question" target="_blank">?</a>
-    <span style='color:red'>Required</span></h4>
-    <p>Select a lower limit for the aligment score for the output files. You will input an integer which represents the exponent of 10<sup>-X</sup> where X is the integer.</p>
-  <form name="define_length" method="post" action="<?php echo $url; ?>" class="align_left">
+<hr><p><br></p>
+<h4><b>Finalization Parameters</b></h4>
+<h4>1: Alignment score for output <a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
+<p>Select a lower limit for the aligment score for the output files. You will input an integer which represents the exponent of 10<sup>-X</sup> where X is the integer.</p>
 
-       <p><input type="text" name="evalue" 
+<form name="define_length" method="post" action="<?php echo $url; ?>" class="align_left">
+
+    <p><input type="text" name="evalue" 
 <?php if (isset($_POST['evalue'])) { 
     echo "value='" . $_POST['evalue'] ."'"; }
 ?>
         > alignment score</p>
-<hr><p><br></p>
-    <h4>3: Define length range<a href="tutorial_analysis.php" class="question" target="_blank">?</a>
+
+This score is the similarity threshold which determine the connection of proteins with each other. All pairs of proteins with a similarity score below this number will not be connected. Sets of connected proteins will form clusters.
+
+<hr>
+    <h4>2: Sequence length restriction  <a href="tutorial_analysis.php" class="question" target="_blank">?</a>
     <span style='color:red'>Optional</span></h4>
-    <p>If protein length needs to be restricted.</p>
+    <p> This option can be used to restrict sequences used based on their length.</p>
 
        <p><input type="text" name="minimum" maxlength='20' 
 <?php if (isset($_POST['minimum'])) { 
@@ -211,7 +271,7 @@ else {
 
 
       <hr>
-    <h4>4: Provide Network Name <span style='color:red'>Required</span></h4>
+    <h4>3: Provide Network Name</h4>
 
 
       <p><input type="text" name="network_name" 
@@ -220,18 +280,32 @@ else {
 }
 ?>
         > Name
+</p>
 
+This name will be displayed in Cytoscape.
 
         <p>
         <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
-      <input type="submit" name="analyze_data" value="Analyze Data" class="css_btn_class_recalc">
+</p>
 
-        </p>
+<hr>
+
+<center>
+      <input type="submit" name="analyze_data" value="Create SSN" class="css_btn_class_recalc">
+
     <p><?php if (isset($result['MESSAGE'])) { echo $result['MESSAGE']; } ?>
-    </form>
 
+<h4><b><span style="color: blue">BETA</span></b></h4>
+</center>
+    </form>
 
 
   </div>
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php
+
+    include_once 'includes/footer.inc.php';
+}
+
+?>
+

@@ -24,8 +24,17 @@ class accession extends family_shared {
     public function get_uploaded_filename() { return $this->file_helper->get_uploaded_filename(); }
     public function get_no_matches_download_path() {
         return functions::get_web_root() . "/" .
-            functions::get_results_dirname() . "/" . 
+            $this->get_no_matches_file();
+    }
+    private function get_no_matches_file() {
+        return
+            functions::get_results_dir() . "/" .
             $this->get_output_dir() . "/" . 
+            $this->get_no_matches_filename(); 
+    }
+    private function get_no_matches_filename() {
+        return
+            $this->get_id() . "_" .
             functions::get_no_matches_filename(); 
     }
 
@@ -107,20 +116,28 @@ class accession extends family_shared {
         //$parms = generate_helper::get_run_script_args($out, $parms);
         //$parms["-blast"] = strtolower($this->get_program());
         $parms["-useraccession"] = $this->file_helper->get_results_input_file();
+        $parms["-no-match-file"] = $this->get_no_matches_file();
         //$parms["-fraction"] = $this->get_fraction();
         return $parms;
     }
     
     public function get_job_info($eol = "\r\n") {
-        $message = "EFI-EST ID: " . $this->get_id() . $eol;
-        $message .= "Uploaded Accession File: " . $this->file_helper->get_uploaded_filename() . $eol;
-        if (count($this->get_families())) {
-            $message .= "PFAM/Interpro Families: ";
-            $message .= $this->get_families_comma() . $eol;
+        $message = "EFI-EST Job ID: " . $this->get_id() . $eol;
+        $message .= "Computation Type: " . functions::format_job_type($this->get_type()) . $eol;
+
+        $upl_file = $this->file_helper->get_uploaded_filename();
+        if ($upl_file) {
+            $message .= "Uploaded Accession File: $upl_file" . $eol;
         }
+
+        if (count($this->get_families())) {
+            $message .= "PFAM/Interpro Families: " . $this->get_families_comma() . $eol;
+        }
+
         $message .= "E-Value: " . $this->get_evalue() . $eol;
         $message .= "Fraction: " . $this->get_fraction() . $eol;
-        $message .= "Selected Program: " . $this->get_program() . $eol;
+        //$message .= "Selected Program: " . $this->get_program() . $eol;
+
         return $message;
     }
 

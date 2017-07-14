@@ -50,7 +50,8 @@ foreach ($jobs as $job) {
 	$generate_html .= "<td>" . $job['Time Submitted'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Time Started'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Time Completed']  ."</td>\n";
-	$generate_html .= "<td>" . $job['Status'] . "</td>\n";
+    $generate_html .= "<td>" . $job['Status'] . "</td>\n";
+//    $generate_html .= "<td><center><span style='font-size: 100%'><a href='reload'>&#8635;</a></span></center></td>\n";
 	$generate_html .= "</tr>";
 
 }
@@ -101,7 +102,8 @@ $monthName = date("F", mktime(0, 0, 0, $month, 10));
 	<th>Time Submitted</th>
 	<th>Time Started</th>
 	<th>Time Finished</th>
-	<th>Status</th>
+    <th>Status</th>
+<!--    <th>Restart</th>-->
 </tr>
 <?php echo $generate_html; ?>
 </table>
