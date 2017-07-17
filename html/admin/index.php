@@ -18,7 +18,7 @@ $get_array  = array('graph_type'=>$graph_type,
                 'year'=>$year);
 $graph_image = "<img src='../daily_graph.php?" . http_build_query($get_array) . "'>";
 
-$generate_per_month = statistics::num_generate_per_month($db);
+$generate_per_month = efi_statistics::num_generate_per_month($db);
 $generate_per_month_html = "";
 foreach ($generate_per_month as $value) {
 	$generate_per_month_html .= "<tr><td>" . $value['month'] . "</td>";

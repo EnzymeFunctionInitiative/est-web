@@ -1,6 +1,6 @@
 <?php
 
-class statistics 
+class efi_statistics 
 {
 
 	public static function num_generate_per_month($db) {

@@ -26,7 +26,7 @@ $get_analyse_array = array('graph_type'=>"analysis_daily_jobs",
                 'year'=>$year);
 $graph_analyze_image = "<img src='daily_graph.php?" . http_build_query($get_analyse_array) . "'>";
 
-$generate_per_month = statistics::num_generate_per_month($db);
+$generate_per_month = efi_statistics::num_generate_per_month($db);
 $generate_per_month_html = "";
 foreach ($generate_per_month as $value) {
 	$generate_per_month_html .= "<tr><td>" . $value['month'] . "</td>";
@@ -42,7 +42,7 @@ foreach ($generate_per_month as $value) {
 
 }
 
-$analysis_per_month = statistics::num_analysis_per_month($db);
+$analysis_per_month = efi_statistics::num_analysis_per_month($db);
 $analysis_per_month_html = "";
 foreach ($analysis_per_month as $value) {
         $analysis_per_month_html .= "<tr><td>" . $value['month'] . "</td>";
@@ -113,11 +113,11 @@ $year_html .= "</select>";
 </table>
 <hr>
 <h4>Running Total of Unique Users</h4>
-<p>Number of Unique Users: <?php echo statistics::num_unique_users($db); ?>
+<p>Number of Unique Users: <?php echo efi_statistics::num_unique_users($db); ?>
 <hr>
 <h4>Running Total of Jobs</h4>
-<p>Generate Step: <?php echo statistics::num_generate_jobs($db); ?>
-<p>Analysis Step: <?php echo statistics::num_analysis_jobs($db); ?>
+<p>Generate Step: <?php echo efi_statistics::num_generate_jobs($db); ?>
+<p>Analysis Step: <?php echo efi_statistics::num_analysis_jobs($db); ?>
 <hr>
 <h4>Daily Graph</h4>
 <form class='form-inline' method='post' action='<?php echo $_SERVER['PHP_SELF']; ?>'>
