@@ -13,7 +13,7 @@ if (isset($_GET['year'])) {
 }
 $generate_page = functions::get_web_root() . "/stepc.php";
 $colorssn_page = functions::get_web_root() . "/view_coloredssn.php";
-$jobs = statistics::get_generate($db,$month,$year);
+$jobs = efi_statistics::get_generate($db,$month,$year);
 
 $generate_html = "";
 foreach ($jobs as $job) {

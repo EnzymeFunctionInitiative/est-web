@@ -28,7 +28,7 @@ if (isset($_GET['graph_type'])) {
 
 //Jobs Per Month
 if ($graph_type == 'analysis_daily_jobs') {
-	$data = statistics::get_analysis_daily_jobs($db,$month,$year);
+	$data = efi_statistics::get_analysis_daily_jobs($db,$month,$year);
 	$xaxis = "day";
 	$yaxis = "count";
 	$title = "Daily Jobs - " . date("F", mktime(0, 0, 0, $month, 10)) . " - " . $year;
@@ -36,7 +36,7 @@ if ($graph_type == 'analysis_daily_jobs') {
 }
 
 if ($graph_type == 'generate_daily_jobs') {
-        $data = statistics::get_generate_daily_jobs($db,$month,$year);
+        $data = efi_statistics::get_generate_daily_jobs($db,$month,$year);
         $xaxis = "day";
         $yaxis = "count";
         $title = "Daily Jobs - " . date("F", mktime(0, 0, 0, $month, 10)) . " - " . $year;

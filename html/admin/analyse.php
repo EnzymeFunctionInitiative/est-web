@@ -13,10 +13,10 @@ if (isset($_GET['year'])) {
 }
 $analysis_page = functions::get_web_root() . "/stepe.php";
 $colorssn_page = functions::get_web_root() . "/view_coloredssn.php";
-$jobs = statistics::get_generate($db,$month,$year);
+$jobs = efi_statistics::get_generate($db,$month,$year);
 
 
-$analysis_jobs = statistics::get_analysis($db,$month,$year);
+$analysis_jobs = efi_statistics::get_analysis($db,$month,$year);
 $analysis_html = "";
 foreach ($analysis_jobs as $job) {
     $get_array = array('id'=>$job['Generate ID'],'key'=>$job['Key'],'analysis_id'=>$job['Analysis ID']);
