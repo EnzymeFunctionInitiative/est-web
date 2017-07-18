@@ -142,7 +142,10 @@ else {
 
     include_once 'includes/header.inc.php'; 
     include_once 'includes/quest_acron.inc';
-    
+
+
+    $stepa_link = functions::get_web_root() . "/stepa.php#colorssn";
+    $gnt_link = functions::get_gnt_web_root();
 
 ?>	
 
@@ -151,8 +154,6 @@ else {
 
 
 <h3>Download Network Files</h3>
-    <p>&nbsp;</p>
-    <p><b>If you use an SSN from EFI-EST, please cite <a href='tutorial_references.php'>Reference #6 Gerlt <i>et al.</i></a></b></p>
     <p>&nbsp;</p>
     <h4>Network Information</h4>
     <p>
@@ -165,7 +166,7 @@ else {
     </table>
 
     <h4>Full Network <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>
-    <p>Each node in the network is a single protein from the data set. Large files (&gt;500MB) may not open.</p>
+    <p>Each node in the network represents a single protein sequence. Large files (&gt;500MB) may not open in Cytoscape.</p>
 
     <table width="100%" border="1">
     <tr>
@@ -180,7 +181,15 @@ else {
     <p>&nbsp;</p>
     <div class="align_left">
     <h4>Representative Node Networks <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>
-    <p>Each node in the network represents a collection of proteins grouped according to percent identity.</p>
+    <p>
+        In representative node (RepNode) networks, each node in the network represents a collection of proteins grouped
+        according to percent identity. For example, for a 75% identity RepNode network, all connected sequences
+        that share 75% or more identity are grouped into a single node (meta node).
+        <br><br>
+        The cluster organization is not changed, and the clustering of sequences remains identical to the full network.
+        <br><br>
+        Sequences are collapsed together to reduce the overall number of nodes making for less complicated networks
+        easier to load in Cytoscape.
     </div>
         <table width="100%" border="1">
     <tr>
@@ -197,7 +206,30 @@ else {
     <hr>
 
   </div>
-<center><p><a href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3'>New to Cytoscape</a></p></center>
+<center><p><a href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3'>New to Cytoscape?</a></p></center>
+
+<hr>
+
+<p>
+    The coloring utility recently developed will help downstream analysis of your SSN. 
+    <a href="<?php echo $stepa_link; ?>">Try it!</a>
+</p>
+<p>
+    Have you tried exploring Genome Neighborhood Networks (GNTs) from your favorite SSNs?
+    <a href="<?php echo $gnt_link; ?>">Submit a GNT analysis</a>.
+</p>
+
+<p>
+If you use an SSN from EFI-EST, please <a href="http://www.sciencedirect.com/science/article/pii/S1570963915001120">cite</a>:<br>
+John A. Gerlt, Jason T. Bouvier, Daniel B. Davidson, Heidi J. Imker, Boris Sadkhin, David R. Slater, Katie L. Whalen,
+<b>Enzyme Function Initiative-Enzyme Similarity Tool (EFI-EST): A web tool for generating protein sequence similarity networks</b>,
+Biochimica et Biophysica Acta (BBA) - Proteins and Proteomics, Volume 1854, Issue 8, 2015, Pages 1019-1037, ISSN 1570-9639.
+</p>
+
+<hr>
+
+<center><h4><b><span style="color: blue">BETA</span></b></h4></center>
+
 <?php
 
     include_once 'includes/footer.inc.php';

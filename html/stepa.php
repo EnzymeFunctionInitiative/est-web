@@ -223,6 +223,8 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 <?php //////////////////////////////////////////////////////////////////////////////////////////////////// ?>
 <?php if (functions::colorssn_enabled()) { ?>
 
+<a name="colorssn"></a>
+
 <hr>
 
 <h4>Utility for SSN Coloring and Analysis</h4>

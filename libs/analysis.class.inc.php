@@ -287,7 +287,7 @@ class analysis {
         $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
 
         $plain_email .= "The coloring utility recently developed will help downstream analysis of your SSN. Try it! ";
-        $plain_email .= "It can be found at the bottom of the $web_root page." . $this->eol . $this->eol;
+        $plain_email .= "It can be found at the bottom of the $web_root/stepa.php#colorssn page." . $this->eol . $this->eol;
         $plain_email .= "Have you tried exploring Genome Neighborhood Networks (GNTs) from your favorite SSNs? ";
         $plain_email .= "GNT_URL" . $this->eol . $this->eol;
 
@@ -377,13 +377,11 @@ class analysis {
         $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
         $plain_email .= $this->get_stepa_job_info();
         $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
-        $plain_email .= "If no new email is received after 48 hours, please contact us and mention the EFi-EST ";
+        $plain_email .= "If no new email is received after 48 hours, please contact us and mention the EFI-EST ";
         $plain_email .= "Job ID that corresponds to this email." . $this->eol . $this->eol;
         $plain_email .= functions::get_email_footer() . $this->eol;
 
         $html_email = nl2br($plain_email, false);
-        $plain_email = str_replace("THE_URL", $full_url, $plain_email);
-        $html_email = str_replace("THE_URL", "<a href=\"" . htmlentities($full_url) . "\">" . $full_url . "</a>", $html_email);
 
         $message = new Mail_mime(array("eol"=>$this->eol));
         $message->setTXTBody($plain_email);

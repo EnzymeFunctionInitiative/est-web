@@ -298,11 +298,12 @@ class stepa {
         if ($this->beta) $plain_email = "Thank you for using the beta site of EFI-EST." . $this->eol;
 
         //plain text email
-        $plain_email .= "The initial information needed for the generation of the data set is being fetched and ";
-        $plain_email .= "processed. The similarity between sequences is being calculated." . $this->eol . $this->eol;
+        $plain_email .= $this->get_started_email_body();
         $plain_email .= "You will receive an email once the job has been completed." . $this->eol . $this->eol;
         $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
         $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
+        $plain_email .= "If no new email is received after 48 hours, please contact us and mention the EFI-EST ";
+        $plain_email .= "Job ID that corresponds to this email." . $this->eol . $this->eol;
         $plain_email .= functions::get_email_footer();
 
         $html_email = nl2br($plain_email, false);
@@ -318,6 +319,12 @@ class stepa {
 
         $mail = Mail::factory("mail");
         $mail->send($to,$headers,$body);
+    }
+
+    protected function get_started_email_body() {
+        $plain_email = "The initial information needed for the generation of the data set is being fetched and ";
+        $plain_email .= "processed. The similarity between sequences is being calculated." . $this->eol . $this->eol;
+        return $plain_email;
     }
 
     // This can be overridden.
