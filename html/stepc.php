@@ -88,7 +88,7 @@ elseif ($gen_type == "COLORSSN") {
 
 if ($uploaded_file) {
     $term = "IDs";
-    if ($gen_type == "FASTA") $term = "Sequences";
+    if ($gen_type == "FASTA" or $gen_type == "FASTA_ID") $term = "Sequences";
     
     $table->add_row("Number of $term in Uploaded File", number_format($generate->get_total_num_file_sequences()));
 

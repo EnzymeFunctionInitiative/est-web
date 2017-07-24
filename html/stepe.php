@@ -82,7 +82,18 @@ $table->add_row("Network Name", $analysis->get_name());
 $table->add_row("Alignment Score", $analysis->get_evalue());
 $table->add_row("Minimum Length", number_format($analysis->get_min_length()));
 $table->add_row("Maximum Length", number_format($analysis->get_max_length()));
-if ($uploaded_file) $table->add_row("Number of Sequences in Uploaded File", number_format($generate->get_total_num_file_sequences()));
+
+if ($uploaded_file) {
+    $term = "IDs";
+    if ($gen_type == "FASTA" or $gen_type == "FASTA_ID") $term = "Sequences";
+    
+    $table->add_row("Number of $term in Uploaded File", number_format($generate->get_total_num_file_sequences()));
+
+    if ($gen_type != "FASTA") {
+        $table->add_row("Number of $term in Uploaded File with UniProt Match", number_format($generate->get_num_matched_file_sequences()));
+        $table->add_row("Number of $term in Uploaded File without UniProt Match", number_format($generate->get_num_unmatched_file_sequences()));
+    }
+}
 if ($included_family) $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
 $table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
 //$table->add_row("Final Number of Filtered Sequences", number_format($analysis->get_num_sequences_post_filter()));

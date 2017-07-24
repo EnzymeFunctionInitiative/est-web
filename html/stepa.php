@@ -305,7 +305,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 </p>
 <div id='message'><?php if (isset($message)) { echo "<h4 class='center'>" . $message . "</h4>"; } ?></div>
 
-<input type="button" id='submit' name="submit" value="Submit Analysis" class="css_btn_class" onclick="uploadFile()">
+<input type="button" id='submit' name="submit" value="Submit Analysis" class="css_btn_class_recalc" onclick="uploadFile()">
 <hr>
        <h4><b><span style="color: blue">BETA</span></b></h4> 
 </form>

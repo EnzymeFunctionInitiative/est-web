@@ -41,7 +41,7 @@ The limit of <?php echo functions::get_max_blast_seq(1); ?> sequences is imposed
 	<button type='submit' class='css_btn_class'>Please proceed to the tutorial</button>
 </form>
 <form action="stepa.php" method="post">
-	<button type='submit' class='css_btn_class'>Begin EFI-EST</button>
+	<button type='submit' class='css_btn_class_recalc'>Begin EFI-EST</button>
 </form>
         
     
