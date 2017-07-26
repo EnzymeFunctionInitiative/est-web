@@ -383,6 +383,24 @@ class functions {
     public static function get_accession_counts_filename() {
         return __ACC_COUNT_FILENAME__ ? __ACC_COUNT_FILENAME__ : "";
     }
+
+    public static function sanitize_family($family) {
+        return trim($family);
+    }
+
+    public static function get_family_type($family) {
+        $family = strtolower($family);
+        if (substr($family, 0, 2) === "pf")
+            return "PFAM";
+        else if (substr($family, 0, 3) === "ipr")
+            return "INTERPRO";
+        else if (substr($family, 0, 3) === "g3d")
+            return "GENE3D";
+        else if (substr($family, 0, 3) === "ssf")
+            return "SSF";
+        else
+            return "";
+    }
 }
 
 ?>

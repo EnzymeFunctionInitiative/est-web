@@ -298,6 +298,38 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 <?php } ?>
 
 
+<?php //////////////////////////////////////////////////////////////////////////////////////////////////// ?>
+
+<hr>
+
+<h4>Family Count Inquiry Tool</h4>
+
+<hr>
+<p class='align_left'>
+    This tool returns the size of the families for the Interpro, Pfam, Gene3D, or SSF databases.
+</p>
+<p class='align_left'>
+    Input a list of families:
+    <div>
+        <div style="float: left; width: 50%">
+            <textarea rows="10" cols="50" id="familyCountInput"></textarea>
+        </div>
+        <div style="float: right; width: 50%">
+            <table border="0" width="100%">
+                <thead>
+                    <th>Family</th>
+                    <th>Size</th>
+                </thead>
+                <tbody id="familyCountOutput"></tbody>
+            </table>
+        </div>
+    </div>
+    <div style="clear: both; padding-top: 20px; height: 50px">
+        <button onclick="getFamilyCounts('familyCountInput','familyCountOutput');" class="family_count_btn" type="button">Query</button>
+    </div>
+</p>
+
+
 <hr>
 <p><br><input type="text" id='email' name='email' value='<?php if (isset($_POST['email'])) { echo $_POST['email']; } else { echo "Enter your email address"; } ?>' i
 	class="blast_inputs email" id='email' onfocus="if(!this._haschanged){this.value=''};this._haschanged=true;"><br>
@@ -317,5 +349,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 <script> 
 disable_forms();
 </script>
+
+<script src="includes/family_counts.js" type="text/javascript"></script>
 
 <?php include_once 'includes/footer.inc.php'; ?>

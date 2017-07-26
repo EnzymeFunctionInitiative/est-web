@@ -484,3 +484,14 @@ li.active  { background: #7a0026; }
 fieldset {
     border-style: none;
 }
+
+.family_count_btn {
+    padding: 11px 38px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+}
+
+
