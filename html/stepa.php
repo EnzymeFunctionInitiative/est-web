@@ -16,6 +16,9 @@ for ($i=3;$i<=20;$i++) {
 	}
 }
 
+$maxSeqNum = functions::get_max_seq();
+$maxSeqFormatted = number_format($maxSeqNum, 0);
+
 ?>
 
 <script>
@@ -76,15 +79,31 @@ Four input methods are available. A utility for SSN coloring and analysis is als
      The sequences from the Pfam and/or InterPro families are retrieved, and then, the similarities between the
     sequences are calculated and used to generate the SSN.
     For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the
-    format is IPRxxxxxx (six digits). The maximum number of retrieved sequences is <?php echo number_format(functions::get_max_seq(),0); ?>.
+    format is IPRxxxxxx (six digits). The maximum number of retrieved sequences is <?php echo $maxSeqFormatted; ?>.
     <!--
         Generate data set with Pfam and/or InterPro numbers. For Pfam families, the format is a comma separated list of
         PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).  The maximum number sequences
-        retrieved is <?php echo number_format(functions::get_max_seq(),0); ?>. To identify the Pfam and/or InterPro number from a BLAST sequence, please go to <a href='<?php echo functions::get_interpro_website(); ?>' target='_blank'><?php echo functions::get_interpro_website(); ?></a>.
+        retrieved is <?php echo $maxSeqFormatted; ?>. To identify the Pfam and/or InterPro number from a BLAST sequence, please go to <a href='<?php echo functions::get_interpro_website(); ?>' target='_blank'><?php echo functions::get_interpro_website(); ?></a>.
     -->
 </p>
 <fieldset id='option_b'>
-<input type='text' id='families_input' name='families_input' class='blast_inputs' value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'>
+<input type='text' id='families_input' name='families_input' class='blast_inputs'
+    value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'
+    oninput="checkFamilyInput('families_input','family_size_container','family_count_table','families_input',<?php echo $maxSeqNum; ?>)"><br>
+
+<center>
+        <div style="width:50%;display:none" id="family_size_container">
+            <table border="0" width="100%">
+                <thead>
+                    <th>Family</th>
+                    <th>Size</th>
+                </thead>
+                <tbody id="family_count_table"></tbody>
+            </table>
+        </div>
+</center>
+<!--<center><div class="pfam_size" id="family_size_container">&nbsp;</div></center>-->
+
 <p class='align_left'><a href='javascript:toggle_pfam_advanced();'>Advanced Options<!-- (see tutorial)--><span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
 <br><div id="pfam_advanced" style="display: none;">
 <p class='align_left'>E-Value: <input type='text' class='small' id='pfam_evalue' name='pfam_evalue' value='<?php if (isset($_POST['pfam_evalue'])) { echo $_POST['pfam_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default <?php echo functions::get_evalue(); ?>)</p>
@@ -299,7 +318,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 
 
 <?php //////////////////////////////////////////////////////////////////////////////////////////////////// ?>
-
+<?php /* ?>
 <hr>
 
 <h4>Family Count Inquiry Tool</h4>
@@ -320,15 +339,15 @@ Four input methods are available. A utility for SSN coloring and analysis is als
                     <th>Family</th>
                     <th>Size</th>
                 </thead>
-                <tbody id="familyCountOutput"></tbody>
+                <tbody id="family_count_table"></tbody>
             </table>
         </div>
     </div>
     <div style="clear: both; padding-top: 20px; height: 50px">
-        <button onclick="getFamilyCounts('familyCountInput','familyCountOutput');" class="family_count_btn" type="button">Query</button>
+        <button onclick="getFamilyCounts('familyCountInput','family_count_table');" class="family_count_btn" type="button">Query</button>
     </div>
 </p>
-
+<?php */ ?>
 
 <hr>
 <p><br><input type="text" id='email' name='email' value='<?php if (isset($_POST['email'])) { echo $_POST['email']; } else { echo "Enter your email address"; } ?>' i

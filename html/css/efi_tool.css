@@ -494,4 +494,10 @@ fieldset {
     text-decoration: none;
 }
 
+.pfam_size {
+    width: 80%;
+    text-align: right;
+    margin-top: -30px;
+    margin-bottom: 10px;
+}
 
