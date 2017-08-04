@@ -29,8 +29,6 @@ if ($db_result) {
             array_push($emails, $email);
         }
     }
-} else {
-    $status = "FAIL";
 }
 
 echo json_encode(array(
