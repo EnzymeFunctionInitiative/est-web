@@ -28,7 +28,7 @@ class accession extends family_shared {
     }
     private function get_no_matches_file() {
         return
-            functions::get_results_dir() . "/" .
+            functions::get_results_dirname() . "/" .
             $this->get_output_dir() . "/" . 
             $this->get_no_matches_filename(); 
     }
