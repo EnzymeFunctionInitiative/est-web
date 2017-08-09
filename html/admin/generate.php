@@ -17,7 +17,8 @@ $jobs = efi_statistics::get_generate($db,$month,$year);
 
 $generate_html = "";
 foreach ($jobs as $job) {
-    $get_array = array('id'=>$job['Generate ID'],'key'=>$job['Key']);
+    $id = $job['Generate ID'];
+    $get_array = array('id'=>$id,'key'=>$job['Key']);
     if ($job['Option Selected'] == "COLORSSN") {
         $url = $colorssn_page;
     } else {
@@ -47,11 +48,12 @@ foreach ($jobs as $job) {
 		$generate_html .= "<td>&nbsp</td>\n";
 	}
 	$generate_html .= "<td>" . $job['Families'] . "</td>\n";
+    $generate_html .= "<td>" . $job['E-Value'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Time Submitted'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Time Started'] . "</td>\n";
 	$generate_html .= "<td>" . $job['Time Completed']  ."</td>\n";
     $generate_html .= "<td>" . $job['Status'] . "</td>\n";
-//    $generate_html .= "<td><center><span style='font-size: 100%'><a href='reload'>&#8635;</a></span></center></td>\n";
+    //$generate_html .= "<td><center><span style='font-size: 100%'><a href='#' onclick='restartJob($id)'>&#8635;</a></span></center></td>\n";
 	$generate_html .= "</tr>";
 
 }
@@ -99,6 +101,7 @@ $monthName = date("F", mktime(0, 0, 0, $month, 10));
 	<th>Type</th>
 	<th>Blast</th>
 	<th>Family</th>
+    <th>E-Value</th>
 	<th>Time Submitted</th>
 	<th>Time Started</th>
 	<th>Time Finished</th>
@@ -108,6 +111,28 @@ $monthName = date("F", mktime(0, 0, 0, $month, 10));
 <?php echo $generate_html; ?>
 </table>
 
+
+<script type="text/javascript">
+
+function restartJob(jobId) {
+    var r = confirm("Are you sure you want to restart job #" + jobId + "?");
+    if (r != true) {
+        return;
+    }
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            location.reload();
+        } else if (this.status == 500) {
+            alert("Restart failed!");
+        }
+    };
+    xmlhttp.open("GET", "restart_job.php?job-id=" + jobId, true);
+    xmlhttp.send();
+}
+
+</script>
 
 
 <?php include_once '../includes/stats_footer.inc.php' ?>

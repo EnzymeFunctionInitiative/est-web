@@ -4,6 +4,22 @@ include_once 'includes/header.inc.php';
 include_once 'includes/quest_acron.inc';
 include_once '../libs/functions.class.inc.php';
 
+$maxFileSize = ini_get('post_max_size');
+
+
+function make_upload_box($title, $file_id, $progress_bar_id, $progress_num_id) {
+    global $maxFileSize;
+    return <<<HTML
+                <div>
+                    $title:
+                    <input type='file' name='$file_id' id='$file_id' data-url='server/php/' class="input_file">
+                    <label for="$file_id" class="file_upload"><img src="images/upload.svg" /> <span>Choose a file&hellip;</span></label>
+                    <progress id='$progress_bar_id' max='100' value='0'></progress>
+                </div>
+                <br><div id="$progress_num_id"></div>
+                Maximum size is $maxFileSize.
+HTML;
+}
 
 $neighbor_size_html = "";
 $default_neighbor_size = functions::get_default_neighbor_size();
@@ -18,6 +34,7 @@ for ($i=3;$i<=20;$i++) {
 
 $maxSeqNum = functions::get_max_seq();
 $maxSeqFormatted = number_format($maxSeqNum, 0);
+
 
 ?>
 
@@ -148,11 +165,17 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 <?php    } ?>
         <textarea class="blast_inputs" id='fasta_input' name='fasta_input'><?php if (isset($_POST['fasta_input'])) { echo $_POST['fasta_input']; } ?></textarea>
         <p>
-            FASTA File:
-            <input type='file' name='fasta_file' id='fasta_file' data-url='server/php/'>
-            <progress id='progress_bar_fasta' max='100' value='0'></progress>
+            <?php echo make_upload_box("FASTA File", "fasta_file", "progress_bar_fasta", "progressNumberFasta"); ?>
+<!--
+            <div>
+                FASTA File:
+                <input type='file' name='fasta_file' id='fasta_file' data-url='server/php/' class="input_file">
+                <label for="fasta_file" class="file_upload"><img src="images/upload.svg" /> <span>Choose a file&hellip;</span></label>
+                <progress id='progress_bar_fasta' max='100' value='0'></progress>
+            </div>
             <br><div id="progressNumberFasta"></div> 
             Maximum size is <?php echo ini_get('post_max_size'); ?>b.
+-->
         </p>
         <p class='align_left'>
             If desired, include a Pfam and/or InterPro families, in the analysis of your FASTA file. For Pfam families,
@@ -205,10 +228,13 @@ Four input methods are available. A utility for SSN coloring and analysis is als
         </p>
         <textarea class="blast_inputs" id='accession_input' name='accession_input'><?php if (isset($_POST['accession_input'])) { echo $_POST['accession_input']; } ?></textarea>
         <p>
+            <?php echo make_upload_box("Accession ID File", "accession_file", "progress_bar_accession", "progressNumberAccession"); ?>
+<!--
             Accession ID File: <input type='file' name='accession_file' id='accession_file' data-url='server/php/'>
             <progress id='progress_bar_accession' max='100' value='0'></progress>
             <br><div id="progressNumberAccession"></div>
             Maximum size is <?php echo ini_get('post_max_size'); ?>b.
+-->
         </p>
         <p class='align_left'>
             If desired, include a Pfam and/or InterPro families, in the analysis of your file. For Pfam families,
@@ -257,11 +283,14 @@ Four input methods are available. A utility for SSN coloring and analysis is als
     <!--Color an input SSN and return associated cluster data.-->
     <fieldset id='option_colorssn'>
         <p>
+            <?php echo make_upload_box("SNN to color and analyze (uncompressed or zipped XGMML file)", "colorssn_file", "progress_bar_colorssn", "progressNumberColorSsn"); ?>
+<!--
             SNN to color and analyze (uncompressed or zipped XGMML file):
             <input type='file' name='colorssn_file' id='colorssn_file' data-url='server/php/'>
             <progress id='progress_bar_colorssn' max='100' value='0'></progress>
             <br>
             <div id="progressNumberColorSsn"></div>
+-->
             Maximum size is <?php echo ini_get('post_max_size'); ?>b.
 <?php /* ?>
             <p>
@@ -370,5 +399,6 @@ disable_forms();
 </script>
 
 <script src="includes/family_counts.js" type="text/javascript"></script>
+<script src="includes/custom-file-input.js" type="text/javascript"></script>
 
 <?php include_once 'includes/footer.inc.php'; ?>
