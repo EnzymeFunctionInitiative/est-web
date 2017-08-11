@@ -21,6 +21,23 @@ function make_upload_box($title, $file_id, $progress_bar_id, $progress_num_id) {
 HTML;
 }
 
+function make_pfam_size_box($parent_id, $table_id) {
+    return <<<HTML
+<center>
+        <div style="width:50%;display:none" id="$parent_id">
+            <table border="0" width="100%">
+                <thead>
+                    <th>Family</th>
+                    <th>Size</th>
+                </thead>
+                <tbody id="$table_id"></tbody>
+            </table>
+        </div>
+</center>
+HTML;
+}
+
+
 $neighbor_size_html = "";
 $default_neighbor_size = functions::get_default_neighbor_size();
 for ($i=3;$i<=20;$i++) {
@@ -107,19 +124,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 <input type='text' id='families_input' name='families_input' class='blast_inputs'
     value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'
     oninput="checkFamilyInput('families_input','family_size_container','family_count_table','families_input',<?php echo $maxSeqNum; ?>)"><br>
-
-<center>
-        <div style="width:50%;display:none" id="family_size_container">
-            <table border="0" width="100%">
-                <thead>
-                    <th>Family</th>
-                    <th>Size</th>
-                </thead>
-                <tbody id="family_count_table"></tbody>
-            </table>
-        </div>
-</center>
-<!--<center><div class="pfam_size" id="family_size_container">&nbsp;</div></center>-->
+<?php echo make_pfam_size_box('family_size_container', 'family_count_table'); ?> 
 
 <p class='align_left'><a href='javascript:toggle_pfam_advanced();'>Advanced Options<!-- (see tutorial)--><span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
 <br><div id="pfam_advanced" style="display: none;">
@@ -182,7 +187,9 @@ Four input methods are available. A utility for SSN coloring and analysis is als
             the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is
             IPRxxxxxx (six digits).
         </p>
-        <input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input2'])) { echo $_POST['families_input2']; } ?>'>
+        <input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input2'])) { echo $_POST['families_input2']; } ?>'
+            oninput="checkFamilyInput('families_input2','family_size_container_optc','family_count_table_optc','families_input2',<?php echo $maxSeqNum; ?>)"><br>
+<?php echo make_pfam_size_box('family_size_container_optc', 'family_count_table_optc'); ?> 
         <p class='align_left'>
             <a href='javascript:toggle_fasta_advanced();'>Advanced Options<!-- (see
                 tutorial)--><span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a>
@@ -241,7 +248,9 @@ Four input methods are available. A utility for SSN coloring and analysis is als
             the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is
             IPRxxxxxx (six digits).
         </p>
-        <input type='text' id='families_input4' name='families_input4' class='blast_inputs' value='<?php if (isset($_POST['families_input4'])) { echo $_POST['families_input4']; } ?>'>
+        <input type='text' id='families_input4' name='families_input4' class='blast_inputs' value='<?php if (isset($_POST['families_input4'])) { echo $_POST['families_input4']; } ?>'
+            oninput="checkFamilyInput('families_input4','family_size_container_optd','family_count_table_optd','families_input4',<?php echo $maxSeqNum; ?>)"><br>
+<?php echo make_pfam_size_box('family_size_container_optd', 'family_count_table_optd'); ?> 
         <p class='align_left'>
             <a href='javascript:toggle_accession_advanced();'>Advanced Options<!--(see 
                 tutorial)--><span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a>
