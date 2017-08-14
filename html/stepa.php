@@ -4,11 +4,11 @@ include_once 'includes/header.inc.php';
 include_once 'includes/quest_acron.inc';
 include_once '../libs/functions.class.inc.php';
 
-$maxFileSize = ini_get('post_max_size');
+$max_file_size = ini_get('post_max_size');
 
 
 function make_upload_box($title, $file_id, $progress_bar_id, $progress_num_id) {
-    global $maxFileSize;
+    global $max_file_size;
     return <<<HTML
                 <div>
                     $title:
@@ -17,7 +17,7 @@ function make_upload_box($title, $file_id, $progress_bar_id, $progress_num_id) {
                     <progress id='$progress_bar_id' max='100' value='0'></progress>
                 </div>
                 <br><div id="$progress_num_id"></div>
-                Maximum size is $maxFileSize.
+                Maximum size is $max_file_size.
 HTML;
 }
 
@@ -49,8 +49,8 @@ for ($i=3;$i<=20;$i++) {
 	}
 }
 
-$maxSeqNum = functions::get_max_seq();
-$maxSeqFormatted = number_format($maxSeqNum, 0);
+$max_seq_num = functions::get_max_seq();
+$max_seq_formatted = number_format($max_seq_num, 0);
 
 
 ?>
@@ -113,17 +113,17 @@ Four input methods are available. A utility for SSN coloring and analysis is als
      The sequences from the Pfam and/or InterPro families are retrieved, and then, the similarities between the
     sequences are calculated and used to generate the SSN.
     For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the
-    format is IPRxxxxxx (six digits). The maximum number of retrieved sequences is <?php echo $maxSeqFormatted; ?>.
+    format is IPRxxxxxx (six digits). The maximum number of retrieved sequences is <?php echo $max_seq_formatted; ?>.
     <!--
         Generate data set with Pfam and/or InterPro numbers. For Pfam families, the format is a comma separated list of
         PFxxxxx (five digits); for InterPro families, the format is IPRxxxxxx (six digits).  The maximum number sequences
-        retrieved is <?php echo $maxSeqFormatted; ?>. To identify the Pfam and/or InterPro number from a BLAST sequence, please go to <a href='<?php echo functions::get_interpro_website(); ?>' target='_blank'><?php echo functions::get_interpro_website(); ?></a>.
+        retrieved is <?php echo $max_seq_formatted; ?>. To identify the Pfam and/or InterPro number from a BLAST sequence, please go to <a href='<?php echo functions::get_interpro_website(); ?>' target='_blank'><?php echo functions::get_interpro_website(); ?></a>.
     -->
 </p>
 <fieldset id='option_b'>
 <input type='text' id='families_input' name='families_input' class='blast_inputs'
     value='<?php if (isset($_POST['families_input'])) { echo $_POST['families_input']; } ?>'
-    oninput="checkFamilyInput('families_input','family_size_container','family_count_table','families_input',<?php echo $maxSeqNum; ?>)"><br>
+    oninput="checkFamilyInput('families_input','family_size_container','family_count_table','families_input',<?php echo $max_seq_num; ?>)"><br>
 <?php echo make_pfam_size_box('family_size_container', 'family_count_table'); ?> 
 
 <p class='align_left'><a href='javascript:toggle_pfam_advanced();'>Advanced Options<!-- (see tutorial)--><span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
@@ -188,7 +188,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
             IPRxxxxxx (six digits).
         </p>
         <input type='text' id='families_input2' name='families_input2' class='blast_inputs' value='<?php if (isset($_POST['families_input2'])) { echo $_POST['families_input2']; } ?>'
-            oninput="checkFamilyInput('families_input2','family_size_container_optc','family_count_table_optc','families_input2',<?php echo $maxSeqNum; ?>)"><br>
+            oninput="checkFamilyInput('families_input2','family_size_container_optc','family_count_table_optc','families_input2',<?php echo $max_seq_num; ?>)"><br>
 <?php echo make_pfam_size_box('family_size_container_optc', 'family_count_table_optc'); ?> 
         <p class='align_left'>
             <a href='javascript:toggle_fasta_advanced();'>Advanced Options<!-- (see
@@ -249,7 +249,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
             IPRxxxxxx (six digits).
         </p>
         <input type='text' id='families_input4' name='families_input4' class='blast_inputs' value='<?php if (isset($_POST['families_input4'])) { echo $_POST['families_input4']; } ?>'
-            oninput="checkFamilyInput('families_input4','family_size_container_optd','family_count_table_optd','families_input4',<?php echo $maxSeqNum; ?>)"><br>
+            oninput="checkFamilyInput('families_input4','family_size_container_optd','family_count_table_optd','families_input4',<?php echo $max_seq_num; ?>)"><br>
 <?php echo make_pfam_size_box('family_size_container_optd', 'family_count_table_optd'); ?> 
         <p class='align_left'>
             <a href='javascript:toggle_accession_advanced();'>Advanced Options<!--(see 
@@ -396,7 +396,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 
 <input type="button" id='submit' name="submit" value="Submit Analysis" class="css_btn_class_recalc" onclick="uploadFile()">
 <hr>
-       <h4><b><span style="color: blue">BETA</span></b></h4> 
+<?php if (functions::is_beta_release()) { ?><h4><b><span style="color: blue">BETA</span></b></h4><?php } ?>
 </form>
 <P>View Example - <a href='stepc_example.php'>Click Here</a></p>
 <h4>InterPro Version: <b><?php echo functions::get_interpro_version(); ?></b></h4>
