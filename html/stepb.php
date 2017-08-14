@@ -8,10 +8,10 @@ include_once 'includes/quest_acron.inc';
 <img src="images/quest_stages_b.jpg" width="990" height="119" alt="stage B">
    <hr>
 
-	<h3>Completing Generate Data Set</h3>
+	<h3>Fetching information and generating data set</h3>
 	<p>&nbsp;</p>
 	<p>An email will be sent when your data set generation is complete.</p>
-	<p>*Note - Datasets > 50K sequences may take greater than 24 hours to BLAST.</p>
+	<p>For large datasets (more than 50,000 sequences), it may take more than 24 hours.</p>
 	<p>&nbsp;</p>
 	<p>&nbsp;</p>
 	<p></p>

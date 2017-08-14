@@ -484,3 +484,37 @@ li.active  { background: #7a0026; }
 fieldset {
     border-style: none;
 }
+
+.family_count_btn {
+    padding: 11px 38px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+}
+
+.pfam_size {
+    width: 80%;
+    text-align: right;
+    margin-top: -30px;
+    margin-bottom: 10px;
+}
+
+.file_upload {
+    border: 1px solid #bbb;
+    background-color: #ddd;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.input_file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+

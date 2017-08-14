@@ -169,17 +169,17 @@ class stepa {
             foreach ($lines as $line) {
                 list($key, $val) = explode("\t", rtrim($line));
                 if (!$val)
-                    $num_seq[0] = intval($key);
+                    $num_seq['total_ssn_nodes'] = intval($key);
                 else if ($key == "Total")
-                    $num_seq[0] = intval($val);
+                    $num_seq['total_ssn_nodes'] = intval($val);
                 else if($key == "FileTotal")
-                    $num_seq[1] = intval($val);
+                    $num_seq['file_seq'] = intval($val);
                 else if($key == "FileMatched")
-                    $num_seq[2] = intval($val);
+                    $num_seq['file_matched'] = intval($val);
                 else if($key == "FileUnmatched")
-                    $num_seq[3] = intval($val);
+                    $num_seq['file_unmatched'] = intval($val);
                 else if ($key == "Family")
-                    $num_seq[4] = intval($val);
+                    $num_seq['family'] = intval($val);
             }
         } else if (file_exists($full_path)) {
             $exec = "grep '>' " . $full_path . " | sort | uniq | wc -l ";
@@ -197,28 +197,26 @@ class stepa {
         $sql = "UPDATE generate SET ";
         
         if (is_array($num_seq)) {
-            $sql .= "generate_num_seq='" . $num_seq[0] . "', ";
-            $sql .= "generate_total_num_file_seq='" . $num_seq[1] . "', ";
-            $sql .= "generate_num_matched_file_seq='" . $num_seq[2] . "', ";
-            $sql .= "generate_num_unmatched_file_seq='" . $num_seq[3] . "', ";
-            $sql .= "generate_num_family_seq='" . $num_seq[4] . "' ";
+            $sql .= "generate_num_seq='" . $num_seq['total_ssn_nodes'] . "', ";
+            $sql .= "generate_total_num_file_seq='" . $num_seq['file_seq'] . "', ";
+            $sql .= "generate_num_matched_file_seq='" . $num_seq['file_matched'] . "', ";
+            $sql .= "generate_num_unmatched_file_seq='" . $num_seq['file_unmatched'] . "', ";
+            $sql .= "generate_num_family_seq='" . $num_seq['family'] . "' ";
         } else {
             $sql .= "SET generate_num_seq='" . $num_seq . "' ";
         }
         
         $sql .= "WHERE generate_id='" . $this->get_id() . "' LIMIT 1";
 
-        print "SQL: $sql\n";
-        
         $result = $this->db->non_select_query($sql);
 
         if ($result) {
             if (is_array($num_seq)) {
-                $this->num_sequences = $num_seq[0];
-                $this->total_num_file_sequences = $num_seq[1];
-                $this->num_matched_file_sequences = $num_seq[2];
-                $this->num_unmatched_file_sequences = $num_seq[3];
-                $this->num_family_sequences = $num_seq[4];
+                $this->num_sequences = $num_seq['total_ssn_nodes'];
+                $this->total_num_file_sequences = $num_seq['file_seq'];
+                $this->num_matched_file_sequences = $num_seq['file_matched'];
+                $this->num_unmatched_file_sequences = $num_seq['file_unmatched'];
+                $this->num_family_sequences = $num_seq['family'];
             }
             else {
                 $this->num_sequences = $num_seq;
@@ -298,11 +296,12 @@ class stepa {
         if ($this->beta) $plain_email = "Thank you for using the beta site of EFI-EST." . $this->eol;
 
         //plain text email
-        $plain_email .= "The initial information needed for the generation of the data set is being fetched and ";
-        $plain_email .= "processed. The similarity between sequences is being calculated." . $this->eol . $this->eol;
+        $plain_email .= $this->get_started_email_body();
         $plain_email .= "You will receive an email once the job has been completed." . $this->eol . $this->eol;
         $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
         $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
+        $plain_email .= "If no new email is received after 48 hours, please contact us and mention the EFI-EST ";
+        $plain_email .= "Job ID that corresponds to this email." . $this->eol . $this->eol;
         $plain_email .= functions::get_email_footer();
 
         $html_email = nl2br($plain_email, false);
@@ -318,6 +317,12 @@ class stepa {
 
         $mail = Mail::factory("mail");
         $mail->send($to,$headers,$body);
+    }
+
+    protected function get_started_email_body() {
+        $plain_email = "The initial information needed for the generation of the data set is being fetched and ";
+        $plain_email .= "processed. The similarity between sequences is being calculated." . $this->eol . $this->eol;
+        return $plain_email;
     }
 
     // This can be overridden.

@@ -44,6 +44,10 @@ $job_name = $gen_id . "_" . $gen_type;
 
 $uploaded_file = "";
 $included_family = "";
+$num_family_nodes = $generate->get_num_family_sequences();
+$total_num_nodes = $generate->get_num_sequences();
+$extra_nodes_string = "";
+$extra_nodes_ast = "";
 
 if ($gen_type == "BLAST") {
     $generate = new blast($db,$_GET['id']);
@@ -54,30 +58,55 @@ if ($gen_type == "BLAST") {
     $table->add_row("Blast Sequence", $code);
     $table->add_row("E-Value", $generate->get_evalue());
     $table->add_row("Maximum Blast Sequences", number_format($generate->get_submitted_max_sequences()));
-    if (functions::get_program_selection_enabled()) { $table->add_row("Program Used", $generate->get_program()); }
 }
-elseif ($gen_type == "FAMILIES" || $gen_type == "ACCESSION" || $gen_type == "FASTA" || $gen_type == "FASTA_ID") {
-    if ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
-        $generate = new fasta($db,$_GET['id']);
-        $uploaded_file = $generate->get_uploaded_filename();
-        if ($uploaded_file) $table->add_row("Uploaded Fasta File", $uploaded_file);
-    } else if ($gen_type == "ACCESSION") {
-        $generate = new accession($db,$_GET['id']);
-        $uploaded_file = $generate->get_uploaded_filename();
-        if ($uploaded_file) $table->add_row("Uploaded Accession ID File", $uploaded_file);
-        $table->add_row("No matches file", "<a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></a>", true);
-    } else {
-        $generate = new generate($db,$_GET['id']);
-    }
-
+elseif ($gen_type == "FAMILIES") {
+    $generate = new generate($db,$_GET['id']);
     $included_family = $generate->get_families_comma();
-    if ($included_family != "") $table->add_row("PFam/Interpro Families", $included_family);
-    
+    $table->add_row("PFam/Interpro Families", $included_family);
     $table->add_row("E-Value", $generate->get_evalue());
     $table->add_row("Fraction", $generate->get_fraction());
-    
-    if ($gen_type == "FAMILIES") { $table->add_row("Domain", $generate->get_domain()); }
-    if (functions::get_program_selection_enabled()) { $table->add_row("Program Used", $generate->get_program()); }
+    $table->add_row("Domain", $generate->get_domain());
+}
+elseif ($gen_type == "ACCESSION") {
+    $generate = new accession($db,$_GET['id']);
+    $uploaded_file = $generate->get_uploaded_filename();
+    if ($uploaded_file)
+        $table->add_row("Uploaded Accession ID File", $uploaded_file);
+    $table->add_row("No matches file", "<a href=\"" . $generate->get_no_matches_download_path() . "\"><button>Download</button></a>", true);
+    $included_family = $generate->get_families_comma();
+    if ($included_family != "")
+        $table->add_row("PFam/Interpro Families", $included_family);
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Fraction", $generate->get_fraction());
+
+    $term = "IDs";
+    $table->add_row("Number of $term in Uploaded File", number_format($generate->get_total_num_file_sequences()));
+    $table->add_row("Number of $term in Uploaded File with UniProt Match", number_format($generate->get_num_matched_file_sequences()));
+    $table->add_row("Number of $term in Uploaded File without UniProt Match", number_format($generate->get_num_unmatched_file_sequences()));
+}
+elseif ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
+    $generate = new fasta($db,$_GET['id']);
+    $uploaded_file = $generate->get_uploaded_filename();
+    if ($uploaded_file)
+        $table->add_row("Uploaded Fasta File", $uploaded_file);
+    $included_family = $generate->get_families_comma();
+    if ($included_family != "")
+        $table->add_row("PFam/Interpro Families", $included_family);
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Fraction", $generate->get_fraction());
+
+    $num_file_seq = $generate->get_total_num_file_sequences();
+    $num_headers = $generate->get_num_matched_file_sequences() + $generate->get_num_unmatched_file_sequences();
+    $table->add_row("Number of Sequences in Uploaded File", number_format($num_file_seq));
+    $table->add_row("Number of FASTA Headers in Uploaded File", number_format($num_headers));
+    $table->add_row("Number of SSN Nodes with UniProt IDs from Uploaded File", number_format($generate->get_num_matched_file_sequences()));
+    $table->add_row("Number of SSN Nodes without UniProt IDs from Uploaded File", number_format($generate->get_num_unmatched_file_sequences()));
+
+    $extra_num_nodes = $total_num_nodes - $num_family_nodes - $num_file_seq;
+    if ($extra_num_nodes > 0) {
+        $extra_nodes_string = "* $extra_num_nodes additional nodes have been added since multiple UniProt IDs were found for a single sequence with more than one header in one or more cases.";
+        $extra_nodes_ast = "*";
+    }
 }
 elseif ($gen_type == "COLORSSN") {
     $generate = new colorssn($db, $_GET['id']);
@@ -86,19 +115,14 @@ elseif ($gen_type == "COLORSSN") {
     $table->add_row("Cooccurrence", $generate->get_cooccurrence());
 }
 
-if ($uploaded_file) {
-    $term = "IDs";
-    if ($gen_type == "FASTA") $term = "Sequences";
-    
-    $table->add_row("Number of $term in Uploaded File", number_format($generate->get_total_num_file_sequences()));
-
-    if ($gen_type != "FASTA") {
-        $table->add_row("Number of $term in Uploaded File with UniProt Match", number_format($generate->get_num_matched_file_sequences()));
-        $table->add_row("Number of $term in Uploaded File without UniProt Match", number_format($generate->get_num_unmatched_file_sequences()));
-    }
+if ($gen_type != "COLORSSN") {
+    if (functions::get_program_selection_enabled())
+        $table->add_row("Program Used", $generate->get_program());
 }
-if ($included_family) $table->add_row("Number of IDs in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
-$table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
+
+if ($included_family)
+    $table->add_row("Number of IDs in PFAM/InterPro Family", number_format($num_family_nodes));
+$table->add_row("Total Number of Nodes $extra_nodes_ast", number_format($total_num_nodes));
 
 
 $table_string = $table->as_string();
@@ -177,6 +201,7 @@ else {
 <table width="100%" border="1">
     <?php echo $table_string; ?>
 </table>
+<?php echo $extra_nodes_string; ?>
 <p>&nbsp;</p>
 
 <hr>

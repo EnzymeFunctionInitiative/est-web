@@ -45,6 +45,10 @@ $table->add_row("Job Number", $gen_id);
 
 $uploaded_file = "";
 $included_family = "";
+$num_family_nodes = $generate->get_num_family_sequences();
+$total_num_nodes = $generate->get_num_sequences();
+$extra_nodes_string = "";
+$extra_nodes_ast = "";
 
 if ($gen_type == "BLAST") {
     $generate = new blast($db,$_GET['id']);
@@ -56,37 +60,59 @@ if ($gen_type == "BLAST") {
     $table->add_row("E-Value", $generate->get_evalue());
     $table->add_row("Maximum Blast Sequences", number_format($generate->get_submitted_max_sequences()));
 }
-elseif ($gen_type == "FAMILIES" || $gen_type == "ACCESSION" || $gen_type == "FASTA" || $gen_type == "FASTA_ID") {
-    if ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
-        $generate = new fasta($db,$_GET['id']);
-        $uploaded_file = $generate->get_uploaded_filename();
-        if ($uploaded_file) $table->add_row("Uploaded Fasta File", $uploaded_file);
-    } else if ($gen_type == "ACCESSION") {
-        $generate = new accession($db,$_GET['id']);
-        $uploaded_file = $generate->get_uploaded_filename();
-        if ($uploaded_file) $table->add_row("Uploaded Accession ID File", $uploaded_file);
-    } else {
-        $generate = new generate($db,$_GET['id']);
-    }
-
+elseif ($gen_type == "FAMILIES") {
+    $generate = new generate($db,$_GET['id']);
     $included_family = $generate->get_families_comma();
-    if ($included_family != "") $table->add_row("PFam/Interpro Families", $included_family);
-    
+    if ($included_family != "")
+        $table->add_row("PFam/Interpro Families", $included_family);
     $table->add_row("E-Value", $generate->get_evalue());
     $table->add_row("Fraction", $generate->get_fraction());
-    
-    if ($gen_type == "FAMILIES") { $table->add_row("Domain", $generate->get_domain()); }
+    $table->add_row("Domain", $generate->get_domain());
 }
+elseif ($gen_type == "ACCESSION") {
+    $generate = new accession($db,$_GET['id']);
+    $uploaded_file = $generate->get_uploaded_filename();
+    if ($uploaded_file)
+        $table->add_row("Uploaded Accession ID File", $uploaded_file);
+    $included_family = $generate->get_families_comma();
+    if ($included_family != "")
+        $table->add_row("PFam/Interpro Families", $included_family);
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Fraction", $generate->get_fraction());
+}
+elseif ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
+    $generate = new fasta($db,$_GET['id']);
+    $uploaded_file = $generate->get_uploaded_filename();
+    if ($uploaded_file)
+        $table->add_row("Uploaded Fasta File", $uploaded_file);
+    $included_family = $generate->get_families_comma();
+    if ($included_family != "")
+        $table->add_row("PFam/Interpro Families", $included_family);
+    $table->add_row("E-Value", $generate->get_evalue());
+    $table->add_row("Fraction", $generate->get_fraction());
+
+    $num_file_seq = $generate->get_total_num_file_sequences();
+    $num_headers = $generate->get_num_matched_file_sequences() + $generate->get_num_unmatched_file_sequences();
+    $table->add_row("Number of Sequences in Uploaded File", number_format($num_file_seq));
+    $table->add_row("Number of FASTA Headers in Uploaded File", number_format($num_headers));
+    $table->add_row("Number of SSN Nodes with UniProt IDs from Uploaded File", number_format($generate->get_num_matched_file_sequences()));
+    $table->add_row("Number of SSN Nodes without UniProt IDs from Uploaded File", number_format($generate->get_num_unmatched_file_sequences()));
+
+    $extra_num_nodes = $total_num_nodes - $num_family_nodes - $num_file_seq;
+    if ($extra_num_nodes > 0) {
+        $extra_nodes_string = "* $extra_num_nodes additional nodes have been added since multiple UniProt IDs were found for a single sequence with more than one header in one or more cases.";
+        $extra_nodes_ast = "*";
+    }
+}
+
+if ($included_family)
+    $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($num_family_nodes));
+$table->add_row("Total Number of Sequences $extra_nodes_ast", number_format($total_num_nodes));
 
 $table->add_row("Network Name", $analysis->get_name());
 $table->add_row("Alignment Score", $analysis->get_evalue());
 $table->add_row("Minimum Length", number_format($analysis->get_min_length()));
 $table->add_row("Maximum Length", number_format($analysis->get_max_length()));
-if ($uploaded_file) $table->add_row("Number of Sequences in Uploaded File", number_format($generate->get_total_num_file_sequences()));
-if ($included_family) $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($generate->get_num_family_sequences()));
-$table->add_row("Final Number of Sequences", number_format($generate->get_num_sequences()));
-//$table->add_row("Final Number of Filtered Sequences", number_format($analysis->get_num_sequences_post_filter()));
-
 
 $table_string = $table->as_string();
 
@@ -142,7 +168,10 @@ else {
 
     include_once 'includes/header.inc.php'; 
     include_once 'includes/quest_acron.inc';
-    
+
+
+    $stepa_link = functions::get_web_root() . "/stepa.php#colorssn";
+    $gnt_link = functions::get_gnt_web_root();
 
 ?>	
 
@@ -151,8 +180,6 @@ else {
 
 
 <h3>Download Network Files</h3>
-    <p>&nbsp;</p>
-    <p><b>If you use an SSN from EFI-EST, please cite <a href='tutorial_references.php'>Reference #6 Gerlt <i>et al.</i></a></b></p>
     <p>&nbsp;</p>
     <h4>Network Information</h4>
     <p>
@@ -163,9 +190,10 @@ else {
     <table width="100%" border="1">
         <?php echo $table_string; ?>
     </table>
+    <?php echo $extra_nodes_string; ?>
 
     <h4>Full Network <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>
-    <p>Each node in the network is a single protein from the data set. Large files (&gt;500MB) may not open.</p>
+    <p>Each node in the network represents a single protein sequence. Large files (&gt;500MB) may not open in Cytoscape.</p>
 
     <table width="100%" border="1">
     <tr>
@@ -180,7 +208,15 @@ else {
     <p>&nbsp;</p>
     <div class="align_left">
     <h4>Representative Node Networks <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>
-    <p>Each node in the network represents a collection of proteins grouped according to percent identity.</p>
+    <p>
+        In representative node (RepNode) networks, each node in the network represents a collection of proteins grouped
+        according to percent identity. For example, for a 75% identity RepNode network, all connected sequences
+        that share 75% or more identity are grouped into a single node (meta node).
+        <br><br>
+        The cluster organization is not changed, and the clustering of sequences remains identical to the full network.
+        <br><br>
+        Sequences are collapsed together to reduce the overall number of nodes making for less complicated networks
+        easier to load in Cytoscape.
     </div>
         <table width="100%" border="1">
     <tr>
@@ -197,7 +233,30 @@ else {
     <hr>
 
   </div>
-<center><p><a href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3'>New to Cytoscape</a></p></center>
+<center><p><a href='http://enzymefunction.org/resources/tutorials/efi-and-cytoscape3'>New to Cytoscape?</a></p></center>
+
+<hr>
+
+<p>
+    The coloring utility recently developed will help downstream analysis of your SSN. 
+    <a href="<?php echo $stepa_link; ?>">Try it!</a>
+</p>
+<p>
+    Have you tried exploring Genome Neighborhood Networks (GNTs) from your favorite SSNs?
+    <a href="<?php echo $gnt_link; ?>">Submit a GNT analysis</a>.
+</p>
+
+<p>
+If you use an SSN from EFI-EST, please <a href="http://www.sciencedirect.com/science/article/pii/S1570963915001120">cite</a>:<br>
+John A. Gerlt, Jason T. Bouvier, Daniel B. Davidson, Heidi J. Imker, Boris Sadkhin, David R. Slater, Katie L. Whalen,
+<b>Enzyme Function Initiative-Enzyme Similarity Tool (EFI-EST): A web tool for generating protein sequence similarity networks</b>,
+Biochimica et Biophysica Acta (BBA) - Proteins and Proteomics, Volume 1854, Issue 8, 2015, Pages 1019-1037, ISSN 1570-9639.
+</p>
+
+<hr>
+
+<center><h4><b><span style="color: blue">BETA</span></b></h4></center>
+
 <?php
 
     include_once 'includes/footer.inc.php';

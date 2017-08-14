@@ -68,7 +68,7 @@ class efi_statistics
 		$sql = "SELECT generate.generate_email as 'Email', ";
 		$sql .= "generate.generate_id as 'EFI-EST ID', ";
 		$sql .= "generate.generate_type as 'Option Selected', ";
-		$sql .= "generate.generate_blast as Blast, ";
+        $sql .= "generate.generate_blast as Blast, ";
 		$sql .= "generate.generate_families as Families, ";
 		$sql .= "generate_status as 'Generate Step Status', ";
 		$sql .= "generate_num_seq as 'Number of Sequences', ";
@@ -97,6 +97,7 @@ class efi_statistics
                 $sql .= "generate.generate_type as 'Option Selected', ";
                 $sql .= "generate.generate_blast as Blast, ";
                 $sql .= "generate.generate_families as Families, ";
+                $sql .= "generate.generate_evalue as 'E-Value', ";
                 $sql .= "generate_status as 'Generate Step Status', ";
                 $sql .= "generate_num_seq as 'Number of Sequences', ";
                 $sql .= "generate_time_created as 'Time Submitted', ";
