@@ -91,6 +91,35 @@ class functions {
 
     }
 
+    public static function get_job_status($db, $generate_id, $analysis_id, $key) {
+        $result = array("generate" => "", "analysis" => "", "job_type" => "", "sql" => "");
+        if ($analysis_id) {
+            $sql = "SELECT A.analysis_status, G.generate_status, G.generate_type ";
+            $sql .= "FROM analysis AS A ";
+            $sql .= "LEFT JOIN generate AS G ON A.analysis_generate_id = G.generate_id ";
+            $sql .= "WHERE A.analysis_id = $analysis_id AND G.generate_id = $generate_id AND G.generate_key = '$key' ";
+            $a_result = $db->query($sql);
+            if ($a_result) {
+                $result["generate"] = $a_result[0]["generate_status"];
+                $result["analysis"] = $a_result[0]["analysis_status"];
+                $result["job_type"] = $a_result[0]["generate_type"];
+            }
+            $result["sql"] = $sql;
+        }
+        else {
+            $sql = "SELECT generate_status, generate_type ";
+            $sql .= "FROM generate ";
+            $sql .= "WHERE generate_id = $generate_id AND generate_key = '$key'";
+            $gen_result = $db->query($sql);
+            if ($gen_result) {
+                $result["generate"] = $gen_result[0]["generate_status"];
+                $result["job_type"] = $gen_result[0]["generate_type"];
+            }
+            $result["sql"] = $sql;
+        }
+        return $result;
+    }
+
 
     public static function parse_datetime($datetimeString) {
         return DateTime::createFromFormat("Y-m-d H:i:s", $datetimeString);
@@ -404,6 +433,10 @@ class functions {
             return "SSF";
         else
             return "";
+    }
+
+    public static function get_job_status_script() {
+        return "job_status.php";
     }
 }
 
