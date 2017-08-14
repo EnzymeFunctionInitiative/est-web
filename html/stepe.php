@@ -255,7 +255,9 @@ Biochimica et Biophysica Acta (BBA) - Proteins and Proteomics, Volume 1854, Issu
 
 <hr>
 
+<?php if (functions::is_beta_release()) { ?>
 <center><h4><b><span style="color: blue">BETA</span></b></h4></center>
+<?php } ?>
 
 <?php
 

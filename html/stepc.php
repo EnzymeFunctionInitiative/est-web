@@ -320,7 +320,9 @@ This name will be displayed in Cytoscape.
 
     <p><?php if (isset($result['MESSAGE'])) { echo $result['MESSAGE']; } ?>
 
+<?php if (functions::is_beta_release()) { ?>
 <h4><b><span style="color: blue">BETA</span></b></h4>
+<?php } ?>
 </center>
     </form>
 

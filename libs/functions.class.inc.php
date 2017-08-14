@@ -324,7 +324,11 @@ class functions {
     }
 
     public static function get_release_status() {
-        return __BETA_RELEASE__ ? (__BETA_RELEASE__ . " ") : "";
+        return defined("__BETA_RELEASE__") && __BETA_RELEASE__ ? (__BETA_RELEASE__ . " ") : "";
+    }
+
+    public static function is_beta_release() {
+        return defined("__BETA_RELEASE__") && __BETA_RELEASE__ ? true : false;
     }
 
 
