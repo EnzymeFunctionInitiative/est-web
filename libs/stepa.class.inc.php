@@ -291,6 +291,9 @@ class stepa {
         $to = $this->get_email();
         $from = "EFI EST <" . functions::get_admin_email() . ">";
 
+        $full_url = functions::get_web_root() . "/" . functions::get_job_status_script();
+        $full_url = $full_url . "?" . http_build_query(array('id'=>$this->get_id(), 'key'=>$this->get_key()));
+
         $plain_email = "";
 
         if ($this->beta) $plain_email = "Thank you for using the beta site of EFI-EST." . $this->eol;
@@ -300,11 +303,15 @@ class stepa {
         $plain_email .= "You will receive an email once the job has been completed." . $this->eol . $this->eol;
         $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
         $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
+        $plain_email .= "To check on the status of this job, go to THE_STATUS_URL" . $this->eol . $this->eol;
         $plain_email .= "If no new email is received after 48 hours, please contact us and mention the EFI-EST ";
         $plain_email .= "Job ID that corresponds to this email." . $this->eol . $this->eol;
         $plain_email .= functions::get_email_footer();
 
         $html_email = nl2br($plain_email, false);
+        
+        $plain_email = str_replace("THE_STATUS_URL", $full_url, $plain_email);
+        $html_email = str_replace("THE_STATUS_URL", "<a href=\"" . htmlentities($full_url) . "\">" . $full_url . "</a>", $html_email);
 
         $message = new Mail_mime(array("eol"=>$this->eol));
         $message->setTXTBody($plain_email);
