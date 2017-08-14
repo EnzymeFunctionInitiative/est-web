@@ -29,16 +29,17 @@ $table = new table_builder($table_format);
 
 
 $web_address = dirname($_SERVER['PHP_SELF']);
-$dateCompleted = $generate->get_time_completed_formatted();
-$dbVersion = $generate->get_db_version();
+$date_completed = $generate->get_time_completed_formatted();
+$db_version = $generate->get_db_version();
+$legacy = empty($db_version); // Indicates if we are looking at old jobs.
 
 
 $gen_type = $generate->get_type();
 $formatted_gen_type = functions::format_job_type($gen_type);
 
-$table->add_row("Date Completed", $dateCompleted);
-if (!empty($dbVersion)) {
-    $table->add_row("Database Version", $dbVersion);
+$table->add_row("Date Completed", $date_completed);
+if (!empty($db_version)) {
+    $table->add_row("Database Version", $db_version);
 }
 $table->add_row("Input Option", $formatted_gen_type);
 $table->add_row("Job Number", $gen_id);
@@ -92,20 +93,28 @@ elseif ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
     $table->add_row("Fraction", $generate->get_fraction());
 
     $num_file_seq = $generate->get_total_num_file_sequences();
-    $num_headers = $generate->get_num_matched_file_sequences() + $generate->get_num_unmatched_file_sequences();
-    $table->add_row("Number of Sequences in Uploaded File", number_format($num_file_seq));
-    $table->add_row("Number of FASTA Headers in Uploaded File", number_format($num_headers));
-    $table->add_row("Number of SSN Nodes with UniProt IDs from Uploaded File", number_format($generate->get_num_matched_file_sequences()));
-    $table->add_row("Number of SSN Nodes without UniProt IDs from Uploaded File", number_format($generate->get_num_unmatched_file_sequences()));
+    $num_matched = $generate->get_num_matched_file_sequences();
+    $num_unmatched = $generate->get_num_unmatched_file_sequences();
+    
+    if (!empty($num_file_seq))
+        $table->add_row("Number of Sequences in Uploaded File", number_format($num_file_seq));
+    if (!empty($num_matched) && !empty($num_unmatched))
+        $table->add_row("Number of FASTA Headers in Uploaded File", number_format($num_matched + $num_unmatched));
+    if (!empty($num_matched))
+        $table->add_row("Number of SSN Nodes with UniProt IDs from Uploaded File", number_format($num_matched));
+    if (!empty($num_unmatched))
+        $table->add_row("Number of SSN Nodes without UniProt IDs from Uploaded File", number_format($num_unmatched));
 
-    $extra_num_nodes = $total_num_nodes - $num_family_nodes - $num_file_seq;
-    if ($extra_num_nodes > 0) {
-        $extra_nodes_string = "* $extra_num_nodes additional nodes have been added since multiple UniProt IDs were found for a single sequence with more than one header in one or more cases.";
-        $extra_nodes_ast = "*";
+    if (!empty($num_family_nodes) && !empty($num_file_seq)) {
+        $extra_num_nodes = $total_num_nodes - $num_family_nodes - $num_file_seq;
+        if ($extra_num_nodes > 0) {
+            $extra_nodes_string = "* $extra_num_nodes additional nodes have been added since multiple UniProt IDs were found for a single sequence with more than one header in one or more cases.";
+            $extra_nodes_ast = "*";
+        }
     }
 }
 
-if ($included_family)
+if ($included_family && !empty($num_family_nodes))
     $table->add_row("Number of Sequences in PFAM/InterPro Family", number_format($num_family_nodes));
 $table->add_row("Total Number of Sequences $extra_nodes_ast", number_format($total_num_nodes));
 
@@ -145,19 +154,26 @@ else {
         if ($i == 0) {
             $path = functions::get_web_root() . "/results/" . $analysis->get_output_dir() . "/" . $analysis->get_network_dir() . "/" . $stats[$i]['File'];
             $full_network_html = "<tr>";
-            $full_network_html .= "<td style='text-align:center;'><a href='$path'><button>Download</button></a>  <a href='$path.zip'><button>Download ZIP</button></a></td>\n";
+            $full_network_html .= "<td style='text-align:center;'><a href='$path'><button>Download</button></a>";
+            if (!$legacy)
+                $full_network_html .= "  <a href='$path.zip'><button>Download ZIP</button></a>";
+            $full_network_html .= "</td>\n";
             $full_network_html .= "<td style='text-align:center;'>" . number_format($stats[$i]['Nodes'],0) . "</td>\n";
             $full_network_html .= "<td style='text-align:center;'>" . number_format($stats[$i]['Edges'],0) . "</td>\n";
             $full_network_html .= "<td style='text-align:center;'>" . functions::bytes_to_megabytes($stats[$i]['Size'],0) . " MB</td>\n";
             $full_network_html .= "</tr>";
         }
         else {
-            $percent_identity = substr($stats[$i]['File'],strrpos($stats[$i]['File'],'-')+1);
-            $percent_identity = substr($percent_identity,0,strrpos($percent_identity,'_'));
+            $percent_identity = substr($stats[$i]['File'], strrpos($stats[$i]['File'],'-') + 1);
+            $sep_char = $legacy ? "." : "_";
+            $percent_identity = substr($percent_identity, 0, strrpos($percent_identity, $sep_char));
             $percent_identity = str_replace(".","",$percent_identity);
             $path = functions::get_web_root() . "/results/" . $analysis->get_output_dir() . "/" . $analysis->get_network_dir() . "/" . $stats[$i]['File'];
             $rep_network_html .= "<tr>";
-            $rep_network_html .= "<td style='text-align:center;'><a href='$path'><button>Download</button></a>   <a href='$path.zip'><button>Download ZIP</button></a></td>\n";
+            $rep_network_html .= "<td style='text-align:center;'><a href='$path'><button>Download</button></a>";
+            if (!$legacy)
+                $rep_network_html .= "  <a href='$path.zip'><button>Download ZIP</button></a>";
+            $rep_network_html .= "</td>\n";
             $rep_network_html .= "<td style='text-align:center;'>" . $percent_identity . "</td>\n";
             $rep_network_html .= "<td style='text-align:center;'>" . number_format($stats[$i]['Nodes'],0) . "</td>\n";
             $rep_network_html .= "<td style='text-align:center;'>" . number_format($stats[$i]['Edges'],0) . "</td>\n";
