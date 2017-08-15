@@ -12,7 +12,7 @@ else {
 	$new_blasts = functions::get_blasts($db,__NEW__);
 	if (count($new_blasts)) {
 		foreach ($new_blasts as $data) {
-			sleep(1);
+			sleep(5);
 			$blast_obj = new blast($db,$data['generate_id']);
 			$result = $blast_obj->run_job();
 		

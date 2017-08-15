@@ -12,7 +12,7 @@ else {
     $new_generate_data = functions::get_colorssns($db,__NEW__);
     if (count($new_generate_data)) {
         foreach ($new_generate_data as $data) {
-            sleep(1);			
+            sleep(5);			
             $obj = new colorssn($db, $data['generate_id']);
             $result = $obj->run_job(functions::get_is_debug());
             if ($result['RESULT']) {
