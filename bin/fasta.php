@@ -12,7 +12,7 @@ else {
 	$new_fastas = functions::get_fastas($db,__NEW__);
 	if (count($new_fastas)) {
 		foreach ($new_fastas as $data) {
-            sleep(1);
+            sleep(5);
             $option = "C";
             if ($data['generate_type'] == "FASTA_ID") {
                 $option = "E";

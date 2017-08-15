@@ -12,7 +12,7 @@ else {
 	$new_generate_data = functions::get_families($db,__NEW__);
 	if (count($new_generate_data)) {
 		foreach ($new_generate_data as $data) {
-			sleep(1);			
+			sleep(5);			
 			$generate_obj = new generate($db,$data['generate_id']);
 			$result = $generate_obj->run_job();
 			if ($result['RESULT']) {

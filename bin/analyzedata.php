@@ -13,7 +13,7 @@ else {
 	$new_analysis = functions::get_analysis($db,__NEW__);
 	if (count($new_analysis)) {
 		foreach ($new_analysis as $analysis) {
-			sleep(1);
+			sleep(5);
 			$analysis_obj = new analysis($db,$analysis['analysis_id']);
 			$result = $analysis_obj->run_job();
 			if ($result['RESULT']) {

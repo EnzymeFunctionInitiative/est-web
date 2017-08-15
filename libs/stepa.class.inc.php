@@ -164,7 +164,7 @@ class stepa {
         $full_path = $results_path . "/" . $this->get_accession_file();
 
         if (file_exists($full_count_path)) {
-            $num_seq = array(0, 0, 0, 0, 0);
+            $num_seq = array('total_ssn_nodes' => 0, 'file_seq' => 0, 'file_matched' => 0, 'file_unmatched' => 0, 'family' => 0);
             $lines = file($full_count_path);
             foreach ($lines as $line) {
                 list($key, $val) = explode("\t", rtrim($line));
@@ -361,7 +361,7 @@ class stepa {
         if ($this->beta) $plain_email = "Thank you for using the beta site of EFI-EST." . $this->eol;
 
         //plain text email
-        $plain_email .= $this->get_completion_email_body();
+        $plain_email = $this->get_completion_email_body();
         $plain_email .= "Submission Summary:" . $this->eol . $this->eol;
         $plain_email .= $this->get_job_info() . $this->eol . $this->eol;
         $plain_email .= "These data will only be retained for " . functions::get_retention_days() . " days." . $this->eol . $this->eol;

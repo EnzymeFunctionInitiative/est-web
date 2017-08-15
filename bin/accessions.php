@@ -12,7 +12,7 @@ else {
 	$new_generate_data = functions::get_accessions($db,__NEW__);
 	if (count($new_generate_data)) {
         foreach ($new_generate_data as $data) {
-			sleep(1);			
+			sleep(5);			
 			$accession_obj = new accession($db, $data['generate_id']);
 			$result = $accession_obj->run_job(functions::get_is_debug());
 			if ($result['RESULT']) {
