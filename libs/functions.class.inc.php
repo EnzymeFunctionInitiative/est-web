@@ -262,12 +262,14 @@ class functions {
 
     public static function get_interpro_version() {
         return __INTERPRO_VERSION__;
-
     }
-
     public static function get_uniprot_version() {
         return __UNIPROT_VERSION__;
-    }	
+    }
+    public static function get_est_version() {
+        return __EST_VERSION__;
+    }
+
     public static function get_generate_queue() {
         return __GENERATE_QUEUE__;
     }
