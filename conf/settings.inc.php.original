@@ -16,7 +16,7 @@
 define("__ENABLE_WEBSITE__",True);
 define("__ENABLE_EMAILS__",True);
 define("__TITLE__","EFI-EST");
-define("__VERSION__","Beta");
+define("__EST_VERSION__","2.0");
 define("__TIMEZONE__","America/Chicago");
 define("__ADMIN_EMAIL__","");
 define("__WEB_ROOT__","");
