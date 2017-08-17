@@ -11,7 +11,7 @@ include_once '../../libs/functions.class.inc.php';
 <script src='includes/jquery-1.11.3.min.js' type='text/javascript'></script>
 <script src='includes/jquery-ui-1.11.4.custom/jquery-ui.js' type='text/javascript'></script>
 <script src='includes/main.inc.js' type='text/javascript'></script>
-<script src='includes/upload.inc.js' type='text/javascript'></script>
+<script src='includes/upload2.inc.js' type='text/javascript'></script>
 <title>EFI - Enzyme Similarity Tool<?php if (functions::is_beta_release()) { ?> - BETA<?php } ?></title>
 
 </head>
