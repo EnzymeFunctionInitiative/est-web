@@ -89,16 +89,6 @@ provided. A manually edited SNN can serve as input for this utility.
 </li>
 </ul>
 
-
-<p>
-Because each of these four options necessarily involves a time delay between
-wanting and having a network, the we are is working toward precomputing a
-library of SSNs for all Pfam families so that users can "immediately" download
-the network file(s) for the families that contain their sequence(s) of
-interest.  Our plan is to provide access to this library via a webtool that
-will be available on the EFI’s website.
-</p>
-
 <p><a href='http://dx.doi.org/10.1016/j.bbapap.2015.04.015'>Please see our recent
 review in BBA Proteins for examples of EFI-EST use.</a></p>
 

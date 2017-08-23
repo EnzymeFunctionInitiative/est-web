@@ -77,7 +77,7 @@ address (for data retrieval only; blue arrow), and hit "Submit Analysis" at the
 bottom of the screen (green arrow). EFI-EST will assemble the sequence dataset 
 and perform the all-by-all BLAST. The all-by-all BLAST will return alignment 
 scores/edges for those sequence pairs for which the BLAST e-values are less 
-than an upper limit threshold of 10-5 (or a different threshold specified in 
+than an upper limit threshold of 10<sup>-5</sup> (or a different threshold specified in 
 the 'Advanced Options'). For most families, the default threshold should 
 provide sufficient internode connections (edges) in the networks that 
 inferences about divergent evolution of protein function are possible.
@@ -650,7 +650,7 @@ generate a network.
 </p>
 
 
-
+<hr>
 
 <h4>Utility for the identification and coloring of independent clusters within a SSN. </h4>
 

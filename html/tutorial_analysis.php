@@ -178,22 +178,21 @@ fragments is small, and the vast majority of the sequences contain a single
 domain. Thus, no values would be entered in the fields in part 3.
 </p>
 
-<p><img src="images/tutorial/stepc_plot_ex2_num_edges.png" /><br>
+<p><img src="images/tutorial/stepc_plot_ex1_num_edges.png" /><br>
 <i>Example 1 (A). Number of edges histogram for the proline racemase superfamily (IPR008794).</i>
 </p>
 
-<p><img src="images/tutorial/stepc_plot_ex2_len_hist.png" /><br>
+<p><img src="images/tutorial/stepc_plot_ex1_len_hist.png" /><br>
 <i>Example 1 (B). Length histogram for the proline racemase superfamily (IPR008794).</i>
 </p>
 
-<p><img src="images/tutorial/stepc_plot_ex2_align_len.png" /><br>
+<p><img src="images/tutorial/stepc_plot_ex1_align_len.png" /><br>
 <i>Example 1 (C). Alignment length vs. alignment score quartile plot for the proline racemase superfamily (IPR008794).</i>
 </p>
 
-<p><img src="images/tutorial/stepc_plot_ex2_pct_id.png" /><br>
+<p><img src="images/tutorial/stepc_plot_ex1_pct_id.png" /><br>
 <i>Example 1 (D). Percent identity vs. alignment score quartile plot for the proline racemase superfamily (IPR008794).</i>
 </p>
-<p>TODO: update images when the jobs are completed<br>
 
 
 <a name="ex2"></a>
