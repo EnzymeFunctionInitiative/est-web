@@ -1,4 +1,5 @@
 <?php 
+include_once 'includes/main.inc.php';
 include_once 'includes/header.inc.php'; 
 include_once 'includes/quest_tutorial.inc';
 ?>
@@ -12,10 +13,9 @@ include_once 'includes/quest_tutorial.inc';
 <div>
   <div> </div>
     </div>
-<h4>&nbsp;</h4>
-<form action='tutorial_references.php' method='post'>
-        <button type='submit' class='css_btn_class'>CONTINUE WITH THE TUTORIAL</button>
-</form>
+
+<center><a href="tutorial_references.php"><button type='submit' class='css_btn_class'>Continue Tutorial</button></a></center>
+
 
 <?php require('includes/gobackto_quest.php'); ?>
     </div>

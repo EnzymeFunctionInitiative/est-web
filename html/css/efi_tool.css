@@ -378,7 +378,8 @@ padding: 0px;
 		.content_content p, .CSS1Compat p { line-height: 120%; margin: 15px 0px; }
 		.content_content h2 { background: #452e36; font-size: 175%; padding: 4px; color: #ebebeb; font-family: 'DINPro-bold', helvetica, sans-serif;  font-weight: normal; }
 			.content_content ul { margin-left: 35px; }
-			.content_content li { list-style: disc; }
+			.content_content ul li { list-style: disc; }
+			.content_content ol li { list-style: upper-greek; }
 			
 			.content_content a:link, .content_content a:visited { font-weight:bold; } 
 			
@@ -407,7 +408,7 @@ padding: 0px;
 		}
 		
 			.content_widecontent ul { margin-left: 35px; }
-			.content_widecontent li { list-style: disc; }
+			.content_widecontent ul li { list-style: disc; }
 			.content_widecontent .cke_wrapper ul { margin-left: 35px; }
 			.content_widecontent .cke_wrapper li { list-style: disc; }
 			
@@ -453,7 +454,7 @@ h3 {  color:#452e36;font-family: 'DINPro-bold', helvetica, sans-serif; font-weig
 h4 { font-size: 135%; font-family: 'DINPro-regular', helvetica, sans-serif; font-weight: normal;}
 
 table td { border-bottom: thin solid #eee; padding: 10px; }
-table tr:hover { background-color: #eee; color:#900; }
+table tr:hover { background-color: #ddd; color:#900; }
 table .tabletop, table .tabletop tr:hover { background:#333; color: #fff; }
 
 sup, sub { font-size: smaller; line-height: 50%; }
@@ -501,20 +502,50 @@ fieldset {
     margin-bottom: 10px;
 }
 
-.file_upload {
-    border: 1px solid #bbb;
+button.accordion {
     background-color: #ddd;
-    display: inline-block;
-    padding: 6px 12px;
+    color: #000;
     cursor: pointer;
+    padding: 6px 12px;
+    border: 1px solid #bbb;
+    text-align: left;
+    outline: none;
+    transition: 0.4s;
 }
 
-.input_file {
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
+button.accordion.active, button.accordion:hover {
+    background-color: #ddd; 
 }
+
+button.accordion:after {
+    content: '\002B';
+    color: #777;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+button.accordion.active:after {
+    content: "\2212";
+}
+
+div.acpanel {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+.plot_header {
+    display: inline-block;
+    width: 250px;
+}
+
+/*
+table.attributes tr:nth-child(even) {
+    background-color: #eee;
+}
+*/
+
 

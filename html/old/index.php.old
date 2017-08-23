@@ -21,90 +21,6 @@ easily generate SSNs that can be visualized in
 
 <div><center><a href="stepa.php"><button type="button" class='css_btn_class_recalc'>Begin EFI-EST</button></a></center></div>
 
-<h3>Overview of possible inputs for EFI-EST</h3>
-
-<p>
-The EFI - ENZYME SIMILARITY TOOL (EFI-EST) is a webserver for the generation of 
-SSNs. Four options for user-initiated generation of a SSN are available. In 
-addition, a utility to enhance SSNs interpretation is available.
-</p>
-
-<ul>
-<li><b>Option A: Single sequence query</b>.  The provided sequence is used as 
-the query for a BLAST search of the UniProt database. The retrieved sequences 
-are used to generate the SSN.
-<p class="indentall">Option A allows the user to explore local sequence-function space for the query 
-sequence. Homologs are collected and used to generate the SSN. By default, 
-<?php echo functions::get_default_blast_seq(1); ?> sequences are collected
-as this number often allows a “full” SSN to be generated and viewed with Cytoscape.</p>
-</li>
-
-<li><b>Option B: Pfam and/or InterPro families</b>. Defined protein families are used to generate the SSN.
-<p class="indentall">
-Option B allows the user to explore sequence-function space from defined 
-protein families. A limit of <?php echo functions::get_max_seq(1); ?> 
-sequences is imposed. Generation of a SSN for more than one family is allowed.
-</p>
-</li>
-
-<li><b>Option C: User-supplied FASTA file.</b>
-A SSN is generated from a set of defined sequences.
-
-<p class="indentall">
-Option C allows the user to generate a SSN for a provided set of FASTA 
-formatted sequences. By default, the provided sequences cannot be associated 
-with sequences in the UniProt database, and only two node attributes are 
-provided for the SSNs generated: the number of residues as the “Sequence 
-Length”, and the FASTA header as the “Description”. 
-</p>
-
-<p class="indentall">An option allows the FASTA headers to be read and if Uniprot or NCBI 
-identifiers are recognized, the corresponding Uniprot information will be 
-presented as node attributes.
-</p>
-</li>
-
-<li><b>Option D: List of UniProt and/or NCBI IDs.</b>
-The SSN is generated after 
-fetching the information from the corresponding databases.
-
-<p class="indentall">
-Option D allows the user to provide a list of UniProt IDs, NCBI IDs, and/or 
-NCBI GI numbers (now “retired”). UniProt IDs are used to retrieve sequences and 
-annotation information from the UniProt database. When recognized, NCBI IDs and 
-GI numbers are used to retrieve the “equivalent” UniProt IDs and information. 
-Sequences with NCBI IDs that cannot be recognized will not be included in the 
-SSN and a “nomatch” file listing these IDs is available for download.
-</p>
-</li>
-
-<li><b>Utility for the identification and coloring of independent clusters within a 
-SSN.</b>
-
-<p class="indentall">
-Independent clusters in the uploaded SSN are identified, numbered and colored. 
-Summary tables, sets of IDs and sequences for specific clusters and are 
-provided. A manually edited SNN can serve as input for this utility.
-</p>
-</li>
-</ul>
-
-
-<p>
-Because each of these four options necessarily involves a time delay between
-wanting and having a network, the we are is working toward precomputing a
-library of SSNs for all Pfam families so that users can "immediately" download
-the network file(s) for the families that contain their sequence(s) of
-interest.  Our plan is to provide access to this library via a webtool that
-will be available on the EFI’s website.
-</p>
-
-<p><a href='http://dx.doi.org/10.1016/j.bbapap.2015.04.015'>Please see our recent
-review in BBA Proteins for examples of EFI-EST use.</a></p>
-
-
-<!--
-
 <h3>OPTIONS FOR GENERATING SEQUENCE SIMLARITY NETWORKS</h3>
 
 <p style='line-height:120%'>Sequence similarity networks (SSNs) are a
@@ -198,7 +114,18 @@ please send an e-mail to efi@enzymefunction.org and provide a brief description
 of your interests and goals so that we can provide guidance in your use of the
 scripts.  We will reply with information on how to register for an account.
 </p>
--->
+
+<p>
+Because each of these four options necessarily involves a time delay between
+wanting and having a network, the we are is working toward precomputing a
+library of SSNs for all Pfam families so that users can "immediately" download
+the network file(s) for the families that contain their sequence(s) of
+interest.  Our plan is to provide access to this library via a webtool that
+will be available on the EFI’s website.
+</p>
+
+<p><a href='http://dx.doi.org/10.1016/j.bbapap.2015.04.015'>Please see our recent
+review in BBA Proteins for examples of EFI-EST use.</a></p>
 
 <hr>
 

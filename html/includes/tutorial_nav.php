@@ -2,7 +2,6 @@
 <ul>
 	  <li><a href='index.php'>Options for Generating Sequence Similarity Networks</a></li>
           <li><a href="tutorial.php">What is a Sequence Similarity Network?</a></li>
-          <li><a href="tutorial_why_use_networks.php">Why use Sequence Similarity Networks?</a></li>
           <li><a href="tutorial_startscreen.php">EFI-EST Start Screen</a></li>
           <li><a href="tutorial_analysis.php">Data Set Analysis</a>
           <ul>

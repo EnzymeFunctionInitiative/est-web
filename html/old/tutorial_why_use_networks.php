@@ -1,5 +1,5 @@
 <?php 
-
+include_once 'includes/main.inc.php';
 include_once 'includes/header.inc.php'; 
 include_once 'includes/quest_tutorial.inc';
 ?>

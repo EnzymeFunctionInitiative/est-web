@@ -221,54 +221,34 @@ should or should not be connected in a network is needed. This will determine th
 
 <h4>Analyze your data set<a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
 <p>View plots and histogram to determine the appropriate lengths and alignment score before continuing.</p>
-<table>
-    <tr>
-        <td><p>Number of Edges Histogram</p></td>
-        <td><a href='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_number_edges_plot(); ?>'
-            class="view_download" target='_blank'>View</a></td>
-        <td><form method='post' action='graphs.php'>
-            <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
-            <input type='hidden' name='type' value='EDGES'>
-            <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
-            <input type='submit' name='download_plot' value='Download' class='view_download'>
-            </form>
-        </td>
-    </tr>
-    <tr>
-        <td><p>Length Histogram</p></td>
-        <td><a href="<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_length_histogram_plot(); ?>" class="view_download" target='_blank'>View</a></td>
-        <td><form method='post' action='graphs.php'>
-                <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
-                <input type='hidden' name='type' value='HISTOGRAM'>
-                <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
-                <input type='submit' name='download_plot' value='Download' class='view_download'>
-                </form>
-        </td>
-    </tr>
-    <tr>
-        <td><p>Alignment Length Quartile Plot</p></td>
-        <td><a href="<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_alignment_plot(); ?>" class="view_download" target='_blank'>View</a></td>
-        <td><form method='post' action='graphs.php'>
-                <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
-                <input type='hidden' name='type' value='ALIGNMENT'>
-                <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
-                <input type='submit' name='download_plot' value='Download' class='view_download'>
-                </form>
-        </td>
-    </tr>
-    <tr>
-        <td><p>Percent Identity Quartile Plot</p></td>
-        <td><a href="<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_percent_identity_plot(); ?>" class="view_download" target='_blank'>View</a></td>
-        <td><form method='post' action='graphs.php'>
-                <input type='hidden' name='id' value='<?php echo $generate->get_id(); ?>'>
-                <input type='hidden' name='type' value='IDENTITY'>
-                <input type='hidden' name='key' value='<?php echo $generate->get_key(); ?>'>
-                <input type='submit' name='download_plot' value='Download' class='view_download'>
-                </form>
-        </td>    
-    </tr>
-</table>
 
+<span class="plot_header">Number of Edges Histogram</span> 
+<a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=EDGES&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
+<button class="accordion">Preview</button>
+<div class="acpanel">
+<img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_number_edges_plot_sm(); ?>' />
+</div>
+
+<span class="plot_header">Length Histograpm</span> 
+<a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=HISTOGRAM&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
+<button class="accordion">Preview</button>
+<div class="acpanel">
+<img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_length_histogram_plot_sm(); ?>' />
+</div>
+
+<span class="plot_header">Alignment Length Quartile Plot</span> 
+<a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=ALIGNMENT&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
+<button class="accordion">Preview</button>
+<div class="acpanel">
+<img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_alignment_plot_sm(); ?>' />
+</div>
+
+<span class="plot_header">Percent Identity Quartile Plot</span> 
+<a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=IDENTITY&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
+<button class="accordion">Preview</button>
+<div class="acpanel">
+<img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_percent_identity_plot_sm(); ?>' />
+</div>
 
 <hr><p><br></p>
 <h4><b>Finalization Parameters</b></h4>

@@ -1,3 +1,2 @@
-<form name="start" method="post" action="stepa.php">
-	<input type="submit" name="" value="BEGIN EFI-EST" class="css_btn_class">
-</form>
+<center><a href="stepa.php"><button type="button" class="css_btn_class">Begin EFI-EST</button></a></center>
+

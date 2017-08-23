@@ -1,5 +1,5 @@
 <Files *.xgmml>
-ForceType application/xml
+ForceType application/octet-stream
 Header set Content-Disposition attachment
 </Files>
 

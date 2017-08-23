@@ -43,6 +43,10 @@ class stepa {
     private $length_histogram = "length_histogram.png";
     private $percent_identity = "percent_identity.png";
     private $number_of_edges = "number_of_edges.png";
+    private $alignment_length_sm = "alignment_length_sm.png";
+    private $length_histogram_sm = "length_histogram_sm.png";
+    private $percent_identity_sm = "percent_identity_sm.png";
+    private $number_of_edges_sm = "number_of_edges_sm.png";
     ///////////////Public Functions///////////
 
     public function __construct($db,$id = 0) {
@@ -235,13 +239,24 @@ class stepa {
     }
     public function get_length_histogram_plot() {
         return $this->length_histogram;
-
     }
     public function get_percent_identity_plot() {
         return $this->percent_identity;
     }
     public function get_number_edges_plot() {
         return $this->number_of_edges;
+    }
+    public function get_alignment_plot_sm() {
+        return $this->alignment_length_sm;
+    }
+    public function get_length_histogram_plot_sm() {
+        return $this->length_histogram_sm;
+    }
+    public function get_percent_identity_plot_sm() {
+        return $this->percent_identity_sm;
+    }
+    public function get_number_edges_plot_sm() {
+        return $this->number_of_edges_sm;
     }
 
     public function download_graph($type) {
