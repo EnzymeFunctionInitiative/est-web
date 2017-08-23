@@ -234,50 +234,69 @@ class stepa {
         return false;
     }
 
-    public function get_alignment_plot() {
-        return $this->alignment_length;
+    public function get_alignment_plot($for_web = 0) {
+        return ($for_web ? functions::get_results_dirname() . "/" : "") . $this->get_output_dir() . "/" . $this->alignment_length;
     }
-    public function get_length_histogram_plot() {
-        return $this->length_histogram;
+    public function get_length_histogram_plot($for_web = 0) {
+        return ($for_web ? functions::get_results_dirname() . "/" : "") . $this->get_output_dir() . "/" . $this->length_histogram;
     }
-    public function get_percent_identity_plot() {
-        return $this->percent_identity;
+    public function get_percent_identity_plot($for_web = 0) {
+        return ($for_web ? functions::get_results_dirname() . "/" : "") . $this->get_output_dir() . "/" . $this->percent_identity;
     }
-    public function get_number_edges_plot() {
-        return $this->number_of_edges;
+    public function get_number_edges_plot($for_web = 0) {
+        return ($for_web ? functions::get_results_dirname() . "/" : "") . $this->get_output_dir() . "/" . $this->number_of_edges;
     }
     public function get_alignment_plot_sm() {
-        return $this->alignment_length_sm;
+        $full_file = functions::get_results_dir() . "/" . $this->get_output_dir() . "/" . $this->alignment_length_sm;
+        if (file_exists($full_file)) {
+            return functions::get_results_dirname() . "/" . $this->get_output_dir() . "/" . $this->alignment_length_sm;
+        } else {
+            return "";
+        }
     }
     public function get_length_histogram_plot_sm() {
-        return $this->length_histogram_sm;
+        $full_file = functions::get_results_dir() . "/" . $this->get_output_dir() . "/" . $this->length_histogram_sm;
+        if (file_exists($full_file)) {
+            return functions::get_results_dirname() . "/" . $this->get_output_dir() . "/" . $this->length_histogram_sm;
+        } else {
+            return "";
+        }
     }
     public function get_percent_identity_plot_sm() {
-        return $this->percent_identity_sm;
+        $full_file = functions::get_results_dir() . "/" . $this->get_output_dir() . "/" . $this->percent_identity_sm;
+        if (file_exists($full_file)) {
+            return functions::get_results_dirname() . "/" . $this->get_output_dir() . "/" . $this->percent_identity_sm;
+        } else {
+            return "";
+        }
     }
     public function get_number_edges_plot_sm() {
-        return $this->number_of_edges_sm;
+        $full_file = functions::get_results_dir() . "/" . $this->get_output_dir() . "/" . $this->number_of_edges_sm;
+        if (file_exists($full_file)) {
+            return functions::get_results_dirname() . "/" . $this->get_output_dir() . "/" . $this->number_of_edges_sm;
+        } else {
+            return "";
+        }
     }
 
     public function download_graph($type) {
         $results_dir = functions::get_results_dir();
-        $directory = $results_dir . "/" . $this->get_output_dir();
         $filename = "";
         if ($type == "ALIGNMENT") {
-            $full_path = $directory . "/" . $this->get_alignment_plot();
+            $full_path = $results_dir . "/" . $this->get_alignment_plot();
             $filename = $this->get_alignment_plot();
         }
 
         elseif ($type == "HISTOGRAM") {
-            $full_path = $directory . "/" . $this->get_length_histogram_plot();
+            $full_path = $results_dir . "/" . $this->get_length_histogram_plot();
             $filename = $this->get_length_histogram_plot();
         }
         elseif ($type == "IDENTITY") {
-            $full_path = $directory . "/" . $this->get_percent_identity_plot();
+            $full_path = $results_dir . "/" . $this->get_percent_identity_plot();
             $filename = $this->get_percent_identity_plot();
         }
         elseif ($type == "EDGES") {
-            $full_path = $directory . "/".  $this->get_number_edges_plot();
+            $full_path = $results_dir . "/".  $this->get_number_edges_plot();
             $filename = $this->get_number_edges_plot();
         }
         if (file_exists($full_path)) {

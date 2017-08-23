@@ -191,6 +191,21 @@ else {
         }
     }
 
+    function make_plot_download($gen, $hdr, $type, $preview_img, $download_img) {
+        $html = "<span class='plot_header'>$hdr</span> \n";
+        $html .= "<a href='graphs.php?id=" . $gen->get_id() . "&type=" . $type . "&key=" . $gen->get_key() . "'><button class='file_download'>Download <img src='images/download.svg' /></button></a>\n";
+        if ($preview_img) {
+            $html .= "<button class='accordion'>Preview</button>\n";
+            $html .= "<div class='acpanel'>\n";
+            $html .= "<img src='$preview_img' />\n";
+            $html .= "</div>\n";
+        } else {
+            $html .= "<a href='$download_img'><button class='file_download'>Preview</button></a>\n";
+            $html .= "<div></div>\n";
+        }
+
+        return $html;
+    }
 
 ?>	
 
@@ -222,6 +237,16 @@ should or should not be connected in a network is needed. This will determine th
 <h4>Analyze your data set<a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
 <p>View plots and histogram to determine the appropriate lengths and alignment score before continuing.</p>
 
+<?php echo make_plot_download($generate, "Number of Edges Histogram", "EDGES", $generate->get_number_edges_plot_sm(), $generate->get_number_edges_plot(1)); ?>
+
+<?php echo make_plot_download($generate, "Length Histogram", "HISTOGRAM", $generate->get_length_histogram_plot_sm(), $generate->get_length_histogram_plot(1)); ?>
+
+<?php echo make_plot_download($generate, "Alignment Length Quartile Plot", "ALIGNMENT", $generate->get_alignment_plot_sm(), $generate->get_alignment_plot(1)); ?>
+
+<?php echo make_plot_download($generate, "Percent Identity Quartile Plot", "IDENTITY", $generate->get_percent_identity_plot_sm(), $generate->get_percent_identity_plot(1)); ?>
+
+
+<!--
 <span class="plot_header">Number of Edges Histogram</span> 
 <a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=EDGES&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
 <button class="accordion">Preview</button>
@@ -249,6 +274,7 @@ should or should not be connected in a network is needed. This will determine th
 <div class="acpanel">
 <img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_percent_identity_plot_sm(); ?>' />
 </div>
+-->
 
 <hr><p><br></p>
 <h4><b>Finalization Parameters</b></h4>
