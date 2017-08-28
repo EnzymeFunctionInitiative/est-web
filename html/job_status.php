@@ -22,6 +22,8 @@ $gen_id = "";
 $ans_id = "";
 $status = "";
 $sql = "";
+$init_url = "";
+$ans_url = "";
 
 if (!array_key_exists("id", $_GET) || !array_key_exists("key", $_GET)) {
     $show_error = true;
@@ -55,9 +57,12 @@ else {
         else {
             if ($job_status["job_type"] == "COLORSSN") {
                 $status = "has completed coloring the SSN";
+                $init_url = "view_coloredssn.php?";
             }
             else {
                 $status = "has completed the initial processing";
+                $init_url = "stepc.php?";
+                $ans_url = "";
                 if ($ans_status) {
                     if ($ans_status == __FAILED__) {
                         $status .= " but the SSN failed to generate";
@@ -70,9 +75,12 @@ else {
                     }
                     else {
                         $status .= " and the SSN has been created";
+                        $ans_url = "stepe.php?analysis_id=" . $ans_id . "&key=" . $key . "&id=" . $gen_id;
                     }
                 }
             }
+
+            $init_url .= "key=" . $key . "&id=" . $gen_id;
         }
     }
 }
@@ -105,8 +113,14 @@ include_once 'includes/quest_acron.inc';
     <p>Job #<?php echo $gen_id . " " . $status; ?>.</p>
 <?php } ?>
 
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
+    <p>&nbsp;</p>
+<?php if ($init_url) { ?>
+    <p>Access initial calculation results <a href="<?php echo $init_url; ?>">here</a>.</p>
+<?php } ?>
+    <p>&nbsp;</p>
+<?php if ($ans_url) { ?>
+    <p>Access analysis results <a href="<?php echo $ans_url; ?>">here</a>.</p>
+<?php } ?>
 	<p></p>
     <p>&nbsp;</p>
   </div>

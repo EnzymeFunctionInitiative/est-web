@@ -149,6 +149,20 @@ class accession extends family_shared {
     // END OVERLOADS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public function view_accession_file() {
+        $filename = $this->get_id() . $this->file_helper->get_file_extension();
+        $full_path = functions::get_uploads_dir() . "/" . $filename;
+        $data = file_get_contents($full_path);
+        $data_array = preg_split("/(\r\n|\r|\n)/", $data);
+        $output = "";
+        while (list($var, $val) = each($data_array)) {
+            ++$var;
+            $val = trim($val);
+            $output .= "<br>" . $val;
+        }
+        return $output;
+    }
+
     private function verify_accession_file($filename) {
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         $valid = true;

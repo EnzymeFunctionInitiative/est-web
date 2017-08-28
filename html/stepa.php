@@ -301,7 +301,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 	class="blast_inputs email" id='email' onfocus="if(!this._haschanged){this.value=''};this._haschanged=true;"><br>
 <span class="smalltext">Used for data retrieval only</span>
 </p>
-<div id='message'><?php if (isset($message)) { echo "<h4 class='center'>" . $message . "</h4>"; } ?></div>
+<div id='message' style='font-weight:bold;font-size:130%;color:red'><?php if (isset($message)) { echo "<h4 class='center' style='color:red'>" . $message . "</h4>"; } ?></div>
 
 <input type="button" id='submit' name="submit" value="Submit Analysis" class="css_btn_class_recalc" onclick="uploadFile()">
 <hr>

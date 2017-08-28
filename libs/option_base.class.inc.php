@@ -103,10 +103,11 @@ abstract class option_base extends stepa {
     // class in addition to whatever actions the child performs.
     protected function validate($data) {
         $result = new validation_result;
+        $result->errors = false;
 
         if (!$this->verify_email($data->email)) {
             $result->errors = true;
-            //$result->message .= "<br>Please enter a valid email address</br>";
+            $result->message .= "<br>Please enter a valid email address</br>";
         }
         if (!$this->verify_evalue($data->evalue)) {
             $result->errors = true;
