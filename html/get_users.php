@@ -1,6 +1,13 @@
 <?php
 require_once 'includes/main.inc.php';
 
+$accessKey = functions::get_user_list_access_key();
+
+if (!array_key_exists("key", $_GET) || $_GET["key"] != $accessKey) {
+    echo json_encode(array('status'=>'FAIL'));
+    exit;
+}
+
 $startTime = "1900-01-01 00:00";
 $endTime = "2200-12-31 23:59";
 $optIn = 1;

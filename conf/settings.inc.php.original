@@ -86,4 +86,6 @@ define("__COLORSSN_MAP_DIR_NAME__","clusterdata");
 define("__COLORSSN_MAP_FILE_NAME__","nodedata.txt");
 define("__ACC_COUNT_FILENAME__","acc_counts.txt");
 
+define("__USER_LIST_KEY__","");
+
 ?>

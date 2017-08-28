@@ -440,6 +440,10 @@ class functions {
     public static function get_job_status_script() {
         return "job_status.php";
     }
+
+    public static function get_user_list_access_key() {
+        return __USER_LIST_KEY__;
+    }
 }
 
 ?>
