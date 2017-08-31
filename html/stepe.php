@@ -269,6 +269,8 @@ John A. Gerlt, Jason T. Bouvier, Daniel B. Davidson, Heidi J. Imker, Boris Sadkh
 Biochimica et Biophysica Acta (BBA) - Proteins and Proteomics, Volume 1854, Issue 8, 2015, Pages 1019-1037, ISSN 1570-9639.
 </p>
 
+<center>Portions of these data are derived from the Universal Protein Resource (UniProt) databases.</center>
+
 <hr>
 
 <?php if (functions::is_beta_release()) { ?>

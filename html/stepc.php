@@ -246,36 +246,6 @@ should or should not be connected in a network is needed. This will determine th
 <?php echo make_plot_download($generate, "Percent Identity Quartile Plot", "IDENTITY", $generate->get_percent_identity_plot_sm(), $generate->get_percent_identity_plot(1)); ?>
 
 
-<!--
-<span class="plot_header">Number of Edges Histogram</span> 
-<a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=EDGES&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
-<button class="accordion">Preview</button>
-<div class="acpanel">
-<img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_number_edges_plot_sm(); ?>' />
-</div>
-
-<span class="plot_header">Length Histograpm</span> 
-<a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=HISTOGRAM&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
-<button class="accordion">Preview</button>
-<div class="acpanel">
-<img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_length_histogram_plot_sm(); ?>' />
-</div>
-
-<span class="plot_header">Alignment Length Quartile Plot</span> 
-<a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=ALIGNMENT&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
-<button class="accordion">Preview</button>
-<div class="acpanel">
-<img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_alignment_plot_sm(); ?>' />
-</div>
-
-<span class="plot_header">Percent Identity Quartile Plot</span> 
-<a href="graphs.php?id=<?php echo $generate->get_id(); ?>&type=IDENTITY&key=<?php echo $generate->get_key(); ?>"><button class="file_download">Download <img src="images/download.svg" /></button></a>
-<button class="accordion">Preview</button>
-<div class="acpanel">
-<img src='<?php echo "results/" . $generate->get_output_dir() . "/" . $generate->get_percent_identity_plot_sm(); ?>' />
-</div>
--->
-
 <hr><p><br></p>
 <h4><b>Finalization Parameters</b></h4>
 <h4>1: Alignment score for output <a href="tutorial_analysis.php" class="question" target="_blank">?</a></h4>
@@ -342,6 +312,8 @@ This name will be displayed in Cytoscape.
 
 
   </div>
+
+<center>Portions of these data are derived from the Universal Protein Resource (UniProt) databases.</center>
 
 <?php
 
