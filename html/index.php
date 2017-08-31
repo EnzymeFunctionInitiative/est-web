@@ -11,7 +11,7 @@ include_once 'includes/header.inc.php';
 <h2>EFI - Enzyme Similarity Tool</h2>
 
 <p>
-A sequence similarity network (SSN) allows to visualize relationships among 
+A sequence similarity network (SSN) allows researchers to visualize relationships among 
 protein sequences. In SSNs, the most related proteins are grouped together in 
 clusters.  The Enzyme Similarity Tool (EFI-EST) is a web-tool that allows researchers to
 easily generate SSNs that can be visualized in 
