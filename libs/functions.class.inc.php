@@ -433,6 +433,8 @@ class functions {
             return "GENE3D";
         else if (substr($family, 0, 3) === "ssf")
             return "SSF";
+        else if (substr($family, 0, 2) === "cl")
+            return "CLAN";
         else
             return "";
     }
@@ -443,6 +445,10 @@ class functions {
 
     public static function get_user_list_access_key() {
         return __USER_LIST_KEY__;
+    }
+
+    public static function get_cluster_scheduler() {
+        return __CLUSTER_SCHEDULER__;
     }
 }
 

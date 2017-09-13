@@ -29,7 +29,7 @@ abstract class family_shared extends option_base {
     public function get_pfam_families() {
         $pfam_families = array();
         foreach ($this->families as $family) {
-            if (substr($family,0,2) == "PF") {
+            if (substr($family,0,2) == "PF" || substr($family,0,2) == "CL") { // Also allow PFAM clans
                 array_push($pfam_families,$family);
             }
 
@@ -126,10 +126,13 @@ abstract class family_shared extends option_base {
             //Test if Interpro Number
             if ((substr($family,0,3) == "ipr") && (is_numeric(substr($family,3))) && (strlen(substr($family,3)) == 6)) {
                 $valid = 1;
-
             }
             //Test if PFam Number
             elseif ((substr($family,0,2) == "pf") && (is_numeric(substr($family,2))) && (strlen(substr($family,2)) == 5)) {
+                $valid = 1;
+            }
+            //Test if Clan Number
+            elseif ((substr($family,0,2) == "cl") && (is_numeric(substr($family,2))) && (strlen(substr($family,2)) == 4)) {
                 $valid = 1;
             }
             else {

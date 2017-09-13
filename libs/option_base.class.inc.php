@@ -166,6 +166,8 @@ abstract class option_base extends stepa {
 
         chdir($out->job_dir);
 
+        $sched = functions::get_cluster_scheduler();
+
         $parms = $this->get_run_script_args($out);
 
         $exec = "source /etc/profile\n";
@@ -173,6 +175,8 @@ abstract class option_base extends stepa {
         $exec .= "module load " . functions::get_efidb_module() . "\n";
         $exec .= $this->additional_exec_modules();
         $exec .= $this->get_run_script() . " ";
+        if ($sched)
+            $exec .= " -scheduler " . $sched;
         foreach ($parms as $key => $value) {
             $exec .= " " . $key . " " . $value;
         }

@@ -3,10 +3,10 @@
 function getFamilyCountsRaw(familyInputId, countOutputId, handler) {
     var family = document.getElementById(familyInputId).value;
 
-    if (family.length >= 7) {
+    if ((family.toLowerCase().startsWith("cl") && family.length == 6) || family.length >= 7) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
+            if (this.readyState == 4 && this.status == 200 && this.responseText.length > 1) {
                 handler(this.responseText, countOutputId);
             }
         };
@@ -52,7 +52,7 @@ function getFamilyCountsTableHandler(responseText, countOutputId) {
 
 function commaFormatted(num) {
 
-    if (num.length <= 3)
+    if (!num || num.length <= 3)
         return num;
 
     var formatted = "";
@@ -79,7 +79,10 @@ function checkFamilyInput(familyInputId, containerOutputId, countOutputId, warni
     var container = document.getElementById(containerOutputId);
     var warning = document.getElementById(warningId);
 
-    if (input.length < 7) {
+    var thresholdNum = 7;
+    if (input.toLowerCase().startsWith("cl"))
+        thresholdNum = 6;
+    if (input.length < thresholdNum) {
         warning.style.color = "black";
         container.style.display = "none";
         return;
