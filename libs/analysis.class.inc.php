@@ -428,7 +428,12 @@ class analysis {
                 $exec .= "-minval " . $this->get_evalue() . " ";
                 $exec .= "-tmp " . $relative_output_dir . " ";
                 $exec .= "-job-id " . $this->get_generate_id() . " ";
-                $exec .= "-queue " . functions::get_analyse_queue() . " 2>&1 ";
+                $exec .= "-queue " . functions::get_analyse_queue() . " ";
+
+                $sched = functions::get_cluster_scheduler();
+                if ($sched)
+                    $exec .= " -scheduler " . $sched . " ";
+                $exec .= " 2>&1 ";
 
                 $exit_status = 1;
                 $output_array = array();
