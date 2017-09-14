@@ -430,8 +430,13 @@ class analysis {
                 $exec .= "-tmp " . $relative_output_dir . " ";
                 $exec .= "-job-id " . $this->get_generate_id() . " ";
                 $exec .= "-queue " . functions::get_analyse_queue() . " ";
+                
                 if ($this->length_overlap)
                     $exec .= "-lengthdif " . $this->length_overlap . " ";
+                $sched = functions::get_cluster_scheduler();
+                if ($sched)
+                    $exec .= " -scheduler " . $sched . " ";
+
                 $exec .= " 2>&1 ";
 
                 $exit_status = 1;
