@@ -101,6 +101,7 @@ class stepa {
     public function get_blast_input() { return ""; }
     public function get_families() { return array(); }
     public function get_db_version() { return $this->db_version; }
+    public function is_cd_hit_job() { return FALSE; } //HACK: this is a temporary hack for research purposes
 
 
     public function set_pbs_number($pbs_number) {
@@ -232,6 +233,23 @@ class stepa {
             return true;
         }
         return false;
+    }
+
+    public function get_convergence_ratio() {
+        $results_dir = functions::get_results_dir();
+        $file = $results_dir . "/" . $this->get_output_dir();
+        $file .= "/" . functions::get_convergence_ratio_filename();
+        if (!file_exists($file))
+            return -1;
+        
+        $file_handle = @fopen($file,"r") or die("Error opening " . $file . "\n");
+        $ratio = fgets($file_handle);
+        fclose($file_handle);
+
+        if ($ratio)
+            return floatval($ratio);
+        else
+            return -1;
     }
 
     public function get_alignment_plot($for_web = 0) {

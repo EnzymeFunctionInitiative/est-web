@@ -450,6 +450,14 @@ class functions {
     public static function get_cluster_scheduler() {
         return __CLUSTER_SCHEDULER__;
     }
+
+    public static function get_cdhit_stats_filename() {
+        return __CDHIT_STATS_FILE__;
+    }
+
+    public static function get_convergence_ratio_filename() {
+        return __CONVERGENCE_RATIO_FILENAME__;
+    }
 }
 
 ?>

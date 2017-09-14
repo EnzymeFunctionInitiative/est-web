@@ -57,6 +57,21 @@ function uploadFile() {
         uploadHandler = uploadProgressColorSsn;
     }
 
+    //Option E Selected
+    else if (document.getElementById('option_selected_e').checked) {
+        option_selected = document.getElementById('option_selected_e').value;
+        fd.append('families_input',document.getElementById('pfam_plus_families').value);
+        fd.append('evalue',document.getElementById('pfam_plus_evalue').value);
+        fd.append('fraction',document.getElementById('pfam_plus_fraction').value);
+        fd.append('pfam_domain',document.getElementById('pfam_plus_domain').checked);
+        fd.append('pfam_seqid',document.getElementById('pfam_plus_seqid').value);
+        fd.append('pfam_length_overlap',document.getElementById('pfam_plus_length_overlap').value);
+        fd.append('pfam_uniref_version',document.getElementById('pfam_plus_uniref_version').value);
+        fd.append('pfam_demux',document.getElementById('pfam_plus_demux').checked);
+        //TODO: conditionally enable this
+        //fd.append('program',document.getElementById('option_b_program').value);
+    }
+
 
     //Global Form Options
     fd.append('option_selected',option_selected);

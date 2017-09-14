@@ -26,8 +26,6 @@ if ($input->is_debug) {
 }
 
 
-
-
 $test = "";
 foreach($_POST as $var) {
     $test .= " " . $var;
@@ -62,17 +60,25 @@ if (isset($_POST['submit'])) {
 
         //Option B - PFam/Interpro
         case 'B':
+        case 'E':
             $generate = new generate($db);
             
             $input->families = $_POST['families_input'];
             $input->domain = $_POST['pfam_domain'];
+            if (isset($_POST['pfam_seqid']))
+                $input->seq_id = $_POST['pfam_seqid'];
+            if (isset($_POST['pfam_length_overlap']))
+                $input->length_overlap = $_POST['pfam_length_overlap'];
+            if (isset($_POST['pfam_uniref_version']))
+                $input->uniref_version = $_POST['pfam_uniref_version'];
+            if (isset($_POST['pfam_demux']))
+                $input->no_demux = $_POST['pfam_demux'] == "true" ? true : false;
 
             $result = $generate->create($input);
             break;
 
         //Option C - Fasta Input
         case 'C':
-        case 'E':
         //Option D - accession list
         case 'D':
         //Option color SSN

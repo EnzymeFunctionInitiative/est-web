@@ -30,6 +30,7 @@ class analysis {
     private $eol = PHP_EOL;
     private $db_version;
     private $beta;
+    private $length_overlap;
 
     ///////////////Public Functions///////////
 
@@ -428,7 +429,10 @@ class analysis {
                 $exec .= "-minval " . $this->get_evalue() . " ";
                 $exec .= "-tmp " . $relative_output_dir . " ";
                 $exec .= "-job-id " . $this->get_generate_id() . " ";
-                $exec .= "-queue " . functions::get_analyse_queue() . " 2>&1 ";
+                $exec .= "-queue " . functions::get_analyse_queue() . " ";
+                if ($this->length_overlap)
+                    $exec .= "-lengthdif " . $this->length_overlap . " ";
+                $exec .= " 2>&1 ";
 
                 $exit_status = 1;
                 $output_array = array();
@@ -489,6 +493,7 @@ class analysis {
             $this->time_completed = $result[0]['analysis_time_completed'];
             $this->filter_sequences = $result[0]['analysis_filter_sequences'];
             $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);
+            $this->length_overlap = $result[0]['generate_length_overlap'];
         }
 
     }

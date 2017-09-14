@@ -66,6 +66,15 @@ elseif ($gen_type == "FAMILIES") {
     $table->add_row("E-Value", $generate->get_evalue());
     $table->add_row("Fraction", $generate->get_fraction());
     $table->add_row("Domain", $generate->get_domain());
+    $seqid = $generate->get_sequence_identity();
+    $overlap = $generate->get_length_overlap();
+    $uniref = $generate->get_uniref_version();
+    if ($seqid)
+        $table->add_row("Sequence Identity", $seqid);
+    if ($overlap)
+        $table->add_row("Sequence Overlap", $overlap);
+    if ($uniref)
+        $table->add_row("UniRef Version", $uniref);
 }
 elseif ($gen_type == "ACCESSION") {
     $generate = new accession($db,$_GET['id']);
@@ -131,7 +140,10 @@ if ($gen_type != "COLORSSN") {
 if ($included_family && !empty($num_family_nodes))
     $table->add_row("Number of IDs in PFAM/InterPro Family", number_format($num_family_nodes));
 $table->add_row("Total Number of Nodes $extra_nodes_ast", number_format($total_num_nodes));
-
+$conv_ratio = $generate->get_convergence_ratio();
+if ($conv_ratio > -0.5) {
+    $table->add_row("Convergence Ratio", number_format($conv_ratio, 3));
+}
 
 $table_string = $table->as_string();
 
@@ -214,6 +226,7 @@ else {
 
 <h3>Data set Completed</h3>
 <p>&nbsp;</p>
+
 <h4>Network Information</h4>
 
 <p>
@@ -228,6 +241,32 @@ else {
 <p>&nbsp;</p>
 
 <hr>
+
+<?php
+    if ($generate->is_cd_hit_job()) {
+?>
+
+<h4>CD-HIT Counts</h4>
+
+<table border="0">
+<thead><th>Sequence % ID</th><th>Sequence Length</th><th>Number of Nodes</th></thead>
+<tbody>
+<?php
+        $cdhit_stats = $generate->get_cdhit_stats();
+        for ($i = 0; $i < count($cdhit_stats); $i++) {
+            echo "<tr><td>";
+            echo join("</td><td>", array($cdhit_stats[$i]['SequenceId'], $cdhit_stats[$i]['SequenceLength'], $cdhit_stats[$i]['Nodes']));
+            echo "</td></tr>\n";
+        }
+?>
+</tbody>
+</table>
+
+<hr>
+  </div>
+<?php
+    } else {
+?>
 
 <h4><b>Parameters for SSN Finalization</b></h4>
 
@@ -316,6 +355,7 @@ This name will be displayed in Cytoscape.
 <center>Portions of these data are derived from the Universal Protein Resource (UniProt) databases.</center>
 
 <?php
+    }
 
     include_once 'includes/footer.inc.php';
 }

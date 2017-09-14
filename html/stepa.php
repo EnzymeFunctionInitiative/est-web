@@ -116,9 +116,18 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 
 <p class='align_left'><a href='javascript:toggle_pfam_advanced();'>Advanced Options<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
 <br><div id="pfam_advanced" style="display: none;">
-<p class='align_left'>E-Value: <input type='text' class='small' id='pfam_evalue' name='pfam_evalue' value='<?php if (isset($_POST['pfam_evalue'])) { echo $_POST['pfam_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default <?php echo functions::get_evalue(); ?>)</p>
-<p class='align_left'>Fraction: <input type='text' class='small' id='pfam_fraction' name='pfam_fraction' value='<?php if (isset($_POST['pfam_fraction'])) { echo $_POST['pfam_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; (default: <?php echo functions::get_fraction(); ?>)</p>
-<p class='align_left'>Enable Domain: <input type='checkbox' id='pfam_domain' name='pfam_domain' value='1' <?php if (isset($_POST['pfam_domain']) && ($_POST['pfam_domain'] == "1")) { echo "checked='checked'"; } ?>' > Check to generate SSN with Pfam-defined domains (default: off)</p>
+<p class='align_left'>E-Value: <input type='text' class='small' id='pfam_evalue' name='pfam_evalue' value='<?php if (isset($_POST['pfam_evalue'])) { echo $_POST['pfam_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default <?php echo functions::get_evalue(); ?>))</p>
+<p class='align_left'>Fraction: <input type='text' class='small' id='pfam_fraction' name='pfam_fraction' value='<?php if (isset($_POST['pfam_fraction'])) { echo $_POST['pfam_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; (default: <?php echo functions::get_fraction(); ?>))</p>
+<p class='align_left'>Enable Domain: <input type='checkbox' id='pfam_domain' name='pfam_domain' value='1' <?php if (isset($_POST['pfam_domain']) && ($_POST['pfam_domain'] == "1")) { echo "checked='checked'"; } ?> > Check to generate SSN with Pfam-defined domains (default: off)</p>
+<p class='align_left'>Sequence Identity: <input type='text' class='small' id='pfam_seqid' name='pfam_seqid' value='<?php if (isset($_POST['pfam_seqid'])) { echo $_POST['pfam_seqid']; } else { echo "1"; } ?>'> Sequence identity (&le; 1; (default: 1))</p>
+<p class='align_left'>Sequence Length Overlap: <input type='text' class='small' id='pfam_length_overlap' name='pfam_length_overlap' value='<?php if (isset($_POST['pfam_length_overlap'])) { echo $_POST['pfam_length_overlap']; } else { echo "1"; } ?>'> Sequence length overlap (&le; 1; (default: 1))</p>
+<!--<p class='align_left'>UniRef Version: 
+    <select name="pfam_uniref_version" id="pfam_uniref_version">
+        <option value="None" selected='selected'>None</option>
+        <option value="50">UniRef50</option>
+        <option value="90">UniRef90</option>
+    </select>
+</p>-->
 <?php    if (functions::get_program_selection_enabled()) { ?>
 <p class='align_left'>Select Program to use: 
 <select name='option_b_program' id='option_b_program'>
@@ -235,6 +244,55 @@ Four input methods are available. A utility for SSN coloring and analysis is als
         </div>
     </fieldset>
 </p>
+<?php } ?>
+
+<hr>
+
+
+<?php if (functions::option_e_enabled()) { ?>
+<p class='align_left'>
+    <input type='radio' id='option_selected_e' name='option_selected' value='E' onChange='disable_forms();'>
+    <b>Option E: Pfam and/or InterPro families with advanced options</b><br>
+     The sequences from the Pfam and/or InterPro families are retrieved, and then, the similarities between the
+    sequences are calculated and used to generate the SSN. Advanced options, including specifying the use of
+    UniRef, sequence identity, and sequence length are provided.
+    For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the
+    format is IPRxxxxxx (six digits). The maximum number of retrieved sequences is <?php echo $max_seq_formatted; ?>.
+</p>
+<fieldset id='option_e'>
+<input type='text' id='pfam_plus_families' name='pfam_plus_families' class='blast_inputs'
+    value='<?php if (isset($_POST['pfam_plus_families'])) { echo $_POST['pfam_plus_families']; } ?>'
+    oninput="checkFamilyInput('pfam_plus_families','family_size_container_plus','family_count_table_plus','pfam_plus_families',<?php echo $max_seq_num; ?>)"><br>
+<?php echo make_pfam_size_box('family_size_container_plus', 'family_count_table_plus'); ?> 
+
+<p class='align_left'><a href='javascript:toggle_pfam_plus_advanced();'>Advanced Options<span class="ui-icon ui-icon-triangle-1-e" style='display: inline-block;'></span></a></p>
+<br><div id="pfam_plus_advanced" style="display: none;">
+<p class='align_left'>E-Value: <input type='text' class='small' id='pfam_plus_evalue' name='pfam_plus_evalue' value='<?php if (isset($_POST['pfam_plus_evalue'])) { echo $_POST['pfam_plus_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default <?php echo functions::get_evalue(); ?>))</p>
+<p class='align_left'>Fraction: <input type='text' class='small' id='pfam_plus_fraction' name='pfam_plus_fraction' value='<?php if (isset($_POST['pfam_plus_fraction'])) { echo $_POST['pfam_plus_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; (default: <?php echo functions::get_fraction(); ?>))</p>
+<p class='align_left'>Enable Domain: <input type='checkbox' id='pfam_plus_domain' name='pfam_plus_domain' value='1' <?php if (isset($_POST['pfam_plus_domain']) && ($_POST['pfam_plus_domain'] == "1")) { echo "checked='checked'"; } ?> > Check to generate SSN with Pfam-defined domains (default: off)</p>
+<p class='align_left'>Sequence Identity: <input type='text' class='small' id='pfam_plus_seqid' name='pfam_plus_seqid' value='<?php if (isset($_POST['pfam_plus_seqid'])) { echo $_POST['pfam_plus_seqid']; } else { echo "1"; } ?>'> Sequence identity (&le; 1; (default: 1))</p>
+<p class='align_left'>Sequence Length Overlap: <input type='text' class='small' id='pfam_plus_length_overlap' name='pfam_plus_length_overlap' value='<?php if (isset($_POST['pfam_plus_length_overlap'])) { echo $_POST['pfam_plus_length_overlap']; } else { echo "1"; } ?>'> Sequence length overlap (&le; 1; (default: 1))</p>
+<p class='align_left'>Do not demultiplex: <input type='checkbox' id='pfam_plus_demux' name='pfam_plus_demux' value='1' <?php if (isset($_POST['pfam_plus_demux']) && ($_POST['pfam_plus_demux'] == "1")) { echo "checked='checked'"; } ?> > Check to prevent a demultiplex to expand cd-hit clusters (default: demultiplex)</p>
+<p class='align_left'>UniRef Version: 
+    <select name="pfam_plus_uniref_version" id="pfam_plus_uniref_version">
+        <option value="None" selected='selected'>None</option>
+        <option value="50">UniRef50</option>
+        <option value="90">UniRef90</option>
+    </select>
+</p>
+<?php    if (functions::get_program_selection_enabled()) { ?>
+<p class='align_left'>Select Program to use: 
+<select name='option_b_program' id='option_b_program'>
+        <option value='BLAST'>Blast</option>
+        <option value='BLAST+'>Blast+</option>
+        <option selected='selected' value='DIAMOND'>Diamond</option>
+	<option value='DIAMONDSENSITIVE'>Diamond Sensitive</option>
+</select></p>
+<?php    } ?>
+
+</div>
+
+</fieldset>
 <?php } ?>
 
 <?php //////////////////////////////////////////////////////////////////////////////////////////////////// ?>

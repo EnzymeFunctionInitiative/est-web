@@ -88,5 +88,7 @@ define("__COLORSSN_MAP_FILE_NAME__","nodedata.txt");
 define("__ACC_COUNT_FILENAME__","acc_counts.txt");
 
 define("__USER_LIST_KEY__","");
+define("__CDHIT_STATS_FILE","");
+define("__CONVERGENCE_RATIO_FILENAME__","");
 
 ?>
