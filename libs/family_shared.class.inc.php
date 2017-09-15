@@ -106,8 +106,8 @@ abstract class family_shared extends option_base {
             return;
         }
 
-        if ($result[0]['generate_families'] != "") {
-            $families = explode(",", $result[0]['generate_families']);
+        if ($result['generate_families'] != "") {
+            $families = explode(",", $result['generate_families']);
             $this->families = $families;
         }
 

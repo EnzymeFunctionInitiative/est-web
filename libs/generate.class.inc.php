@@ -53,7 +53,7 @@ class generate extends family_shared {
             return;
         }
 
-        $this->domain = $result[0]['generate_domain'];
+        $this->domain = $result['generate_domain'];
 
         return $result;
     }

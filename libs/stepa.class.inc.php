@@ -198,21 +198,19 @@ class stepa {
     }
 
     public function set_num_sequences($num_seq) {
-        $sql = "UPDATE generate SET ";
-        
-        if (is_array($num_seq)) {
-            $sql .= "generate_num_seq='" . $num_seq['total_ssn_nodes'] . "', ";
-            $sql .= "generate_total_num_file_seq='" . $num_seq['file_seq'] . "', ";
-            $sql .= "generate_num_matched_file_seq='" . $num_seq['file_matched'] . "', ";
-            $sql .= "generate_num_unmatched_file_seq='" . $num_seq['file_unmatched'] . "', ";
-            $sql .= "generate_num_family_seq='" . $num_seq['family'] . "' ";
-        } else {
-            $sql .= "SET generate_num_seq='" . $num_seq . "' ";
-        }
-        
-        $sql .= "WHERE generate_id='" . $this->get_id() . "' LIMIT 1";
+        $update = array();
 
-        $result = $this->db->non_select_query($sql);
+        if (is_array($num_seq)) {
+            $update["generate_num_seq"] = $num_seq['total_ssn_nodes'];
+            $update["generate_total_num_file_seq"] = $num_seq['file_seq'];
+            $update["generate_num_matched_file_seq"] = $num_seq['file_matched'];
+            $update["generate_num_unmatched_file_seq"] = $num_seq['file_unmatched'];
+            $update["generate_num_family_seq"] = $num_seq['family'];
+        } else {
+            $update["generate_num_seq"] = $num_seq;
+        }
+
+        $result = $this->update_results_object($this->get_id(), $update);
 
         if ($result) {
             if (is_array($num_seq)) {
@@ -232,6 +230,27 @@ class stepa {
             return true;
         }
         return false;
+    }
+
+    protected function update_results_object($id, $data) {
+        $sql = "SELECT generate_results FROM generate WHERE generate_id='" . $id . "' ";
+        $result = $this->db->query($sql);
+        if (!$result)
+            return NULL;
+        $result = $result[0];
+        $results_obj = $this->decode_object($result['generate_results']);
+
+        foreach ($data as $key => $value)
+            $results_obj[$key] = $value;
+        
+        $json = $this->encode_object($results_obj);
+        
+        $sql = "UPDATE generate SET generate_results=";
+        $sql .= "'" . $this->db->escape_string($json) . "'";
+        $sql .= " WHERE generate_id='" . $this->get_id() . "' LIMIT 1";
+        $result = $this->db->non_select_query($sql);
+
+        return $result;
     }
 
     public function get_alignment_plot($for_web = 0) {
@@ -514,28 +533,50 @@ class stepa {
         $sql = "SELECT * FROM generate WHERE generate_id='" . $id . "' ";
         $sql .= "LIMIT 1";
         $result = $this->db->query($sql);
+        $result = $result[0];
+
+        $results_obj = array();
         if ($result) {
             $this->id = $id;
-            $this->key = $result[0]['generate_key'];
-            $this->pbs_number = $result[0]['generate_pbs_number'];
-            $this->evalue = $result[0]['generate_evalue'];
-            $this->fraction = $result[0]['generate_fraction'];
-            $this->time_created = $result[0]['generate_time_created'];
-            $this->status = $result[0]['generate_status'];
-            $this->time_started = $result[0]['generate_time_started'];
-            $this->time_completed = $result[0]['generate_time_completed'];
-            $this->type = $result[0]['generate_type'];
-            $this->num_sequences = $result[0]['generate_num_seq'];
-            $this->total_num_file_sequences = $result[0]['generate_total_num_file_seq'];
-            $this->num_matched_file_sequences = $result[0]['generate_num_matched_file_seq'];
-            $this->num_unmatched_file_sequences = $result[0]['generate_num_unmatched_file_seq'];
-            $this->num_family_sequences = $result[0]['generate_num_family_seq'];
-            $this->email = $result[0]['generate_email'];
-            $this->program = $result[0]['generate_program'];
-            $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);
+            $this->key = $result['generate_key'];
+            $this->pbs_number = $result['generate_pbs_number'];
+            $this->time_created = $result['generate_time_created'];
+            $this->status = $result['generate_status'];
+            $this->time_started = $result['generate_time_started'];
+            $this->time_completed = $result['generate_time_completed'];
+            $this->type = $result['generate_type'];
+            $this->email = $result['generate_email'];
+            $this->program = $result['generate_program'];
+            $this->db_version = functions::decode_db_version($result['generate_db_version']);
+            
+            $params_obj = $this->decode_object($result['generate_params']);
+            $this->evalue = $params_obj['generate_evalue'];
+            $this->fraction = $params_obj['generate_fraction'];
+            
+            $results_obj = $this->decode_object($result['generate_results']);
+            if (array_key_exists('generate_num_seq', $results_obj))
+                $this->num_sequences = $results_obj['generate_num_seq'];
+            if (array_key_exists('generate_total_num_file_seq', $results_obj))
+                $this->total_num_file_sequences = $results_obj['generate_total_num_file_seq'];
+            if (array_key_exists('generate_num_matched_file_seq', $results_obj))
+                $this->num_matched_file_sequences = $results_obj['generate_num_matched_file_seq'];
+            if (array_key_exists('generate_num_unmatched_file_seq', $results_obj))
+                $this->num_unmatched_file_sequences = $results_obj['generate_num_unmatched_file_seq'];
+            if (array_key_exists('generate_num_family_seq', $results_obj))
+                $this->num_family_sequences = $results_obj['generate_num_family_seq'];
         }
 
-        return $result;
+        return $params_obj;
+    }
+
+    protected function decode_object($json) {
+        //return json_decode($json, true);
+        return functions::decode_object($json);
+    }
+
+    protected function encode_object($obj) {
+        //return json_encode($obj);
+        return functions::encode_object($obj);
     }
 
     protected function verify_email($email) {
