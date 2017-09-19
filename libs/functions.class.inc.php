@@ -28,11 +28,6 @@ class functions {
         $sql .= "ORDER BY generate_time_created ASC ";
         $result = $db->query($sql);
         return $result;
-
-
-
-
-
     }
 
     public static function get_families($db,$status = 'NEW') {
@@ -44,8 +39,6 @@ class functions {
         $sql .= "ORDER BY generate_time_created ASC ";
         $result = $db->query($sql);
         return $result;
-
-
     }
 
     public static function get_accessions($db,$status = 'NEW') {
@@ -458,6 +451,19 @@ class functions {
     public static function get_convergence_ratio_filename() {
         return __CONVERGENCE_RATIO_FILENAME__;
     }
+
+    public static function decode_object($json) {
+        $data = json_decode($json, true);
+        if (!$data)
+            return array();
+        else
+            return $data;
+    }
+
+    public static function encode_object($obj) {
+        return json_encode($obj);
+    }
+
 }
 
 ?>

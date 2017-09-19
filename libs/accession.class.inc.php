@@ -79,7 +79,10 @@ class accession extends family_shared {
             return;
         }
 
-        $this->expand_homologs = $result['generate_expand_homologs'];
+        if (array_key_exists('generate_expand_homologs', $result))
+            $this->expand_homologs = $result['generate_expand_homologs'];
+        else
+            $this->expand_homologs = false;
 
         $this->file_helper->on_load_generate($id, $result);
 

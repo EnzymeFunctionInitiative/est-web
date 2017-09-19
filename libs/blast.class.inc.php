@@ -98,8 +98,8 @@ class blast extends option_base {
             return;
         }
 
-        $this->blast_input = $result[0]['generate_blast'];
-        $this->blast_sequence_max = $result[0]['generate_blast_max_sequence'];
+        $this->blast_input = $result['generate_blast'];
+        $this->blast_sequence_max = $result['generate_blast_max_sequence'];
 
         return $result;
     }

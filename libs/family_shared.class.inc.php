@@ -148,20 +148,20 @@ abstract class family_shared extends option_base {
             return;
         }
 
-        if ($result[0]['generate_families'] != "") {
-            $families = explode(",", $result[0]['generate_families']);
+        if ($result['generate_families'] != "") {
+            $families = explode(",", $result['generate_families']);
             $this->families = $families;
         }
 
-        if ($result[0]['generate_seq_id'])
-            $this->seq_id = $result[0]['generate_seq_id'];
-        if ($result[0]['generate_length_overlap'])
-            $this->length_overlap = $result[0]['generate_length_overlap'];
-        if ($result[0]['generate_uniref'] != "--")
-            $this->uniref_version = $result[0]['generate_uniref'];
+        if (array_key_exists('generate_seq_id', $result) && $result['generate_seq_id'])
+            $this->seq_id = $result['generate_seq_id'];
+        if (array_key_exists('generate_length_overlap', $result) && $result['generate_length_overlap'])
+            $this->length_overlap = $result['generate_length_overlap'];
+        if (array_key_exists('generate_uniref', $result) && $result['generate_uniref'] != "--")
+            $this->uniref_version = $result['generate_uniref'];
         else
             $this->uniref_version = "";
-        if ($result[0]['generate_no_demux'])
+        if (array_key_exists('generate_no_demux', $result) && $result['generate_no_demux'])
             $this->no_demux = 1;
         else
             $this->no_demux = 0;
