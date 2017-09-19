@@ -334,6 +334,7 @@ class analysis {
         $generate = new stepa($this->db,$this->get_generate_id());
         $subject = $this->beta . "EFI-EST - SSN finalization failed";
         $to = $generate->get_email();
+        $from = "EFI-EST <" .functions::get_admin_email() . ">";
         //$url = $web_root . "/stepa.php";
 
         $plain_email = "";
@@ -578,7 +579,8 @@ class analysis {
     }
 
     private function get_job_info() {
-        $message = "Minimum Length: " . $this->get_min_length() . "\r\n";
+        $message = "Job ID: " . $this->get_id() . "\r\n";
+        $message .= "Minimum Length: " . $this->get_min_length() . "\r\n";
         $message .= "Maximum Length: " . $this->get_max_length() . "\r\n";
         $message .= "Alignment Score: " . $this->get_evalue() . "\r\n";
         $message .= "Network Name: " . $this->get_name() . "\r\n";
