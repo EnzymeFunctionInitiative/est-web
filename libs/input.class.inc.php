@@ -11,6 +11,9 @@ class input_data {
     // For option A, C, D
     public $field_input;
 
+    // For option D
+    public $expand_homologs;
+
     // For option B, and E
     public $domain;
     public $program;

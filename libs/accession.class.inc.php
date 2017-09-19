@@ -13,6 +13,9 @@ class accession extends family_shared {
     public $subject = "EFI-EST FASTA";
 
 
+    private $expand_homologs = false;
+
+
     public function __construct($db,$id = 0) {
         $this->file_helper = new file_helper(".txt", $id);
         parent::__construct($db, $id);
@@ -76,6 +79,8 @@ class accession extends family_shared {
             return;
         }
 
+        $this->expand_homologs = $result['generate_expand_homologs'];
+
         $this->file_helper->on_load_generate($id, $result);
 
         return $result;
@@ -95,6 +100,7 @@ class accession extends family_shared {
     
     public function get_insert_array($data) {
         $insert_array = parent::get_insert_array($data);
+        $insert_array['generate_expand_homologs'] = $this->expand_homologs;
         $insert_array = $this->file_helper->on_append_insert_array($data, $insert_array);
         return $insert_array;
     }
@@ -122,6 +128,8 @@ class accession extends family_shared {
         //$parms["-blast"] = strtolower($this->get_program());
         $parms["-useraccession"] = $this->file_helper->get_results_input_file();
         $parms["-no-match-file"] = $this->get_no_matches_job_file();
+        if ($this->expand_homologs)
+            $parms["-uniref-expand"] = "";
         //$parms["-fraction"] = $this->get_fraction();
         return $parms;
     }

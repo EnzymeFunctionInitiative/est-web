@@ -231,6 +231,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
         <div id="accession_advanced" style="display: none;">
             <p class='align_left'>E-Value: <input type='text' class='small' id='accession_evalue' name='accession_evalue' value='<?php if (isset($_POST['accession_evalue'])) { echo $_POST['accession_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
             <p class='align_left'>Fraction: <input type='text' class='small' id='accession_fraction' name='accession_fraction' value='<?php if (isset($_POST['accession_fraction'])) { echo $_POST['accession_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
+            <p class='align_left'>Expand UniRef homologs: <input type='checkbox' id='accession_use_uniref' name='accession_use_uniref' value='1' <?php if (isset($_POST['accession_use_uniref']) && ($_POST['accession_use_uniref'] == "1")) { echo "checked='checked'"; } ?> > Check to expand the homologs for any input sequences that are UniRef seed sequences (default: off)</p>
 <?php    if (functions::get_program_selection_enabled()) { ?>
             <p class='align_left'>Select Program to use:
                 <select name='option_d_program' id='option_d_program'>

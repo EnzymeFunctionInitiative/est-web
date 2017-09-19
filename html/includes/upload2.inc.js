@@ -44,6 +44,7 @@ function uploadFile() {
         fd.append('fraction',document.getElementById('accession_fraction').value);
         fd.append('families_input',document.getElementById('families_input4').value);
         fd.append('accession_input', document.getElementById('accession_input').value);
+        fd.append('accession_use_uniref', document.getElementById('accession_use_uniref').value);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_d_program').value);
         uploadHandler = uploadProgressAccession;

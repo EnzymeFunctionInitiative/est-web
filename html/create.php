@@ -99,6 +99,7 @@ if (isset($_POST['submit'])) {
                     $obj = new accession($db);
                     $input->field_input = $_POST['accession_input'];
                     $input->families = $_POST['families_input'];
+                    $input->expand_homologs = $_POST['accession_use_uniref'];
                 } else if ($option == "colorssn") {
                     $obj = new colorssn($db);
                     //$input->cooccurrence = $_POST['cooccurrence'];

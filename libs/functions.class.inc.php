@@ -448,7 +448,7 @@ class functions {
     }
 
     public static function get_cluster_scheduler() {
-        return __CLUSTER_SCHEDULER__;
+        return __CLUSTER_SCHEDULER__ ? __CLUSTER_SCHEDULER__ : "";
     }
 
     public static function get_cdhit_stats_filename() {
