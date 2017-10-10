@@ -18,6 +18,7 @@ function uploadFile() {
         fd.append('evalue',document.getElementById('pfam_evalue').value);
         fd.append('fraction',document.getElementById('pfam_fraction').value);
         fd.append('pfam_domain',document.getElementById('pfam_domain').checked);
+        fd.append('pfam_random_fraction',document.getElementById('pfam_random_fraction').checked);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_b_program').value);
     }
@@ -44,7 +45,8 @@ function uploadFile() {
         fd.append('fraction',document.getElementById('accession_fraction').value);
         fd.append('families_input',document.getElementById('families_input4').value);
         fd.append('accession_input', document.getElementById('accession_input').value);
-        fd.append('accession_use_uniref', document.getElementById('accession_use_uniref').value);
+        fd.append('accession_use_uniref', document.getElementById('accession_use_uniref').checked);
+        fd.append('accession_uniref_version',document.getElementById('accession_uniref_version').value);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_d_program').value);
         uploadHandler = uploadProgressAccession;
@@ -69,6 +71,7 @@ function uploadFile() {
         fd.append('pfam_length_overlap',document.getElementById('pfam_plus_length_overlap').value);
         fd.append('pfam_uniref_version',document.getElementById('pfam_plus_uniref_version').value);
         fd.append('pfam_demux',document.getElementById('pfam_plus_demux').checked);
+        fd.append('pfam_random_fraction',document.getElementById('pfam_plus_random_fraction').checked);
         //TODO: conditionally enable this
         //fd.append('program',document.getElementById('option_b_program').value);
     }

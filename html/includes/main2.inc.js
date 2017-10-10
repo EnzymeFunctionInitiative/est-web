@@ -122,6 +122,14 @@ function disable_forms() {
     }
 }
 
+function toggleUniref(combo_id, uniref_checkbox) {
+    if (uniref_checkbox.checked) {
+        document.getElementById(combo_id).disabled = false;
+    } else {
+        document.getElementById(combo_id).disabled = true;
+    }
+}
+
 function toggle_blast_advanced() {
     if ( $("#blast_advanced").is(":hidden")) {
         $("#blast_advanced").slideDown("slow");

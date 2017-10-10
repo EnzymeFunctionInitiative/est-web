@@ -7,6 +7,7 @@ class input_data {
     public $evalue;
     public $fraction;
     public $max_seqs;
+    public $random_fraction;
 
     // For option A, C, D
     public $field_input;

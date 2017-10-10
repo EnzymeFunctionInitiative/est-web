@@ -73,6 +73,8 @@ if (isset($_POST['submit'])) {
                 $input->uniref_version = $_POST['pfam_uniref_version'];
             if (isset($_POST['pfam_demux']))
                 $input->no_demux = $_POST['pfam_demux'] == "true" ? true : false;
+            if (isset($_POST['pfam_random_fraction']))
+                $input->random_fraction = $_POST['pfam_random_fraction'] == "true" ? true : false;
 
             $result = $generate->create($input);
             break;
@@ -99,7 +101,14 @@ if (isset($_POST['submit'])) {
                     $obj = new accession($db);
                     $input->field_input = $_POST['accession_input'];
                     $input->families = $_POST['families_input'];
-                    $input->expand_homologs = $_POST['accession_use_uniref'];
+                    if (isset($_POST['accession_use_uniref'])) {
+                        $input->expand_homologs = $_POST['accession_use_uniref'] == "true" ? true : false;
+                        if ($input->expand_homologs) {
+                            $input->uniref_version = $_POST['accession_uniref_version'];
+                        }
+                    } else {
+                        $input->expand_homologs = false;
+                    }
                 } else if ($option == "colorssn") {
                     $obj = new colorssn($db);
                     //$input->cooccurrence = $_POST['cooccurrence'];

@@ -103,7 +103,9 @@ class accession extends family_shared {
     
     public function get_insert_array($data) {
         $insert_array = parent::get_insert_array($data);
-        $insert_array['generate_expand_homologs'] = $this->expand_homologs;
+        $insert_array['generate_expand_homologs'] = $data->expand_homologs;
+        if (!$data->expand_homologs)
+            $insert_array['generate_uniref'] = "";
         $insert_array = $this->file_helper->on_append_insert_array($data, $insert_array);
         return $insert_array;
     }

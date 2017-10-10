@@ -121,6 +121,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 <p class='align_left'>Enable Domain: <input type='checkbox' id='pfam_domain' name='pfam_domain' value='1' <?php if (isset($_POST['pfam_domain']) && ($_POST['pfam_domain'] == "1")) { echo "checked='checked'"; } ?> > Check to generate SSN with Pfam-defined domains (default: off)</p>
 <p class='align_left'>Sequence Identity: <input type='text' class='small' id='pfam_seqid' name='pfam_seqid' value='<?php if (isset($_POST['pfam_seqid'])) { echo $_POST['pfam_seqid']; } else { echo "1"; } ?>'> Sequence identity (&le; 1; (default: 1))</p>
 <p class='align_left'>Sequence Length Overlap: <input type='text' class='small' id='pfam_length_overlap' name='pfam_length_overlap' value='<?php if (isset($_POST['pfam_length_overlap'])) { echo $_POST['pfam_length_overlap']; } else { echo "1"; } ?>'> Sequence length overlap (&le; 1; (default: 1))</p>
+<p class='align_left'>Randomize fractions: <input type='checkbox' id='pfam_random_fraction' name='pfam_random_fraction' value='1' <?php if (isset($_POST['pfam_random_fraction']) && ($_POST['pfam_random_fraction'] == "1")) { echo "checked='checked'"; } ?> > Check to randomize fractions</p>
 <!--<p class='align_left'>UniRef Version: 
     <select name="pfam_uniref_version" id="pfam_uniref_version">
         <option value="None" selected='selected'>None</option>
@@ -231,7 +232,19 @@ Four input methods are available. A utility for SSN coloring and analysis is als
         <div id="accession_advanced" style="display: none;">
             <p class='align_left'>E-Value: <input type='text' class='small' id='accession_evalue' name='accession_evalue' value='<?php if (isset($_POST['accession_evalue'])) { echo $_POST['accession_evalue']; } else { echo functions::get_evalue(); } ?>'> Negative log of e-value for all-by-all BLAST (&ge;1; default: <?php echo functions::get_evalue(); ?>)</p>
             <p class='align_left'>Fraction: <input type='text' class='small' id='accession_fraction' name='accession_fraction' value='<?php if (isset($_POST['accession_fraction'])) { echo $_POST['accession_fraction']; } else { echo functions::get_fraction(); } ?>'>  Fraction of sequences in Pfam/Interpro family for network (&ge; 1; default: <?php echo functions::get_fraction(); ?>)</p>
-            <p class='align_left'>Expand UniRef homologs: <input type='checkbox' id='accession_use_uniref' name='accession_use_uniref' value='1' <?php if (isset($_POST['accession_use_uniref']) && ($_POST['accession_use_uniref'] == "1")) { echo "checked='checked'"; } ?> > Check to expand the homologs for any input sequences that are UniRef seed sequences (default: off)</p>
+            <p class='align_left'>Expand UniRef homologs: 
+                <input type='checkbox' id='accession_use_uniref' name='accession_use_uniref'
+                        <?php if (isset($_POST['accession_use_uniref']) && ($_POST['accession_use_uniref'] == "1")) { echo "checked='checked'"; } ?>
+                        onchange="toggleUniref('accession_uniref_version', this)"
+                >
+                Check to expand the homologs for any input sequences that are UniRef seed sequences (default: off)
+            </p>
+            <p class='align_left'>UniRef Version: 
+                <select name="accession_uniref_version" id="accession_uniref_version" disabled="disabled">
+                    <option value="50">UniRef50</option>
+                    <option value="90">UniRef90</option>
+                </select>
+            </p>
 <?php    if (functions::get_program_selection_enabled()) { ?>
             <p class='align_left'>Select Program to use:
                 <select name='option_d_program' id='option_d_program'>
@@ -274,6 +287,7 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 <p class='align_left'>Sequence Identity: <input type='text' class='small' id='pfam_plus_seqid' name='pfam_plus_seqid' value='<?php if (isset($_POST['pfam_plus_seqid'])) { echo $_POST['pfam_plus_seqid']; } else { echo "1"; } ?>'> Sequence identity (&le; 1; (default: 1))</p>
 <p class='align_left'>Sequence Length Overlap: <input type='text' class='small' id='pfam_plus_length_overlap' name='pfam_plus_length_overlap' value='<?php if (isset($_POST['pfam_plus_length_overlap'])) { echo $_POST['pfam_plus_length_overlap']; } else { echo "1"; } ?>'> Sequence length overlap (&le; 1; (default: 1))</p>
 <p class='align_left'>Do not demultiplex: <input type='checkbox' id='pfam_plus_demux' name='pfam_plus_demux' value='1' <?php if (isset($_POST['pfam_plus_demux']) && ($_POST['pfam_plus_demux'] == "1")) { echo "checked='checked'"; } ?> > Check to prevent a demultiplex to expand cd-hit clusters (default: demultiplex)</p>
+<p class='align_left'>Randomize fractions: <input type='checkbox' id='pfam_plus_random_fraction' name='pfam_plus_random_fraction' value='1' <?php if (isset($_POST['pfam_plus_random_fraction']) && ($_POST['pfam_plus_random_fraction'] == "1")) { echo "checked='checked'"; } ?> > Check to randomize fractions</p>
 <p class='align_left'>UniRef Version: 
     <select name="pfam_plus_uniref_version" id="pfam_plus_uniref_version">
         <option value="None" selected='selected'>None</option>

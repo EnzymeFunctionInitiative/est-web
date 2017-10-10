@@ -10,9 +10,10 @@ abstract class family_shared extends option_base {
 
     protected $families = array();
     protected $length_overlap = 1.0;
-    protected $seq_id = 1.0;
+    protected $seq_id = "1.0";
     protected $uniref_version = "";
     protected $no_demux = 0;
+    protected $random_fraction = false;
 
     ///////////////Public Functions///////////
 
@@ -89,11 +90,12 @@ abstract class family_shared extends option_base {
         $insert_array = parent::get_insert_array($data);
         $formatted_families = $this->format_families($data->families);
         $insert_array['generate_families'] = $formatted_families;
-        $insert_array['generate_seq_id'] = $data->seq_id;
+        $insert_array['generate_sequence_identity'] = $data->seq_id;
         $insert_array['generate_length_overlap'] = $data->length_overlap;
         if ($data->uniref_version && ($data->uniref_version == "50" || $data->uniref_version == "90"))
             $insert_array['generate_uniref'] = $data->uniref_version;
         $insert_array['generate_no_demux'] = $data->no_demux;
+        $insert_array['generate_random_fraction'] = $data->random_fraction;
         return $insert_array;
     }
 
@@ -136,6 +138,8 @@ abstract class family_shared extends option_base {
         if (($this->length_overlap || $this->seq_id) && $this->no_demux)
             $parms["-no-demux"] = "";
         $parms["-fraction"] = $this->get_fraction();
+        if ($this->get_fraction() > 1 && $this->random_fraction)
+            $parms["-random-fraction"] = "";
         $parms["-seq-count-file"] = $this->get_accession_counts_file_full_path();
         $parms["-conv-ratio-file"] = functions::get_convergence_ratio_filename();
 
@@ -153,8 +157,8 @@ abstract class family_shared extends option_base {
             $this->families = $families;
         }
 
-        if (array_key_exists('generate_seq_id', $result) && $result['generate_seq_id'])
-            $this->seq_id = $result['generate_seq_id'];
+        if (array_key_exists('generate_sequence_identity', $result) && $result['generate_sequence_identity'])
+            $this->seq_id = $result['generate_sequence_identity'];
         if (array_key_exists('generate_length_overlap', $result) && $result['generate_length_overlap'])
             $this->length_overlap = $result['generate_length_overlap'];
         if (array_key_exists('generate_uniref', $result) && $result['generate_uniref'] != "--")
@@ -165,6 +169,10 @@ abstract class family_shared extends option_base {
             $this->no_demux = 1;
         else
             $this->no_demux = 0;
+        if (array_key_exists('generate_random_fraction', $result) && $result['generate_random_fraction'])
+            $this->random_fraction = 1;
+        else
+            $this->random_fraction = 0;
 
         return $result;
     }
