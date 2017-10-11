@@ -16,6 +16,12 @@ class efi_statistics
         $sql .= "SUM(IF(generate_type='BLAST' AND generate_status='FAILED',1,0)) as num_failed_option_a, ";
         $sql .= "SUM(IF(generate_type='FASTA' AND generate_status='FINISH',1,0)) as num_success_option_c, ";
         $sql .= "SUM(IF(generate_type='FASTA' AND generate_status='FAILED',1,0)) as num_failed_option_c, ";
+        $sql .= "SUM(IF(generate_type='FASTA_ID' AND generate_status='FINISH',1,0)) as num_success_option_c_id, ";
+        $sql .= "SUM(IF(generate_type='FASTA_ID' AND generate_status='FAILED',1,0)) as num_failed_option_c_id, ";
+        $sql .= "SUM(IF(generate_type='ACCESSION' AND generate_status='FINISH',1,0)) as num_success_option_d, ";
+        $sql .= "SUM(IF(generate_type='ACCESSION' AND generate_status='FAILED',1,0)) as num_failed_option_d, ";
+        $sql .= "SUM(IF(generate_type='COLORSSN' AND generate_status='FINISH',1,0)) as num_success_option_color, ";
+        $sql .= "SUM(IF(generate_type='COLORSSN' AND generate_status='FAILED',1,0)) as num_failed_option_color, ";
         $sql .= "SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(generate_time_completed,generate_time_started)))) as total_time ";
         $sql .= "FROM generate ";
         $sql .= "GROUP BY MONTH(generate_time_created),YEAR(generate_time_created) ORDER BY year,MONTH(generate_time_created)";
