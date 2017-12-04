@@ -24,11 +24,14 @@ HTML;
 function make_pfam_size_box($parent_id, $table_id) {
     return <<<HTML
 <center>
-        <div style="width:50%;display:none" id="$parent_id">
+        <div style="width:80%;display:none" id="$parent_id">
             <table border="0" width="100%">
                 <thead>
                     <th>Family</th>
-                    <th>Size</th>
+                    <th>Family Name</th>
+                    <th>Full Size</th>
+                    <th>UniRef90 Size</th>
+                    <th>UniRef50 Size</th>
                 </thead>
                 <tbody id="$table_id"></tbody>
             </table>
@@ -65,6 +68,12 @@ $max_seq_formatted = number_format($max_seq_num, 0);
   ga('send', 'pageview');
 
 </script>
+
+<div class="update_message">
+    The EST database has been updated to use UniProt
+    <?php echo functions::get_uniprot_version(); ?> and InterPro
+    <?php echo functions::get_interpro_version(); ?>.
+</div>
 
 <h3>First step of SSN generation: Input selection</h3>
 <br>
@@ -377,6 +386,13 @@ Four input methods are available. A utility for SSN coloring and analysis is als
 <div id='message' style='font-weight:bold;font-size:130%;color:red'><?php if (isset($message)) { echo "<h4 class='center' style='color:red'>" . $message . "</h4>"; } ?></div>
 
 <input type="button" id='submit' name="submit" value="Submit Analysis" class="css_btn_class_recalc" onclick="uploadFile()">
+
+<div class="update_message">
+    The EST database has been updated to use UniProt
+    <?php echo functions::get_uniprot_version(); ?> and InterPro
+    <?php echo functions::get_interpro_version(); ?>.
+</div>
+
 <hr>
 <?php if (functions::is_beta_release()) { ?><h4><b><span style="color: blue">BETA</span></b></h4><?php } ?>
 </form>

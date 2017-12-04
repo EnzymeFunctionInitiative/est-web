@@ -17,37 +17,64 @@ function getFamilyCountsRaw(familyInputId, countOutputId, handler) {
 }
 
 function getFamilyCountsTableHandler(responseText, countOutputId) {
-    var sumCounts = 0;
-    var counts = responseText.split(",");
+
+    var data = JSON.parse(responseText);
+
+    var sumCounts = {all: 0, uniref90: 0, uniref50: 0};
     var table = document.getElementById(countOutputId);
     var newBody = document.createElement('tbody');
-    for (var i = 0; i < counts.length; i++) {
-        var data = counts[i].split("=");
 
+    for (famId in data) {
+        var cellIdx = 0;
         var row = newBody.insertRow(-1);
-        var familyCell = row.insertCell(0);
-        familyCell.innerHTML = data[0];
+        var familyCell = row.insertCell(cellIdx++);
+        familyCell.innerHTML = famId;
+        var familyNameCell = row.insertCell(cellIdx++);
+        familyNameCell.innerHTML = data[famId].name;
 
-        var countVal = data[1];
-        var countCell = row.insertCell(1);
-        countCell.innerHTML = commaFormatted(countVal);
+        var countVal = data[famId].all;
+        var countCell = row.insertCell(cellIdx++);
+        countCell.innerHTML = commaFormatted(countVal.toString());
         countCell.style.textAlign = "right";
-        sumCounts += parseInt(countVal);
+        sumCounts.all += parseInt(countVal);
+        
+        countVal = data[famId].uniref90;
+        countCell = row.insertCell(cellIdx++);
+        countCell.innerHTML = commaFormatted(countVal.toString());
+        countCell.style.textAlign = "right";
+        sumCounts.uniref90 += parseInt(countVal);
+        
+        countVal = data[famId].uniref50;
+        countCell = row.insertCell(cellIdx++);
+        countCell.innerHTML = commaFormatted(countVal.toString());
+        countCell.style.textAlign = "right";
+        sumCounts.uniref50 += parseInt(countVal);
     }
 
+    var cellIdx = 0;
     var row = newBody.insertRow(-1);
-    var total1 = row.insertCell(0);
+    var empty = row.insertCell(cellIdx++);
+
+    var total1 = row.insertCell(cellIdx++);
     total1.innerHTML = "Total:";
     total1.style.textAlign = "right";
 
-    var total2 = row.insertCell(1);
-    total2.innerHTML = commaFormatted(sumCounts.toString());
+    var total2 = row.insertCell(cellIdx++);
+    total2.innerHTML = commaFormatted(sumCounts.all.toString());
     total2.style.textAlign = "right";
+
+    var total3 = row.insertCell(cellIdx++);
+    total3.innerHTML = commaFormatted(sumCounts.uniref90.toString());
+    total3.style.textAlign = "right";
+
+    var total4 = row.insertCell(cellIdx++);
+    total4.innerHTML = commaFormatted(sumCounts.uniref50.toString());
+    total4.style.textAlign = "right";
 
     table.parentNode.replaceChild(newBody, table);
     newBody.id = countOutputId;
 
-    return sumCounts;
+    return sumCounts.all;
 }
 
 function commaFormatted(num) {
@@ -98,36 +125,5 @@ function checkFamilyInput(familyInputId, containerOutputId, countOutputId, warni
     };
 
     getFamilyCountsRaw(familyInputId, countOutputId, handleResponse);
-
-    /*
-    var output = document.getElementById(countOutputId);
-    var famType = input.substring(0, 2).toLowerCase();
-    
-    outputSize = function(responseText, countOutputId) {
-        var parts = responseText.split("=");
-        if (parts.length == 2)
-        {
-            output.innerHTML = parts[0] + " size: " + parts[1];
-            if (parseInt(parts[1]) > warningThreshold)
-                document.getElementById(warningId).style.color = "red";
-            else
-                document.getElementById(warningId).style.color = "black";
-        }
-        else
-        {
-            output.innerHTML = "";
-            document.getElementById(warningId).style.color = "black";
-        }
-    };
-
-    if ((famType == "pf" && input.length == 7) ||
-        (famType == "ip" && input.length == 9))
-        getFamilyCountsRaw(familyInputId, countOutputId, outputSize);
-    else
-    {
-        output.innerHTML = "";
-        document.getElementById(warningId).style.color = "black";
-    }
-    */
 }
 

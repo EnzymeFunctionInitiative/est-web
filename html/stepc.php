@@ -221,6 +221,13 @@ else {
 
 ?>	
 
+
+<div class="update_message">
+    The EST database has been updated to use UniProt
+    <?php echo functions::get_uniprot_version(); ?> and InterPro
+    <?php echo functions::get_interpro_version(); ?>.
+</div>
+
 <img src="images/quest_stages_c.jpg" width="990" height="119" alt="stage 1">
 <hr>
 
