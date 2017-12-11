@@ -1,13 +1,13 @@
 
 
-function getFamilyCountsRaw(familyInputId, countOutputId, handler) {
+function getFamilyCountsRaw(familyInputId, countOutputId, handler, useUniref90, useUniref50) {
     var family = document.getElementById(familyInputId).value;
 
     if ((family.toLowerCase().startsWith("cl") && family.length == 6) || family.length >= 7) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200 && this.responseText.length > 1) {
-                handler(this.responseText, countOutputId);
+                handler(this.responseText, countOutputId, useUniref90, useUniref50);
             }
         };
         family_query = family.replace(/\n/g, " ").replace(/\r/g, " ");
@@ -16,7 +16,7 @@ function getFamilyCountsRaw(familyInputId, countOutputId, handler) {
     }
 }
 
-function getFamilyCountsTableHandler(responseText, countOutputId) {
+function getFamilyCountsTableHandler(responseText, countOutputId, useUniref90, useUniref50) {
 
     var data = JSON.parse(responseText);
 
@@ -38,17 +38,21 @@ function getFamilyCountsTableHandler(responseText, countOutputId) {
         countCell.style.textAlign = "right";
         sumCounts.all += parseInt(countVal);
         
-        countVal = data[famId].uniref90;
-        countCell = row.insertCell(cellIdx++);
-        countCell.innerHTML = commaFormatted(countVal.toString());
-        countCell.style.textAlign = "right";
-        sumCounts.uniref90 += parseInt(countVal);
+        if (useUniref90) {
+            countVal = data[famId].uniref90;
+            countCell = row.insertCell(cellIdx++);
+            countCell.innerHTML = commaFormatted(countVal.toString());
+            countCell.style.textAlign = "right";
+            sumCounts.uniref90 += parseInt(countVal);
+        }
         
-        countVal = data[famId].uniref50;
-        countCell = row.insertCell(cellIdx++);
-        countCell.innerHTML = commaFormatted(countVal.toString());
-        countCell.style.textAlign = "right";
-        sumCounts.uniref50 += parseInt(countVal);
+        if (useUniref50) {
+            countVal = data[famId].uniref50;
+            countCell = row.insertCell(cellIdx++);
+            countCell.innerHTML = commaFormatted(countVal.toString());
+            countCell.style.textAlign = "right";
+            sumCounts.uniref50 += parseInt(countVal);
+        }
     }
 
     var cellIdx = 0;
@@ -63,13 +67,17 @@ function getFamilyCountsTableHandler(responseText, countOutputId) {
     total2.innerHTML = commaFormatted(sumCounts.all.toString());
     total2.style.textAlign = "right";
 
-    var total3 = row.insertCell(cellIdx++);
-    total3.innerHTML = commaFormatted(sumCounts.uniref90.toString());
-    total3.style.textAlign = "right";
+    if (useUniref90) {
+        var total3 = row.insertCell(cellIdx++);
+        total3.innerHTML = commaFormatted(sumCounts.uniref90.toString());
+        total3.style.textAlign = "right";
+    }
 
-    var total4 = row.insertCell(cellIdx++);
-    total4.innerHTML = commaFormatted(sumCounts.uniref50.toString());
-    total4.style.textAlign = "right";
+    if (useUniref50) {
+        var total4 = row.insertCell(cellIdx++);
+        total4.innerHTML = commaFormatted(sumCounts.uniref50.toString());
+        total4.style.textAlign = "right";
+    }
 
     table.parentNode.replaceChild(newBody, table);
     newBody.id = countOutputId;
@@ -101,7 +109,7 @@ function getFamilyCounts(familyInputId, countOutputId) {
     getFamilyCountsRaw(familyInputId, countOutputId, getFamilyCountsTableHandler);
 }
 
-function checkFamilyInput(familyInputId, containerOutputId, countOutputId, warningId, warningThreshold) {
+function checkFamilyInput(familyInputId, containerOutputId, countOutputId, warningId, warningThreshold, useUniref90, useUniref50) {
     var input = document.getElementById(familyInputId).value;
     var container = document.getElementById(containerOutputId);
     var warning = document.getElementById(warningId);
@@ -116,7 +124,7 @@ function checkFamilyInput(familyInputId, containerOutputId, countOutputId, warni
     }
 
     var handleResponse = function(responseText, countOutputId) {
-        var sumCounts = getFamilyCountsTableHandler(responseText, countOutputId);
+        var sumCounts = getFamilyCountsTableHandler(responseText, countOutputId, useUniref90, useUniref50);
         if (sumCounts > warningThreshold)
             warning.style.color = "red";
         else
@@ -124,6 +132,6 @@ function checkFamilyInput(familyInputId, containerOutputId, countOutputId, warni
         container.style.display = "block";
     };
 
-    getFamilyCountsRaw(familyInputId, countOutputId, handleResponse);
+    getFamilyCountsRaw(familyInputId, countOutputId, handleResponse, useUniref90, useUniref50);
 }
 

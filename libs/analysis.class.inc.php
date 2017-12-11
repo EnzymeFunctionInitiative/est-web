@@ -30,6 +30,7 @@ class analysis {
     private $eol = PHP_EOL;
     private $db_version;
     private $beta;
+    private $length_overlap;
 
     ///////////////Public Functions///////////
 
@@ -334,6 +335,7 @@ class analysis {
         $generate = new stepa($this->db,$this->get_generate_id());
         $subject = $this->beta . "EFI-EST - SSN finalization failed";
         $to = $generate->get_email();
+        $from = "EFI-EST <" .functions::get_admin_email() . ">";
         //$url = $web_root . "/stepa.php";
 
         $plain_email = "";
@@ -429,10 +431,13 @@ class analysis {
                 $exec .= "-tmp " . $relative_output_dir . " ";
                 $exec .= "-job-id " . $this->get_generate_id() . " ";
                 $exec .= "-queue " . functions::get_analyse_queue() . " ";
-
+                
+                if ($this->length_overlap)
+                    $exec .= "-lengthdif " . $this->length_overlap . " ";
                 $sched = functions::get_cluster_scheduler();
                 if ($sched)
                     $exec .= " -scheduler " . $sched . " ";
+
                 $exec .= " 2>&1 ";
 
                 $exit_status = 1;
@@ -494,6 +499,7 @@ class analysis {
             $this->time_completed = $result[0]['analysis_time_completed'];
             $this->filter_sequences = $result[0]['analysis_filter_sequences'];
             $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);
+            $this->length_overlap = $result[0]['generate_length_overlap'];
         }
 
     }
@@ -578,7 +584,8 @@ class analysis {
     }
 
     private function get_job_info() {
-        $message = "Minimum Length: " . $this->get_min_length() . "\r\n";
+        $message = "Job ID: " . $this->get_id() . "\r\n";
+        $message .= "Minimum Length: " . $this->get_min_length() . "\r\n";
         $message .= "Maximum Length: " . $this->get_max_length() . "\r\n";
         $message .= "Alignment Score: " . $this->get_evalue() . "\r\n";
         $message .= "Network Name: " . $this->get_name() . "\r\n";

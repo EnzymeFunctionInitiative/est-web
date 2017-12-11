@@ -65,6 +65,9 @@ function disable_forms() {
     else if (document.getElementById('option_selected_d').checked) {
         option_selected = document.getElementById('option_selected_d').value;
     }
+    else if (document.getElementById('option_selected_e').checked) {
+        option_selected = document.getElementById('option_selected_e').value;
+    }
     else if (document.getElementById('option_selected_colorssn').checked) {
         option_selected = document.getElementById('option_selected_colorssn').value;
     }
@@ -74,6 +77,7 @@ function disable_forms() {
         document.getElementById("option_b").disabled = true;
         document.getElementById("option_c").disabled = true;
         document.getElementById("option_d").disabled = true;
+        document.getElementById("option_e").disabled = true;
         document.getElementById("option_colorssn").disabled = true;
     } 
     else if (option_selected == "B") {
@@ -81,6 +85,7 @@ function disable_forms() {
         document.getElementById("option_b").disabled = false;
         document.getElementById("option_c").disabled = true;
         document.getElementById("option_d").disabled = true;
+        document.getElementById("option_e").disabled = true;
         document.getElementById("option_colorssn").disabled = true;
     }
     else if (option_selected == "C") {
@@ -88,6 +93,7 @@ function disable_forms() {
         document.getElementById("option_b").disabled = true;
         document.getElementById("option_c").disabled = false;
         document.getElementById("option_d").disabled = true;
+        document.getElementById("option_e").disabled = true;
         document.getElementById("option_colorssn").disabled = true;
     }
     else if (option_selected == "D") {
@@ -95,21 +101,32 @@ function disable_forms() {
         document.getElementById("option_b").disabled = true;
         document.getElementById("option_c").disabled = true;
         document.getElementById("option_d").disabled = false;
+        document.getElementById("option_e").disabled = true;
         document.getElementById("option_colorssn").disabled = true;
     }
-    else if (option_selected == "colorssn") {
+    else if (option_selected == "E") {
         document.getElementById("option_a").disabled = true;
         document.getElementById("option_b").disabled = true;
         document.getElementById("option_c").disabled = true;
         document.getElementById("option_d").disabled = true;
-        document.getElementById("option_colorssn").disabled = false;
+        document.getElementById("option_e").disabled = false;
+        document.getElementById("option_colorssn").disabled = true;
     }
     else {
         document.getElementById("option_a").disabled = true;
         document.getElementById("option_b").disabled = true;
         document.getElementById("option_c").disabled = true;
         document.getElementById("option_d").disabled = true;
-        document.getElementById("option_colorssn").disabled = true;
+        document.getElementById("option_e").disabled = true;
+        document.getElementById("option_colorssn").disabled = false;
+    }
+}
+
+function toggleUniref(combo_id, uniref_checkbox) {
+    if (uniref_checkbox.checked) {
+        document.getElementById(combo_id).disabled = false;
+    } else {
+        document.getElementById(combo_id).disabled = true;
     }
 }
 
@@ -123,13 +140,22 @@ function toggle_blast_advanced() {
 
 }
 
-
 function toggle_pfam_advanced() {
     if ( $("#pfam_advanced").is(":hidden")) {
         $("#pfam_advanced").slideDown("slow");
     }
     else {
         $("#pfam_advanced").slideUp();
+    }
+
+}
+
+function toggle_pfam_plus_advanced() {
+    if ( $("#pfam_plus_advanced").is(":hidden")) {
+        $("#pfam_plus_advanced").slideDown("slow");
+    }
+    else {
+        $("#pfam_plus_advanced").slideUp();
     }
 
 }

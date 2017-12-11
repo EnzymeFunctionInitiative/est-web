@@ -69,6 +69,12 @@ elseif ($gen_type == "FAMILIES") {
     $table->add_row("E-Value", $generate->get_evalue());
     $table->add_row("Fraction", $generate->get_fraction());
     $table->add_row("Domain", $generate->get_domain());
+    $seqid = $generate->get_sequence_identity();
+    $overlap = $generate->get_length_overlap();
+    if ($seqid)
+        $table->add_row("Sequence Identity", $seqid);
+    if ($overlap)
+        $table->add_row("Sequence Overlap", $overlap);
 }
 elseif ($gen_type == "ACCESSION") {
     $generate = new accession($db,$_GET['id']);
@@ -122,6 +128,10 @@ $table->add_row("Network Name", $analysis->get_name());
 $table->add_row("Alignment Score", $analysis->get_evalue());
 $table->add_row("Minimum Length", number_format($analysis->get_min_length()));
 $table->add_row("Maximum Length", number_format($analysis->get_max_length()));
+$conv_ratio = $generate->get_convergence_ratio();
+if ($conv_ratio > -0.5) {
+    $table->add_row("Convergence Ratio", number_format($conv_ratio, 3));
+}
 
 $table_string = $table->as_string();
 

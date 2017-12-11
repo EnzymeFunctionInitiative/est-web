@@ -53,7 +53,7 @@ class generate extends family_shared {
             return;
         }
 
-        $this->domain = $result[0]['generate_domain'];
+        $this->domain = $result['generate_domain'];
 
         return $result;
     }
@@ -76,6 +76,8 @@ class generate extends family_shared {
         $message .= "E-Value: " . $this->get_evalue() . $eol;
         $message .= "Fraction: " . $this->get_fraction() . $eol;
         $message .= "Enable Domain: " . $this->get_domain() . $eol;
+        if ($this->uniref_version)
+            $message .= "Using UniRef " . $this->uniref_version . $eol;
         //$message .= "Selected Program: " . $this->get_program() . $eol;
         
         return $message;
