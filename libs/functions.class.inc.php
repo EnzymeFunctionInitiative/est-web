@@ -464,6 +464,12 @@ class functions {
         return json_encode($obj);
     }
 
+    public static function generate_key() {
+        $key = uniqid(rand(), true);
+        $hash = sha1($key);
+        return $hash;
+    }
+
 }
 
 ?>

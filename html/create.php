@@ -1,6 +1,7 @@
 <?php
-require_once 'includes/main.inc.php';
+require_once '../includes/main.inc.php';
 require_once '../libs/input.class.inc.php';
+require_once '../libs/user_jobs.class.inc.php';
 
 $result['id'] = 0;
 $result['MESSAGE'] = "";
@@ -31,15 +32,21 @@ foreach($_POST as $var) {
     $test .= " " . $var;
 }
 
+$input->email = $_POST['email'];
 
-if (isset($_POST['submit'])) {
+if (!isset($_POST['submit'])) {
+    $result["MESSAGE"] = "Form is invalid.";
+} elseif (!$input->email) {
+    $result["MESSAGE"] = "Please enter an email address.";
+} else {
+    $result['RESULT'] = true;
+
     foreach ($_POST as &$var) {
         $var = trim(rtrim($var));
     }
     $message = "";
     $option = $_POST['option_selected'];
-
-    $input->email = $_POST['email'];
+    
     if (array_key_exists('evalue', $_POST))
         $input->evalue = $_POST['evalue'];
     if (array_key_exists('program', $_POST))
@@ -57,7 +64,7 @@ if (isset($_POST['submit'])) {
             
             $result = $blast->create($input);
             break;
-
+    
         //Option B - PFam/Interpro
         case 'B':
         case 'E':
@@ -75,25 +82,33 @@ if (isset($_POST['submit'])) {
                 $input->no_demux = $_POST['pfam_demux'] == "true" ? true : false;
             if (isset($_POST['pfam_random_fraction']))
                 $input->random_fraction = $_POST['pfam_random_fraction'] == "true" ? true : false;
-
+            if (isset($_POST['families_use_uniref']) && $_POST['families_use_uniref'] == "true")
+                $input->uniref_version = "90";
+    
             $result = $generate->create($input);
             break;
-
+    
         //Option C - Fasta Input
         case 'C':
         //Option D - accession list
         case 'D':
         //Option color SSN
         case 'colorssn':
-            if ($_FILES['file']['error'] === "") { $_FILES['file']['error'] = 4; }
+            $input->seq_id = 1;
+
+            if (isset($_FILES['file']) && $_FILES['file']['error'] === "")
+                $_FILES['file']['error'] = 4;
     
             if ((isset($_FILES['file']['error'])) && ($_FILES['file']['error'] !== 0)) {
                 $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['file']['error']);
                 $result['RESULT'] = false;
             }
             else {
+                if (isset($_POST['families_use_uniref']) && $_POST['families_use_uniref'] == "true")
+                    $input->uniref_version = "90";
+
                 if ($option == "C" || $option == "E") {
-                    $useFastaHeaders = $_POST['use_fasta_headers'];
+                    $useFastaHeaders = $_POST['fasta_use_headers'];
                     $obj = new fasta($db, 0, $useFastaHeaders == "true" ? "E" : "C");
                     $input->field_input = $_POST['fasta_input'];
                     $input->families = $_POST['families_input'];
@@ -114,12 +129,14 @@ if (isset($_POST['submit'])) {
                     //$input->cooccurrence = $_POST['cooccurrence'];
                     //$input->neighborhood_size = $_POST['neighborhood_size'];
                 }
- 
-                $input->tmp_file = $_FILES['file']['tmp_name'];
-                $input->uploaded_filename = $_FILES['file']['name'];
+
+                if (isset($_FILES['file'])) {
+                    $input->tmp_file = $_FILES['file']['tmp_name'];
+                    $input->uploaded_filename = $_FILES['file']['name'];
+                }
                 $result = $obj->create($input);
             }
-
+    
             break;
             
         default:
@@ -127,7 +144,6 @@ if (isset($_POST['submit'])) {
             $result['MESSAGE'] = "You need to select one of the above options.";
     
     }
-
 }
 
 
@@ -135,9 +151,19 @@ if ($input->is_debug) {
     print "JSON: ";
 }
 
-echo json_encode(array('valid'=>$result['RESULT'],
-    'id'=>$result['id'],
-    'message'=>$result['MESSAGE']));
+$returnData = array('valid'=>$result['RESULT'],
+                    'id'=>$result['id'],
+                    'message'=>$result['MESSAGE']);
+
+if ($result["RESULT"]) {
+    $id = $result['id'];
+    $userObj = new user_jobs();
+    $userObj->save_user($db, $input->email);
+    $cookieInfo = $userObj->get_cookie();
+    $returnData["cookieInfo"] = $cookieInfo;
+}
+
+echo json_encode($returnData);
 
 if ($input->is_debug) {
     print "\n\n";

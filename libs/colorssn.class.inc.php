@@ -131,8 +131,6 @@ class colorssn extends option_base {
     public function get_insert_array($data) {
         $insert_array = parent::get_insert_array($data);
         $insert_array = $this->file_helper->on_append_insert_array($data, $insert_array);
-        $insert_array['generate_fraction'] = $data->cooccurrence;
-        $insert_array['generate_evalue'] = $data->neighborhood_size;
         return $insert_array;
     }
 
