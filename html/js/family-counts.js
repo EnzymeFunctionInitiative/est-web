@@ -39,14 +39,20 @@ function getFamilyCountsTableHandler(responseText, countOutputId, useUniref90, u
         sumCounts.all += parseInt(countVal);
         
         if (useUniref90) {
-            countVal = data[famId].uniref90;
-            countCell = row.insertCell(cellIdx++);
-            countCell.innerHTML = commaFormatted(countVal.toString());
-            countCell.style.textAlign = "right";
-            sumCounts.uniref90 += parseInt(countVal);
+            if (data[famId].uniref90) {
+                countVal = data[famId].uniref90;
+                countCell = row.insertCell(cellIdx++);
+                countCell.innerHTML = commaFormatted(countVal.toString());
+                countCell.style.textAlign = "right";
+                sumCounts.uniref90 += parseInt(countVal);
+            } else {
+                countCell = row.insertCell(cellIdx++);
+                countCell.innerHTML = "0";
+                countCell.style.textAlign = "right";
+            }
         }
         
-        if (useUniref50) {
+        if (useUniref50 && typeof data[famId].uniref50 !== 'undefined') {
             countVal = data[famId].uniref50;
             countCell = row.insertCell(cellIdx++);
             countCell.innerHTML = commaFormatted(countVal.toString());
