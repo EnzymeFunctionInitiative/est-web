@@ -6,16 +6,17 @@ require_once "../includes/main.inc.php";
 
 $userEmail = "Enter your email address";
 
+$showJobsTab = false;
 $jobs = array();
 //$analysisJobs = array();
-if (user_jobs::has_token_cookie()) {
+if (functions::is_recent_jobs_enabled() && user_jobs::has_token_cookie()) {
     $userJobs= new user_jobs();
     $userJobs->load_jobs($db, user_jobs::get_user_token());
     $jobs = $userJobs->get_jobs();
 //    $analysisJobs = $userJobs->get_analysis_jobs();
     $userEmail = $userJobs->get_email();
+    $showJobsTab = count($jobs) > 0; // || count($analysisJobs) > 0;
 }
-$showJobsTab = count($jobs) > 0; // || count($analysisJobs) > 0;
 
 $maxSeqNum = functions::get_max_seq();
 $maxSeqFormatted = number_format($maxSeqNum, 0);
