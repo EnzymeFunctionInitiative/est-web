@@ -4,35 +4,34 @@ require_once '../libs/input.class.inc.php';
 
 $result = "";
 
-$query_string = str_replace("\n", ",", $_GET["families"]);
-$query_string = str_replace("\r", ",", $query_string);
-$query_string = str_replace(" ", ",", $query_string);
-$families = explode(",", $query_string);
+$queryString = str_replace("\n", ",", $_GET["families"]);
+$queryString = str_replace("\r", ",", $queryString);
+$queryString = str_replace(" ", ",", $queryString);
+$families = explode(",", $queryString);
+
+$results = array();
 
 foreach ($families as $family) {
     $family = functions::sanitize_family($family);
     if (!$family)
         continue;
 
-    $family_type = functions::get_family_type($family);
-    if (!$family_type)
+    $familyType = functions::get_family_type($family);
+    if (!$familyType)
         continue;
 
-    $sql = "SELECT * FROM family_counts WHERE family_type='$family_type' AND family='$family'";
-    $sql .= " LIMIT 1";
-    $db_result = $db->query($sql);
-    if ($db_result) {
-        if ($result)
-            $result .= ",";
-        $result .= strtoupper($family) . "=" . $db_result[0]['num_members'];
+    $sql = "SELECT * FROM family_info WHERE family='$family'";
+    $dbResult = $db->query($sql);
+    if ($dbResult) {
+        $results[strtoupper($family)] = array(
+            "name" => $dbResult[0]["short_name"],
+            "all" => $dbResult[0]["num_members"],
+            "uniref90" => $dbResult[0]["num_uniref90_members"],
+            "uniref50" => $dbResult[0]["num_uniref50_members"]);
     }
 }
 
-echo $result;
-
-//echo json_encode(
-//    'id'=>$result['id'],
-//    'message'=>$result['MESSAGE']));
+echo json_encode($results);
 
 
 ?>

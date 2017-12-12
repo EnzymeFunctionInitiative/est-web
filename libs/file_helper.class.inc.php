@@ -31,7 +31,7 @@ class file_helper {
 
     public function on_load_generate($id, $result) {
         // This field is used for any file that is uploaded (e.g. Option C, D, and E), not just FASTA files.
-        $this->uploaded_filename = $result[0]['generate_fasta_file'];
+        $this->uploaded_filename = $result['generate_fasta_file'];
         $this->file_extension = "." . pathinfo($this->uploaded_filename, PATHINFO_EXTENSION);
     }
 

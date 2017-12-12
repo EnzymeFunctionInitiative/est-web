@@ -50,7 +50,9 @@ abstract class option_base extends stepa {
         
         if (!$result->errors) {
             $table_name = "generate";
-            $insert_array = $this->get_insert_array($data);
+            $params_array = $this->get_insert_array($data);
+            $insert_array = $this->get_generate_insert_array($data);
+            $insert_array['generate_params'] = $this->encode_object($params_array);
             if ($data->is_debug) {
                 foreach ($insert_array as $k => $v) {
                     print "'$k' = $v\n";
@@ -79,15 +81,24 @@ abstract class option_base extends stepa {
     // This is stored into the generate database so that it can be picked up by run_job below later.
     abstract protected function get_create_type();
 
-    protected function get_insert_array($data) {
-        $key = $key = $this->generate_key();
-        $insert_array = array('generate_key' => $key,
+    // This is creates the actual array that is inserted into the database.
+    protected function get_generate_insert_array($data) {
+        $key = $this->generate_key();
+        $insert_array = array(
+            'generate_key' => $key,
             'generate_email' => $data->email,
             'generate_type' => $this->get_create_type(),
-            'generate_evalue' => $data->evalue,
-            'generate_fraction' => $data->fraction,
             'generate_program' => $data->program,
             'generate_db_version' => functions::get_encoded_db_version(),
+        );
+        return $insert_array;
+    }
+
+    // This creates the specific parameters that are stored in the json object that is saved to the generate_params field.
+    protected function get_insert_array($data) {
+        $insert_array = array(
+            'generate_evalue' => $data->evalue,
+            'generate_fraction' => $data->fraction,
         );
         return $insert_array;
     }
@@ -166,6 +177,8 @@ abstract class option_base extends stepa {
 
         chdir($out->job_dir);
 
+        $sched = functions::get_cluster_scheduler();
+
         $parms = $this->get_run_script_args($out);
 
         $exec = "source /etc/profile\n";
@@ -173,6 +186,8 @@ abstract class option_base extends stepa {
         $exec .= "module load " . functions::get_efidb_module() . "\n";
         $exec .= $this->additional_exec_modules();
         $exec .= $this->get_run_script() . " ";
+        if ($sched)
+            $exec .= " -scheduler " . $sched;
         foreach ($parms as $key => $value) {
             $exec .= " " . $key . " " . $value;
         }
@@ -216,9 +231,12 @@ abstract class option_base extends stepa {
 
     public function set_sequence_max($num_seq) {
         $sql ="UPDATE generate ";
-        $sql .= "SET generate_sequence_max='1',generate_num_seq='" . $num_seq . "' ";
+        $sql .= "SET generate_sequence_max='1' ";
         $sql .= "WHERE generate_id='" . $this->get_id() . "' LIMIT 1";
         $result = $this->db->non_select_query($sql);
+
+        $data = array('generate_num_seq' => $num_seq);
+        $result = $this->update_results_object($this->get_id(), $data);
         if ($result) {
             $this->sequence_max = 1;
             $this->num_sequences = $num_seq;

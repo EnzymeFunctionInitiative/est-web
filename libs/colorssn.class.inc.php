@@ -110,8 +110,8 @@ class colorssn extends option_base {
         
         $this->file_helper->on_load_generate($id, $result);
         //HACK: This is a bit of a hack we are doing to avoid having to create new fields in the database.
-        $this->cooccurrence = $result[0]['generate_fraction'];
-        $this->neighborhood_size = $result[0]['generate_evalue'];
+        $this->cooccurrence = $result['generate_fraction'];
+        $this->neighborhood_size = $result['generate_evalue'];
 
         return $result;
     }
@@ -131,8 +131,6 @@ class colorssn extends option_base {
     public function get_insert_array($data) {
         $insert_array = parent::get_insert_array($data);
         $insert_array = $this->file_helper->on_append_insert_array($data, $insert_array);
-        $insert_array['generate_fraction'] = $data->cooccurrence;
-        $insert_array['generate_evalue'] = $data->neighborhood_size;
         return $insert_array;
     }
 

@@ -1,6 +1,7 @@
 <?php
-require_once 'includes/main.inc.php';
+require_once '../includes/main.inc.php';
 require_once '../libs/input.class.inc.php';
+require_once '../libs/user_jobs.class.inc.php';
 
 $result['id'] = 0;
 $result['MESSAGE'] = "";
@@ -26,22 +27,26 @@ if ($input->is_debug) {
 }
 
 
-
-
 $test = "";
 foreach($_POST as $var) {
     $test .= " " . $var;
 }
 
+$input->email = $_POST['email'];
 
-if (isset($_POST['submit'])) {
+if (!isset($_POST['submit'])) {
+    $result["MESSAGE"] = "Form is invalid.";
+} elseif (!$input->email) {
+    $result["MESSAGE"] = "Please enter an email address.";
+} else {
+    $result['RESULT'] = true;
+
     foreach ($_POST as &$var) {
         $var = trim(rtrim($var));
     }
     $message = "";
     $option = $_POST['option_selected'];
-
-    $input->email = $_POST['email'];
+    
     if (array_key_exists('evalue', $_POST))
         $input->evalue = $_POST['evalue'];
     if (array_key_exists('program', $_POST))
@@ -59,33 +64,51 @@ if (isset($_POST['submit'])) {
             
             $result = $blast->create($input);
             break;
-
+    
         //Option B - PFam/Interpro
         case 'B':
+        case 'E':
             $generate = new generate($db);
             
             $input->families = $_POST['families_input'];
             $input->domain = $_POST['pfam_domain'];
-
+            if (isset($_POST['pfam_seqid']))
+                $input->seq_id = $_POST['pfam_seqid'];
+            if (isset($_POST['pfam_length_overlap']))
+                $input->length_overlap = $_POST['pfam_length_overlap'];
+            if (isset($_POST['pfam_uniref_version']))
+                $input->uniref_version = $_POST['pfam_uniref_version'];
+            if (isset($_POST['pfam_demux']))
+                $input->no_demux = $_POST['pfam_demux'] == "true" ? true : false;
+            if (isset($_POST['pfam_random_fraction']))
+                $input->random_fraction = $_POST['pfam_random_fraction'] == "true" ? true : false;
+            if (isset($_POST['families_use_uniref']) && $_POST['families_use_uniref'] == "true")
+                $input->uniref_version = "90";
+    
             $result = $generate->create($input);
             break;
-
+    
         //Option C - Fasta Input
         case 'C':
-        case 'E':
         //Option D - accession list
         case 'D':
         //Option color SSN
         case 'colorssn':
-            if ($_FILES['file']['error'] === "") { $_FILES['file']['error'] = 4; }
+            $input->seq_id = 1;
+
+            if (isset($_FILES['file']) && $_FILES['file']['error'] === "")
+                $_FILES['file']['error'] = 4;
     
             if ((isset($_FILES['file']['error'])) && ($_FILES['file']['error'] !== 0)) {
                 $result['MESSAGE'] = "Error Uploading File: " . functions::get_upload_error($_FILES['file']['error']);
                 $result['RESULT'] = false;
             }
             else {
+                if (isset($_POST['families_use_uniref']) && $_POST['families_use_uniref'] == "true")
+                    $input->uniref_version = "90";
+
                 if ($option == "C" || $option == "E") {
-                    $useFastaHeaders = $_POST['use_fasta_headers'];
+                    $useFastaHeaders = $_POST['fasta_use_headers'];
                     $obj = new fasta($db, 0, $useFastaHeaders == "true" ? "E" : "C");
                     $input->field_input = $_POST['fasta_input'];
                     $input->families = $_POST['families_input'];
@@ -93,17 +116,27 @@ if (isset($_POST['submit'])) {
                     $obj = new accession($db);
                     $input->field_input = $_POST['accession_input'];
                     $input->families = $_POST['families_input'];
+                    if (isset($_POST['accession_use_uniref'])) {
+                        $input->expand_homologs = $_POST['accession_use_uniref'] == "true" ? true : false;
+                        if ($input->expand_homologs) {
+                            $input->uniref_version = $_POST['accession_uniref_version'];
+                        }
+                    } else {
+                        $input->expand_homologs = false;
+                    }
                 } else if ($option == "colorssn") {
                     $obj = new colorssn($db);
                     //$input->cooccurrence = $_POST['cooccurrence'];
                     //$input->neighborhood_size = $_POST['neighborhood_size'];
                 }
- 
-                $input->tmp_file = $_FILES['file']['tmp_name'];
-                $input->uploaded_filename = $_FILES['file']['name'];
+
+                if (isset($_FILES['file'])) {
+                    $input->tmp_file = $_FILES['file']['tmp_name'];
+                    $input->uploaded_filename = $_FILES['file']['name'];
+                }
                 $result = $obj->create($input);
             }
-
+    
             break;
             
         default:
@@ -111,7 +144,6 @@ if (isset($_POST['submit'])) {
             $result['MESSAGE'] = "You need to select one of the above options.";
     
     }
-
 }
 
 
@@ -119,9 +151,19 @@ if ($input->is_debug) {
     print "JSON: ";
 }
 
-echo json_encode(array('valid'=>$result['RESULT'],
-    'id'=>$result['id'],
-    'message'=>$result['MESSAGE']));
+$returnData = array('valid'=>$result['RESULT'],
+                    'id'=>$result['id'],
+                    'message'=>$result['MESSAGE']);
+
+if ($result["RESULT"]) {
+    $id = $result['id'];
+    $userObj = new user_jobs();
+    $userObj->save_user($db, $input->email);
+    $cookieInfo = $userObj->get_cookie();
+    $returnData["cookieInfo"] = $cookieInfo;
+}
+
+echo json_encode($returnData);
 
 if ($input->is_debug) {
     print "\n\n";

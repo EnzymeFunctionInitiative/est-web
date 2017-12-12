@@ -7,13 +7,20 @@ class input_data {
     public $evalue;
     public $fraction;
     public $max_seqs;
+    public $random_fraction;
 
-    // For option A, C, D, and E
+    // For option A, C, D
     public $field_input;
 
-    // For option B
+    // For option D
+    public $expand_homologs;
+
+    // For option B, and E
     public $domain;
     public $program;
+    public $length_overlap;
+    public $uniref_version;  # If this is set to valid value (50 or 90) UniRef is used to generate the dataset.
+    public $no_demux;  # In the case of Option E (Option B+) setting this forces a demux step to be executed.
 
     // For option B+C
     public $families;

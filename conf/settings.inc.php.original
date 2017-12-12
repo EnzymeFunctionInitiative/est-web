@@ -36,6 +36,7 @@ define("__MYSQL_PASSWORD__","");
 
 ////////Cluster Settings////////////
 define("__CLUSTER_USER__","");
+define("__CLUSTER_SCHEDULER__","");
 define("__GENERATE_QUEUE__","");
 define("__ANALYSE_QUEUE__","");
 define("__CLUSTER_PROCS__","48");
@@ -87,5 +88,7 @@ define("__COLORSSN_MAP_FILE_NAME__","nodedata.txt");
 define("__ACC_COUNT_FILENAME__","acc_counts.txt");
 
 define("__USER_LIST_KEY__","");
+define("__CDHIT_STATS_FILE","");
+define("__CONVERGENCE_RATIO_FILENAME__","");
 
 ?>

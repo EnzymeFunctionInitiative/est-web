@@ -9,6 +9,11 @@ abstract class family_shared extends option_base {
     //////////////////Private Variables//////////
 
     protected $families = array();
+    protected $length_overlap = 1.0;
+    protected $seq_id = "1.0";
+    protected $uniref_version = "";
+    protected $no_demux = 0;
+    protected $random_fraction = false;
 
     ///////////////Public Functions///////////
 
@@ -24,15 +29,21 @@ abstract class family_shared extends option_base {
     
     public function get_families() { return $this->families; }
     public function get_families_comma() { return implode(",", $this->get_families()); }
+    public function get_sequence_identity() { return $this->seq_id; }
+    public function get_length_overlap() { return $this->length_overlap; }
+    public function get_uniref_version() { return $this->uniref_version; }
+    public function get_no_demux() { return $this->no_demux; }
+    public function is_cd_hit_job() { return strpos($this->seq_id, ",") !== FALSE; } //HACK: this is a temporary hack for research purposes
+            
+
 
     //returns an array of the pfam families or empty array otherwise
     public function get_pfam_families() {
         $pfam_families = array();
         foreach ($this->families as $family) {
-            if (substr($family,0,2) == "PF") {
+            if (substr($family,0,2) == "PF" || substr($family,0,2) == "CL") { // Also allow PFAM clans
                 array_push($pfam_families,$family);
             }
-
         }
         return $pfam_families;
 
@@ -45,11 +56,28 @@ abstract class family_shared extends option_base {
             if (substr($family,0,3) == "IPR") {
                 array_push($interpro_families,$family);
             }
-
         }
         return $interpro_families;
 
     }
+
+    public function get_cdhit_stats() {
+        $results_dir = functions::get_results_dir();
+        $file = $results_dir . "/" . $this->get_output_dir();
+        $file .= "/" . functions::get_cdhit_stats_filename();
+        $file_handle = @fopen($file,"r") or die("Error opening " . $this->stats_file . "\n");
+        $i = 0; 
+        $stats_array = array();
+        $keys = array('SequenceId','SequenceLength','Nodes');
+        while (($data = fgetcsv($file_handle,0,"\t")) !== FALSE) {
+            $data[0] = number_format(floatval($data[0]) * 100, 0) . "%";
+            $data[1] = number_format(floatval($data[1]) * 100, 0) . "%";
+            array_push($stats_array,array_combine($keys,$data));
+        }
+        fclose($file_handle);
+        return $stats_array;
+    }
+
 
     // END FUNCTIONS SPECIFIC TO FAMILIES
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +90,12 @@ abstract class family_shared extends option_base {
         $insert_array = parent::get_insert_array($data);
         $formatted_families = $this->format_families($data->families);
         $insert_array['generate_families'] = $formatted_families;
+        $insert_array['generate_sequence_identity'] = $data->seq_id;
+        $insert_array['generate_length_overlap'] = $data->length_overlap;
+        if ($data->uniref_version && ($data->uniref_version == "50" || $data->uniref_version == "90"))
+            $insert_array['generate_uniref'] = $data->uniref_version;
+        $insert_array['generate_no_demux'] = $data->no_demux;
+        $insert_array['generate_random_fraction'] = $data->random_fraction;
         return $insert_array;
     }
 
@@ -88,14 +122,26 @@ abstract class family_shared extends option_base {
         $parms = array();
         $parms = generate_helper::get_run_script_args($outDir, $parms, $this);
         #$parms["-blast"] = strtolower($this->get_program());
-        if (strlen($interpro_families)) {
+        if (strlen($interpro_families))
             $parms["-ipro"] = $interpro_families;
-        }
-        if (strlen($pfam_families)) {
+        if (strlen($pfam_families))
             $parms["-pfam"] = $pfam_families;
+        if ($this->seq_id) {
+            $parms["-sim"] = $this->seq_id;
+            if (strpos($this->seq_id, ",") !== FALSE)
+                $parms["-cd-hit"] = functions::get_cdhit_stats_filename();
         }
+        if ($this->length_overlap)
+            $parms["-lengthdif"] = $this->length_overlap;
+        if ($this->uniref_version)
+            $parms["-uniref-version"] = $this->uniref_version;
+        if (($this->length_overlap || $this->seq_id) && $this->no_demux)
+            $parms["-no-demux"] = "";
         $parms["-fraction"] = $this->get_fraction();
+        if ($this->get_fraction() > 1 && $this->random_fraction)
+            $parms["-random-fraction"] = "";
         $parms["-seq-count-file"] = $this->get_accession_counts_file_full_path();
+        $parms["-conv-ratio-file"] = functions::get_convergence_ratio_filename();
 
         return $parms;
     }
@@ -106,10 +152,27 @@ abstract class family_shared extends option_base {
             return;
         }
 
-        if ($result[0]['generate_families'] != "") {
-            $families = explode(",", $result[0]['generate_families']);
+        if ($result['generate_families'] != "") {
+            $families = explode(",", $result['generate_families']);
             $this->families = $families;
         }
+
+        if (array_key_exists('generate_sequence_identity', $result) && $result['generate_sequence_identity'])
+            $this->seq_id = $result['generate_sequence_identity'];
+        if (array_key_exists('generate_length_overlap', $result) && $result['generate_length_overlap'])
+            $this->length_overlap = $result['generate_length_overlap'];
+        if (array_key_exists('generate_uniref', $result) && $result['generate_uniref'] != "--")
+            $this->uniref_version = $result['generate_uniref'];
+        else
+            $this->uniref_version = "";
+        if (array_key_exists('generate_no_demux', $result) && $result['generate_no_demux'])
+            $this->no_demux = 1;
+        else
+            $this->no_demux = 0;
+        if (array_key_exists('generate_random_fraction', $result) && $result['generate_random_fraction'])
+            $this->random_fraction = 1;
+        else
+            $this->random_fraction = 0;
 
         return $result;
     }
@@ -130,6 +193,10 @@ abstract class family_shared extends option_base {
             }
             //Test if PFam Number
             elseif ((substr($family,0,2) == "pf") && (is_numeric(substr($family,2))) && (strlen(substr($family,2)) == 5)) {
+                $valid = 1;
+            }
+            //Test if Clan Number
+            elseif ((substr($family,0,2) == "cl") && (is_numeric(substr($family,2))) && (strlen(substr($family,2)) == 4)) {
                 $valid = 1;
             }
             else {
