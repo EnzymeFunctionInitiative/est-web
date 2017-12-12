@@ -27,6 +27,7 @@ define("__INTERPRO_VERSION__","53.0");
 define("__UNIPROT_VERSION__","2015_08");
 define("__INTERPRO_WEBSITE__","http://www.ebi.ac.uk/interpro/");
 define("__BETA_RELEASE__","");
+define("__ENABLE_RECENT_JOBS__",false);
 
 ////////MySQL Settings///////////
 define("__MYSQL_HOST__","");

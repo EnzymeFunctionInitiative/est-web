@@ -5,7 +5,7 @@ include_once 'functions.class.inc.php';
 class efi_statistics 
 {
 
-    public static function num_generate_per_month($db) {
+    public static function num_generate_per_month($db, $recentOnly = false) {
         $sql = "SELECT count(1) as count, ";
         $sql .= "MONTHNAME(generate_time_created) as month, ";
         $sql .= "YEAR(generate_time_created) as year, ";
@@ -24,11 +24,13 @@ class efi_statistics
         $sql .= "SUM(IF(generate_type='COLORSSN' AND generate_status='FAILED',1,0)) as num_failed_option_color, ";
         $sql .= "SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(generate_time_completed,generate_time_started)))) as total_time ";
         $sql .= "FROM generate ";
+        if ($recentOnly)
+            $sql .= "WHERE TIMESTAMPDIFF(DAY,generate_time_created,CURRENT_TIMESTAMP) <= 180 ";
         $sql .= "GROUP BY MONTH(generate_time_created),YEAR(generate_time_created) ORDER BY year,MONTH(generate_time_created)";
         return $db->query($sql);
     }
 
-    public static function num_analysis_per_month($db) {
+    public static function num_analysis_per_month($db, $recentOnly = false) {
         $sql = "SELECT count(1) as count, ";
         $sql .= "MONTHNAME(analysis_time_created) as month, ";
         $sql .= "YEAR(analysis_time_created) as year, ";
@@ -36,6 +38,8 @@ class efi_statistics
         $sql .= "SUM(IF(analysis_status='FAILED',1,0)) as num_failed, ";
         $sql .= "SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(analysis_time_completed,analysis_time_started)))) as total_time ";
         $sql .= "FROM analysis ";
+        if ($recentOnly)
+            $sql .= "WHERE TIMESTAMPDIFF(DAY,analysis_time_created,CURRENT_TIMESTAMP) <= 180 ";
         $sql .= "GROUP BY MONTH(analysis_time_created),YEAR(analysis_time_created) ORDER BY year,MONTH(analysis_time_created)";
         return $db->query($sql);
     }

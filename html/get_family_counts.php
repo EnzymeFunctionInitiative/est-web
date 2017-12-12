@@ -20,7 +20,7 @@ foreach ($families as $family) {
     if (!$familyType)
         continue;
 
-    $sql = "SELECT * FROM family_counts as FC LEFT JOIN pfam_info as PI ON FC.family = PI.pfam WHERE FC.family_type='$familyType' AND FC.family='$family'";
+    $sql = "SELECT * FROM family_info WHERE family='$family'";
     $dbResult = $db->query($sql);
     if ($dbResult) {
         $results[strtoupper($family)] = array(

@@ -470,6 +470,9 @@ class functions {
         return $hash;
     }
 
+    public static function is_recent_jobs_enabled() {
+        return __ENABLE_RECENT_JOBS__;
+    }
 }
 
 ?>
