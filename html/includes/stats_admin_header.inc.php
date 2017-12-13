@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang='en'>
-<header>
+<head>
 <title>EFI-EST Statistics</title>
 <link rel="stylesheet" type="text/css"
 	<?php if (file_exists("../includes/bootstrap-3.3.5-dist/css/bootstrap.min.css")) {
@@ -9,8 +9,20 @@
 	elseif (file_exists("includes/bootstrap-3.3.5-dist/css/bootstrap.min.css")) {
 		echo "href='includes/bootstrap-3.3.5-dist/css/bootstrap.min.css'>";
 	}
-	?>
-</header>
+?>
+<style>
+/*.families-col {
+    max-width: 200px;
+    overflow: auto;
+    text-overflow: ellipsis;
+}
+.email-col {
+    max-width: 200px;
+    overflow: auto;
+    text-overflow: ellipsis;
+}*/
+</style>
+</head>
 
 <body style='padding-top: 60px;'>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -32,6 +44,6 @@
 	</div>
 </nav>
 
-<div class='container'>
+<div class='container' style="width:100%;padding:40px">
 <div class='span12'>
 
