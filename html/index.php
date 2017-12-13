@@ -25,6 +25,8 @@ $useUniref90 = true;
 $useUniref50 = false;
 $useAdvancedFamilyInputs = functions::option_e_enabled();
 
+$updateMessage = functions::get_update_message();
+
 ?>
 
 
@@ -41,6 +43,16 @@ easily generate SSNs that can be visualized in
 <div id="update-message" class="update_message initial-hidden">
 <?php if (isset($updateMessage)) echo $updateMessage; ?>
 </div>
+
+When a family is selected in Options B, C, and D, SSNs now can be generated using the 
+UniRef90 database in which UniProt sequences that share ≥90% sequence identity over 80% 
+of the sequence length are clustered and represented by a single seed sequence. For most 
+families, use of Uniref90 seed sequences decreases the time for the BLAST step by a
+factor of &ge;4. The UniRef90 SSNs are analogous to 90% representative node SSNs generated
+using all UniProt sequences. The UniRef90 SSNs contain a node attribute "UniRef90 Cluster
+IDs" that lists the UniProt IDs is each node and is searchable with Cytoscape, so all 
+UniProt IDs in the family can be located. The UniRef90 SSNs are compatible with the 
+EFI-GNT tool.
 
 <div class="tabs">
     <ul class="tab-headers">

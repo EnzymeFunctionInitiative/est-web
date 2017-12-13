@@ -473,6 +473,11 @@ class functions {
     public static function is_recent_jobs_enabled() {
         return __ENABLE_RECENT_JOBS__;
     }
+
+    public static function get_update_message() {
+        return "The EST database has been updated to use UniProt " . 
+            self::get_uniprot_version() . " and InterPro " . self::get_interpro_version();
+    }
 }
 
 ?>
