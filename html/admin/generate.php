@@ -18,6 +18,7 @@ $jobs = efi_statistics::get_generate($db,$month,$year);
 $generate_html = "";
 foreach ($jobs as $job) {
     $id = $job['Generate ID'];
+    $families = implode(", ", explode(",", $job['Families']));
     $get_array = array('id'=>$id,'key'=>$job['Key']);
     if ($job['Option Selected'] == "COLORSSN") {
         $url = $colorssn_page;
@@ -50,11 +51,11 @@ foreach ($jobs as $job) {
 	else {
 		$generate_html .= "<td>&nbsp</td>\n";
 	}
-	$generate_html .= "<td>" . $job['Families'] . "</td>\n";
+	$generate_html .= "<td>" . $families . "</td>\n";
     $generate_html .= "<td>" . $job['E-Value'] . "</td>\n";
-	$generate_html .= "<td>" . $job['Time Submitted'] . "</td>\n";
-	$generate_html .= "<td>" . $job['Time Started'] . "</td>\n";
-	$generate_html .= "<td>" . $job['Time Completed']  ."</td>\n";
+	$generate_html .= "<td>" . str_replace(" ", "&nbsp;", $job['Time Submitted']) . "</td>\n";
+	$generate_html .= "<td>" . str_replace(" ", "&nbsp;", $job['Time Started']) . "</td>\n";
+	$generate_html .= "<td>" . str_replace(" ", "&nbsp;", $job['Time Completed'])  ."</td>\n";
     $generate_html .= "<td>" . $job['Status'] . "</td>\n";
     //$generate_html .= "<td><center><span style='font-size: 100%'><a href='#' onclick='restartJob($id)'>&#8635;</a></span></center></td>\n";
 	$generate_html .= "</tr>";

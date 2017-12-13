@@ -17,6 +17,7 @@ if ($generate->get_key() != $_GET['key']) {
     exit;
 }
 
+$updateMessage = functions::get_update_message();
 
 $table_format = "html";
 if (isset($_GET["as-table"])) {
@@ -222,10 +223,8 @@ else {
 ?>	
 
 
-<div class="update_message">
-    The EST database has been updated to use UniProt
-    <?php echo functions::get_uniprot_version(); ?> and InterPro
-    <?php echo functions::get_interpro_version(); ?>.
+<div id="update-message" class="update_message initial-hidden">
+<?php if (isset($updateMessage)) echo $updateMessage; ?>
 </div>
 
 <img src="images/quest_stages_c.jpg" width="990" height="119" alt="stage 1">
