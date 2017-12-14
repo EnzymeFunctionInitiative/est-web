@@ -25,7 +25,7 @@ class efi_statistics
         $sql .= "SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(generate_time_completed,generate_time_started)))) as total_time ";
         $sql .= "FROM generate ";
         if ($recentOnly)
-            $sql .= "WHERE TIMESTAMPDIFF(DAY,generate_time_created,CURRENT_TIMESTAMP) <= 180 ";
+            $sql .= "WHERE TIMESTAMPDIFF(MONTH,generate_time_created,CURRENT_TIMESTAMP) <= 7 ";
         $sql .= "GROUP BY MONTH(generate_time_created),YEAR(generate_time_created) ORDER BY year,MONTH(generate_time_created)";
         return $db->query($sql);
     }
