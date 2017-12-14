@@ -129,8 +129,16 @@ $table->add_row("Alignment Score", $analysis->get_evalue());
 $table->add_row("Minimum Length", number_format($analysis->get_min_length()));
 $table->add_row("Maximum Length", number_format($analysis->get_max_length()));
 $conv_ratio = $generate->get_convergence_ratio();
+$convergence_ratio_string = "";
 if ($conv_ratio > -0.5) {
-    $table->add_row("Convergence Ratio", number_format($conv_ratio, 3));
+    $table->add_row("Convergence Ratio<sup>+</sup>", number_format($conv_ratio, 3));
+    $convergence_ratio_string = <<<STR
+<div><sup>+</sup>
+The convergence ratio is a measure of the similarity of the sequences used in the BLAST.  It is the
+ratio of the total number of edges retained from the BLAST (e-values less than the specified threshold;
+default 5) to the total number of sequence pairs.  The value decreases from 1.0 for sequences that are
+very similar (identical) to 0.0 for sequences that are very different (unrelated).</div>
+STR;
 }
 
 $table_string = $table->as_string();
@@ -217,6 +225,7 @@ else {
         <?php echo $table_string; ?>
     </table>
     <?php echo $extra_nodes_string; ?>
+    <?php echo $convergence_ratio_string; ?>
 
     <h4>Full Network <a href="tutorial_download.php" class="question" target="_blank">?</a></h4>
     <p>Each node in the network represents a single protein sequence. Large files (&gt;500MB) may not open in Cytoscape.</p>
