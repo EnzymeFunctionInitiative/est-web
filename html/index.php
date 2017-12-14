@@ -45,7 +45,7 @@ easily generate SSNs that can be visualized in
 </div>
 
 When a family is selected in Options B, C, and D, SSNs now can be generated using the 
-UniRef90 database in which UniProt sequences that share ≥90% sequence identity over 80% 
+UniRef90 database in which UniProt sequences that share &ge;90% sequence identity over 80% 
 of the sequence length are clustered and represented by a single seed sequence. For most 
 families, use of Uniref90 seed sequences decreases the time for the BLAST step by a
 factor of &ge;4. The UniRef90 SSNs are analogous to 90% representative node SSNs generated
