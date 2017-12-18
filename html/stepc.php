@@ -121,7 +121,7 @@ elseif ($gen_type == "FASTA" || $gen_type == "FASTA_ID") {
     if (!empty($num_family_nodes) && !empty($num_file_seq)) {
         $extra_num_nodes = $total_num_nodes - $num_family_nodes - $num_file_seq;
         if ($extra_num_nodes > 0) {
-            $extra_nodes_string = "* $extra_num_nodes additional nodes have been added since multiple UniProt IDs were found for a single sequence with more than one header in one or more cases.";
+            $extra_nodes_string = "<div>* $extra_num_nodes additional nodes have been added since multiple UniProt IDs were found for a single sequence with more than one header in one or more cases.</div>";
             $extra_nodes_ast = "*";
         }
     }
@@ -142,8 +142,16 @@ if ($included_family && !empty($num_family_nodes))
     $table->add_row("Number of IDs in PFAM/InterPro Family", number_format($num_family_nodes));
 $table->add_row("Total Number of Nodes $extra_nodes_ast", number_format($total_num_nodes));
 $conv_ratio = $generate->get_convergence_ratio();
+$convergence_ratio_string = "";
 if ($conv_ratio > -0.5) {
-    $table->add_row("Convergence Ratio", number_format($conv_ratio, 3));
+    $table->add_row("Convergence Ratio<sup>+</sup>", number_format($conv_ratio, 3));
+    $convergence_ratio_string = <<<STR
+<div><sup>+</sup>
+The convergence ratio is a measure of the similarity of the sequences used in the BLAST.  It is the
+ratio of the total number of edges retained from the BLAST (e-values less than the specified threshold;
+default 5) to the total number of sequence pairs.  The value decreases from 1.0 for sequences that are
+very similar (identical) to 0.0 for sequences that are very different (unrelated).</div>
+STR;
 }
 
 $table_string = $table->as_string();
@@ -244,6 +252,7 @@ else {
     <?php echo $table_string; ?>
 </table>
 <?php echo $extra_nodes_string; ?>
+<?php echo $convergence_ratio_string; ?>
 <p>&nbsp;</p>
 
 <hr>
@@ -347,7 +356,7 @@ This name will be displayed in Cytoscape.
 <center>
       <input type="submit" name="analyze_data" value="Create SSN" class="css_btn_class_recalc">
 
-    <p><?php if (isset($result['MESSAGE'])) { echo $result['MESSAGE']; } ?>
+    <p style="color:red"><?php if (isset($result['MESSAGE'])) { echo $result['MESSAGE']; } ?></p>
 
 <?php if (functions::is_beta_release()) { ?>
 <h4><b><span style="color: blue">BETA</span></b></h4>

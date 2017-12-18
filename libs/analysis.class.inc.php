@@ -86,10 +86,7 @@ class analysis {
             return true;
         }
         return false;
-
     }		
-
-
 
     public function get_num_sequences_post_filter() {
         $root_dir = functions::get_results_dir();
@@ -105,9 +102,6 @@ class analysis {
 
         }
         return $num_seq;
-
-
-
     }
 
     public function create($generate_id,$evalue,$name,$minimum,$maximum) {
@@ -117,9 +111,9 @@ class analysis {
         if (!$this->verify_length($minimum,$maximum)) {
             $message = "<br><b>Please verify the minimum and maximum lengths.</b>";
             $errors = true;
-
         }
-        if (!$this->verify_network_name($name)) {
+        $name = $this->verify_network_name($name);
+        if ($name === false) {
             $message .= "<br><b>Please verify the network name.</b>";
             $message .= "<br><b>It can contain only letters, numbers, dash, and underscore.</b>";
             $errors = true;
@@ -142,17 +136,13 @@ class analysis {
             }
         }
         return array('RESULT'=>false,'MESSAGE'=>$message);
-
-
-
     }
+
     public function set_pbs_number($pbs_number) {
         $sql = "UPDATE analysis SET analysis_pbs_number='" . $pbs_number . "' ";
         $sql .= "WHERE analysis_id='" . $this->get_id() . "'";
         $this->db->non_select_query($sql);
         $this->pbs_number = $pbs_number;
-
-
     }
 
     public function set_time_started() {
@@ -161,7 +151,6 @@ class analysis {
         $sql .= "WHERE analysis_id='" . $this->get_id() . "' LIMIT 1";
         $this->db->non_select_query($sql);
         $this->time_started = $current_time;
-
     }
 
     public function set_time_completed() {
@@ -170,7 +159,6 @@ class analysis {
         $sql .= "WHERE analysis_id='" . $this->get_id() . "' LIMIT 1";
         $this->db->non_select_query($sql);
         $this->time_completed = $current_time;
-
     }
 
     public function check_pbs_running() {
@@ -184,7 +172,6 @@ class analysis {
         else {
             return false;
         }
-
     }
 
     public function check_finish_file() {
@@ -192,7 +179,6 @@ class analysis {
         $directory .= "/" . $this->get_network_dir();
         $full_path = $directory . "/" . $this->get_finish_file();
         return file_exists($full_path);
-
     }
 
     public function set_status($status) {
@@ -204,7 +190,6 @@ class analysis {
         if ($result) {
             $this->status = $status;
         }
-
     }
 
     public function get_network_stats() {
@@ -251,18 +236,13 @@ class analysis {
         else {
             return false;
         }
-
-
     }
 
     public function get_stats_full_path() {
         $path = functions::get_web_root() . "/results/" . $this->get_output_dir() . "/" . $this->get_network_dir() . "/" . $this->stats_file;
         return $path;
-
-
-
-
     }
+
     public function email_complete() {
 
         $stepa = new stepa($this->db,$this->get_generate_id());	
@@ -325,7 +305,6 @@ class analysis {
 
         $mail = Mail::factory("mail");
         $mail->send($to,$headers,$body);
-
     }
 
     public function email_failed() { //$from_email,$web_root,$footer) {
@@ -360,8 +339,6 @@ class analysis {
 
         $mail = Mail::factory("mail");
         $mail->send($to,$headers,$body);
-
-
     }
 
     public function email_started() {
@@ -403,7 +380,6 @@ class analysis {
 
         $mail = Mail::factory("mail");
         $mail->send($to,$headers,$body);
-
     }
 
     public function run_job($is_debug = false) {
@@ -507,14 +483,12 @@ class analysis {
             // feature isn't used anymore.
             //$this->length_overlap = $result[0]['generate_length_overlap'];
         }
-
     }
 
     public function get_network_dir() {
         $path = $this->get_filter() . "-" . $this->get_evalue();
         $path .= "-" . $this->get_min_length() . "-" . $this->get_max_length();
         return $path;
-
     }
 
     private function verify_length($min,$max) {
@@ -530,7 +504,6 @@ class analysis {
             $result = false;
         }
         return $result;
-
     }
 
     private function verify_network_name($name) {
@@ -538,11 +511,11 @@ class analysis {
         if ($name == "") {
             $result = false;
         }
-        if (!preg_match('/^[A-Za-z0-9_-]+$/',$name)) {
-            $result = false;
-        }
+        $result = preg_replace('/[^A-Za-z0-9_-]/', '_', $name);
+        //if (!preg_match('/^[A-Za-z0-9_-]+$/',$name)) {
+        //    $result = false;
+        //}
         return $result;
-
     }
 
     private function verify_evalue($evalue) {
@@ -554,7 +527,6 @@ class analysis {
             $result = false;
         }
         return $result;
-
     }
 
     private function is_integer($value) {
@@ -562,7 +534,6 @@ class analysis {
             return true;
         }
         return false;
-
     }
 
     private function available_pbs_slots() {
@@ -596,7 +567,6 @@ class analysis {
         $message .= "Alignment Score: " . $this->get_evalue() . "\r\n";
         $message .= "Network Name: " . $this->get_name() . "\r\n";
         return $message;
-
     }
 
     private function get_stepa_job_info() {
