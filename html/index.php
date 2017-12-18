@@ -44,6 +44,7 @@ easily generate SSNs that can be visualized in
 <?php if (isset($updateMessage)) echo $updateMessage; ?>
 </div>
 
+<p>
 When a family is selected in Options B, C, and D, SSNs now can be generated using the 
 UniRef90 database in which UniProt sequences that share ≥90% sequence identity over 80% 
 of the sequence length are clustered and represented by a single seed sequence. For most 
@@ -53,6 +54,12 @@ using all UniProt sequences. The UniRef90 SSNs contain a node attribute "UniRef9
 IDs" that lists the UniProt IDs is each node and is searchable with Cytoscape, so all 
 UniProt IDs in the family can be located. The UniRef90 SSNs are compatible with the 
 EFI-GNT tool.
+</p>
+
+<p>
+A listing of new features and other information pertaining to EST is available on the
+<a href="notes.php">release notes</a> page.
+</p>
 
 <div class="tabs">
     <ul class="tab-headers">
@@ -233,10 +240,15 @@ HTML;
 <?php if (functions::option_b_enabled()) { ?>
         <div id="optionBtab" class="tab">
             <p>
-            The sequences from the Pfam and/or InterPro families are retrieved, and then, the similarities between the
-            sequences are calculated and used to generate the SSN.
+            The sequences from the Pfam families, InterPro families, and/or Pfam clans (superfamilies) are retrieved,
+            and then, the similarities between the sequences are calculated and used to generate the SSN.
             For Pfam families, the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the
-            format is IPRxxxxxx (six digits). The maximum number of retrieved sequences is <?php echo $maxSeqFormatted; ?>.
+            format is IPRxxxxxx (six digits); for Pfam clans, the format is CLxxxx (four digits).
+            Lists of Pfam families, InterPro families, and Pfam clans are included in the <a href="notes.php">release notes</a>.
+            </p>
+            <p>
+            The maximum number of retrieved sequences is <?php echo $maxSeqFormatted; ?>.
+            For large Pfam families, InterPro families, and Pfam clans, we recommend using the UniRef90 seed sequences.
             </p>
 
             <form name="optionBform" id="optionBform" method="post" action="">
@@ -335,7 +347,7 @@ HTML;
                     <div>
                         If desired, include a Pfam and/or InterPro families, in the analysis of your FASTA file. For Pfam families,
                         the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is
-                        IPRxxxxxx (six digits).
+                        IPRxxxxxx (six digits); for Pfam clans, the format is CLxxxx (four digits).
                     </div>
                 <div class="primary-input">
                     <div>
@@ -412,7 +424,7 @@ HTML;
                 <div>
                     If desired, include a Pfam and/or InterPro families, in the analysis of your FASTA file. For Pfam families,
                     the format is a comma separated list of PFxxxxx (five digits); for InterPro families, the format is
-                    IPRxxxxxx (six digits).
+                    IPRxxxxxx (six digits); for Pfam clans, the format is CLxxxx (four digits).
                 </div>
                 <div class="primary-input">
                     <div>
@@ -625,7 +637,8 @@ HTML;
                     as this number often allows a “full” SSN to be generated and viewed with Cytoscape.</p>
                 </li>
                 
-                <li><b>Option B: Pfam and/or InterPro families</b>. Defined protein families are used to generate the SSN.
+                <li><b>Option B: Pfam and/or InterPro families; Pfam clans (superfamilies)</b>.
+                    Defined protein families are used to generate the SSN.
                     <p class="indentall">
                     Option B allows the user to explore sequence-function space from defined 
                     protein families. A limit of <?php echo functions::get_max_seq(1); ?> 
