@@ -425,7 +425,10 @@ class analysis {
                 chdir($current_dir);
 
                 $output = trim(rtrim($output));
-                $pbs_job_number = substr($output,0,strpos($output,"."));
+                if ($sched == "slurm")
+                    $pbs_job_number = $output;
+                else
+                    $pbs_job_number = substr($output,0,strpos($output,"."));
                 if ($pbs_job_number && !$exit_status) {
                     $this->set_pbs_number($pbs_job_number);
                     $this->set_time_started();
@@ -475,7 +478,10 @@ class analysis {
             $this->time_completed = $result[0]['analysis_time_completed'];
             $this->filter_sequences = $result[0]['analysis_filter_sequences'];
             $this->db_version = functions::decode_db_version($result[0]['generate_db_version']);
-            $this->length_overlap = $result[0]['generate_length_overlap'];
+            //TODO: fix this. the field doesn't come from a database column anymore; it comes from the generate_params
+            // field which is a JSON structure. that would mean it would need to be decoded to get the value. this
+            // feature isn't used anymore.
+            //$this->length_overlap = $result[0]['generate_length_overlap'];
         }
     }
 

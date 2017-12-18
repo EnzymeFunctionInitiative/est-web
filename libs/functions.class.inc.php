@@ -329,7 +329,7 @@ class functions {
 
 
     public static function safe_filename($filename) {
-        return mb_ereg_replace("([^A-Za-z0-9_\-\.])", "_", $filename);
+        return preg_replace("([^A-Za-z0-9_\-\.])", "_", $filename);
     }
 
     public static function format_job_type($gen_type) {
@@ -477,6 +477,14 @@ class functions {
     public static function get_update_message() {
         return "The EST database has been updated to use UniProt " . 
             self::get_uniprot_version() . " and InterPro " . self::get_interpro_version();
+    }
+
+    public static function get_max_queuable_jobs() {
+        return __MAX_QUEUABLE_JOBS__;
+    }
+
+    public static function get_max_user_queuable_jobs() {
+        return __MAX_USER_QUEUABLE_JOBS__;
     }
 }
 
