@@ -35,8 +35,8 @@ if ($isPfamClanMap) {
     $dbResult = $db->query($sql);
 }
 
-function get_tab_style($filter, $category) {
-    if (!$filter || $filter == $category)
+function get_tab_style($filter, $category, $defaultTab = false) {
+    if ((!$filter && $defaultTab) || $filter == $category)
         echo "class=\"active\"";
     else
         echo "";
@@ -53,7 +53,7 @@ These data are sourced from the <a href="http://www.uniprot.org">UniProt</a> and
 
 <div class="tabs">
     <ul class="tab-headers">
-        <li <?php get_tab_style($filter, "pfam"); ?>><a href="family_list.php?filter=pfam">Pfam Families</a></li>
+        <li <?php get_tab_style($filter, "pfam", true); ?>><a href="family_list.php?filter=pfam">Pfam Families</a></li>
         <li <?php get_tab_style($filter, "interpro"); ?>><a href="family_list.php?filter=interpro">InterPro Families</a></li>
         <li <?php get_tab_style($filter, "clan"); ?>><a href="family_list.php?filter=clan">Pfam Clans</a></li>
         <li <?php get_tab_style($filter, "pfam-clan"); ?>><a href="family_list.php?filter=pfam-clan">Clan-Pfam Mapping</a></li>
