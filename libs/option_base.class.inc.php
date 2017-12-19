@@ -206,9 +206,11 @@ abstract class option_base extends stepa {
             $exit_status = 0;
         }
 
-        print $output . "\n";
         $output = trim(rtrim($output));
-        $pbs_job_number = substr($output, 0, strpos($output, "."));
+        if (strtolower($sched) == "slurm")
+            $pbs_job_number = $output;
+        else 
+            $pbs_job_number = substr($output, 0, strpos($output, "."));
 
         functions::log_message($output);
         functions::log_message($pbs_job_number);
