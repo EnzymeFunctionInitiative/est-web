@@ -372,6 +372,10 @@ table.family td {
     padding: 5px;
 }
 
+td.right-align {
+    text-align: right;
+}
+
 
 /* FORM INPUT */
 
