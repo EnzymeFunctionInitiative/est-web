@@ -34,6 +34,8 @@ foreach($_POST as $var) {
 
 $input->email = $_POST['email'];
 
+$updateCookie = 
+
 if (!isset($_POST['submit'])) {
     $result["MESSAGE"] = "Form is invalid.";
 } elseif (!$input->email) {
@@ -155,11 +157,11 @@ $returnData = array('valid'=>$result['RESULT'],
                     'id'=>$result['id'],
                     'message'=>$result['MESSAGE']);
 
-if ($result["RESULT"]) {
-    $id = $result['id'];
-    $userObj = new user_jobs();
-    $userObj->save_user($db, $input->email);
-    $cookieInfo = $userObj->get_cookie();
+
+// This resets the expiration date of the cookie so that frequent users don't have to login in every X days as long
+// as they keep using the app.
+if (functions::is_recent_jobs_enabled() && user_jobs::has_token_cookie()) {
+    $cookieInfo = user_jobs::get_cookie_shared(user_jobs::get_user_token());
     $returnData["cookieInfo"] = $cookieInfo;
 }
 

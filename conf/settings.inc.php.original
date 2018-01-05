@@ -33,6 +33,7 @@ define("__ENABLE_RECENT_JOBS__",false);
 define("__MYSQL_HOST__","");
 define("__MYSQL_USER__","");
 define("__MYSQL_DATABASE__","");
+define("__MYSQL_AUTH_DATABASE__","");
 define("__MYSQL_PASSWORD__","");
 
 ////////Cluster Settings////////////

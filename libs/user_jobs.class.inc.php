@@ -2,39 +2,185 @@
 
 require_once "../includes/main.inc.php";
 require_once "functions.class.inc.php";
+require_once "../../main/libs/user_auth.class.inc.php";
 
-class user_jobs {
+class user_jobs extends user_auth {
 
-    const USER_TOKEN_NAME = "est_token";
-    const EXPIRATION_SECONDS = 2592000; // 30 days
+//    const USER_TOKEN_NAME = "efi_token";
+//    const EXPIRATION_SECONDS = 2592000; // 30 days
 
     private $user_token;
     private $user_email = "";
     private $jobs;
     private $analysis_jobs;
 
-    public static function has_token_cookie() {
-        return isset($_COOKIE[user_jobs::USER_TOKEN_NAME]);
-    }
-
-    public static function get_user_token() {
-        return $_COOKIE[user_jobs::USER_TOKEN_NAME];
-    }
+//    public static function has_token_cookie() {
+//        return isset($_COOKIE[user_jobs::USER_TOKEN_NAME]);
+//    }
+//
+//    public static function get_user_token() {
+//        return $_COOKIE[user_jobs::USER_TOKEN_NAME];
+//    }
 
     public function __construct() {
         $this->jobs = array();
         $this->analysis_jobs = array();
     }
 
-    public function load_jobs($db, $token) {
-        $this->user_token = $token;
-        
-        $sql = "SELECT user_email FROM user_token WHERE user_id='" . $this->user_token . "'";
-        $row = $db->query($sql);
-        if (!$row)
-            return;
+//    private static function get_user_table() {
+//        $userTable = __MYSQL_AUTH_DATABASE__;
+//        if ($userTable)
+//            $userTable .= ".";
+//        $userTable .= "user_token";
+//        return $userTable;
+//    }
+//
+//    public static function validate_user($db, $email, $password) {
+//        $output = array('valid' => false, 'cookie' => "");
+//
+//        $userTable = self::get_user_table();
+//        $sql = "SELECT * FROM $userTable WHERE user_email = '$email' AND user_action = 'ACTIVE'";
+//        $result = $db->query($sql);
+//        if (!$result) // User doesn't exist
+//            return $output;
+//        $result = $result[0];
+//
+//        $output['valid'] = self::pass_verify($password, $result['user_password']);
+//        if ($output['valid']) {
+//            $output['cookie'] = self::get_cookie_shared($result['user_id']);
+//        }
+//
+//        return $output;
+//    }
+//
+//    public static function check_reset_token($db, $token) {
+//        $userTable = self::get_user_table();
+//        $sql = "SELECT * FROM $userTable WHERE user_id = '$token'";
+//        $result = $db->query($sql);
+//        if ($result) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+//
+//    public static function check_reset_email($db, $email) {
+//        $userTable = self::get_user_table();
+//        $sql = "SELECT * FROM $userTable WHERE user_email = '$email'";
+//        $result = $db->query($sql);
+//        if ($result) {
+//            return $result[0]["user_id"];
+//        } else {
+//            return false;
+//        }
+//    }
+//
+//    public static function create_user($db, $email, $password, $listservSignup) {
+//        $userTable = self::get_user_table();
+//        $sql = "SELECT user_id FROM $userTable WHERE user_email = '$email'";
+//        $result = $db->query($sql);
+//        if ($result) // User already exists
+//            return false;
+//
+//        $token = functions::generate_key();
+//        $hash = self::pass_crypt($password);
+//        $sql = "INSERT INTO $userTable (user_id, user_email, user_password, user_action) VALUES ('$token', '$email', '$hash', 'PENDING')";
+//        $result = $db->non_select_query($sql);
+//        if ($result)
+//            return $token;
+//        else
+//            return false;
+//    }
+//
+//    public static function change_password($db, $email, $oldPassword, $password) {
+//        $userTable = self::get_user_table();
+//        $sql = "SELECT user_password FROM $userTable WHERE user_email = '$email'";
+//        $result = $db->query($sql);
+//        if (!$result) // User doesn't exist
+//            return false;
+//
+//        $hash = $result[0]['user_password'];
+//        if (!self::pass_verify($oldPassword, $hash)) // Old password doesn't match
+//            return false;
+//
+//        $hash = self::pass_crypt($password);
+//        $sql = "UPDATE $userTable SET user_action = 'ACTIVE', user_password = '$hash' WHERE user_email = '$email'";
+//        $result = $db->non_select_query($sql);
+//        if ($result) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+//
+//    public static function reset_password($db, $userToken, $password) {
+//        $userTable = self::get_user_table();
+//        $sql = "SELECT * FROM $userTable WHERE user_id = '$userToken'";
+//        $result = $db->query($sql);
+//        if (!$result) // User doesn't exist
+//            return false;
+//
+//        $hash = self::pass_crypt($password);
+//        $sql = "UPDATE $userTable SET user_action = 'ACTIVE', user_password = '$hash' WHERE user_id = '$userToken'";
+//        $result = $db->non_select_query($sql);
+//        if ($result) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+//
+//    private static function pass_crypt($password) {
+//        $hasher = self::get_hasher();
+//        $hash = $hasher->HashPassword($password);
+//        unset($hasher);
+//        return $hash;
+//    }
+//
+//    private static function pass_verify($password, $hash) {
+//        if (!$hash)
+//            return false;
+//        $hasher = self::get_hasher();
+//        $ok = $hasher->CheckPassword($password, $hash);
+//        unset($hasher);
+//        return $ok;
+//    }
+//
+//    private static function get_hasher() {
+//        $hash_cost_log2 = 8;
+//        $hash_portable = false;
+//        $hasher = new PasswordHash($hash_cost_log2, $hash_portable);
+//        return $hasher;
+//    }
+//
+//    public static function validate_new_account($db, $token) {
+//        $userTable = self::get_user_table();
+//        $sql = "SELECT * FROM $userTable WHERE user_id = '$token' AND user_action = 'PENDING'";
+//        $result = $db->query($sql);
+//        if ($result) { // User alread added but hasn't been validated.
+//            $sql = "UPDATE $userTable SET user_action = 'ACTIVE' WHERE user_id = '$token'";
+//            $result = $db->non_select_query($sql);
+//            if ($result) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } else {
+//            return false;
+//        }
+//    } 
 
-        $this->user_email = $row[0]["user_email"];
+    public function load_jobs($db, $token) {
+//        $userTable = self::get_user_table();
+//        
+//        $sql = "SELECT user_email FROM $userTable WHERE user_id='" . $this->user_token . "'";
+//        $row = $db->query($sql);
+//        if (!$row)
+//            return;
+//
+//        $this->user_email = $row[0]["user_email"];
+        $this->user_token = $token;
+        $this->user_email = self::get_email_from_token($db, $token);
         if (!$this->user_email)
             return;
 
@@ -43,7 +189,7 @@ class user_jobs {
     }
 
     private function load_generate_jobs($db) {
-        $expDate = $this->get_start_date_window();
+        $expDate = self::get_start_date_window();
         $sql = "SELECT generate_id, generate_key, generate_time_completed, generate_status, generate_type, generate_params FROM generate " .
             "WHERE generate_email='" . $this->user_email . "' AND " .
             "(generate_time_completed >= '$expDate' OR (generate_time_created >= '$expDate' AND (generate_status = 'NEW' OR generate_status = 'RUNNING'))) " .
@@ -214,7 +360,7 @@ class user_jobs {
     }
 
     private function load_analysis_jobs($db) {
-        $expDate = $this->get_start_date_window();
+        $expDate = self::get_start_date_window();
         $sql = "SELECT analysis_id, analysis_generate_id, generate_key, analysis_time_completed, analysis_status, generate_type FROM analysis " .
             "LEFT JOIN generate ON analysis_generate_id = generate_id " .
             "WHERE generate_email='" . $this->user_email . "' AND " .
@@ -245,43 +391,48 @@ class user_jobs {
         }
     }
 
-    public function save_user($db, $email) {
-        $this->user_email = $email;
-
-        $sql = "SELECT user_id, user_email FROM user_token WHERE user_email='" . $this->user_email . "'";
-        $rows = $db->query($sql);
-
-        $isUpdate = false;
-        if ($rows && count($rows) > 0) {
-            $isUpdate = true;
-            $this->user_token = $rows[0]["user_id"];
-        } else {
-            $this->user_token = functions::generate_key();
-        }
-
-        $insert_array = array("user_id" => $this->user_token, "user_email" => $this->user_email);
-        if (!$isUpdate) {
-            $db->build_insert("user_token", $insert_array);
-        }
-
-        return true;
-    }
+//    public function save_user($db, $email) {
+//        $userTable = self::get_user_table();
+//        $this->user_email = $email;
+//
+//        $sql = "SELECT user_id, user_email FROM $userTable WHERE user_email='" . $this->user_email . "'";
+//        $rows = $db->query($sql);
+//
+//        $isUpdate = false;
+//        if ($rows && count($rows) > 0) {
+//            $isUpdate = true;
+//            $this->user_token = $rows[0]["user_id"];
+//        } else {
+//            $this->user_token = functions::generate_key();
+//        }
+//
+//        $insert_array = array("user_id" => $this->user_token, "user_email" => $this->user_email);
+//        if (!$isUpdate) {
+//            $db->build_insert("user_token", $insert_array);
+//        }
+//
+//        return true;
+//    }
 
     public function get_cookie() {
-        $dom = parse_url(functions::get_web_root(), PHP_URL_HOST);
-        $maxAge = 30 * 86400; // 30 days
-        $tokenField = user_jobs::USER_TOKEN_NAME;
-        $token = $this->user_token;
-        return "$tokenField=$token;max-age=$maxAge";
+        return self::get_cookie_shared($this->user_token);
     }
 
-    public function get_start_date_window() {
-        $numDays = functions::get_retention_days();
-        $dt = new DateTime();
-        $pastDt = $dt->sub(new DateInterval("P${numDays}D"));
-        $mysqlDate = $pastDt->format("Y-m-d");
-        return $mysqlDate;
-    }
+//    public static function get_cookie_shared($user_token) {
+//        $dom = parse_url(functions::get_web_root(), PHP_URL_HOST);
+//        $maxAge = 30 * 86400; // 30 days
+//        $tokenField = user_jobs::USER_TOKEN_NAME;
+//        $token = $user_token;
+//        return "$tokenField=$token;max-age=$maxAge;Path=/";
+//    }
+
+//    public function get_start_date_window() {
+//        $numDays = functions::get_retention_days();
+//        $dt = new DateTime();
+//        $pastDt = $dt->sub(new DateInterval("P${numDays}D"));
+//        $mysqlDate = $pastDt->format("Y-m-d");
+//        return $mysqlDate;
+//    }
 
     public function get_jobs() {
         return $this->jobs;

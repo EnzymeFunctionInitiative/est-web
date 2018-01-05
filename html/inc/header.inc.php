@@ -1,5 +1,5 @@
 <?php
-include_once("../libs/functions.class.inc.php");
+require_once("../libs/functions.class.inc.php");
 
 if (!isset($TopLevelUrl))
     $TopLevelUrl = "http://efi.igb.illinois.edu/efi-est/";
@@ -14,6 +14,12 @@ if (isset($Is404Page) && $Is404Page)
 if (isset($IsExpiredPage) && $IsExpiredPage)
     $title = "Expired Job";
 
+include("../../main/html/inc/global_login_button.inc.php");
+//$loginText = '<a href="#" class="about" id="login-menu">SIGN IN</a>';
+//if (isset($IsLoggedIn) && $IsLoggedIn)
+//    $loginText = '<a href="#" class="about" style="cursor:default">' . $IsLoggedIn . '</a>';
+
+
 ?>
 
 <!doctype html>
@@ -21,6 +27,7 @@ if (isset($IsExpiredPage) && $IsExpiredPage)
 <head>
     <link rel="stylesheet" type="text/css" href="jquery-ui-1.12.1/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="/css/shared.css">
+    <link rel="stylesheet" type="text/css" href="/css/global.css">
     <link rel="stylesheet" type="text/css" href="css/est.css">
     <link rel="stylesheet" type="text/css" href="css/tabs.css">
     <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -30,12 +37,16 @@ if (isset($IsExpiredPage) && $IsExpiredPage)
     <link rel="shortcut icon" href="images/favicon_efi.ico" type="image/x-icon">
     <title><?php echo $title; ?></title>
 
+    <script src="/js/login.js" type="text/javascript"></script>
     <script src="js/submit.js" type="text/javascript"></script>
     <script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="jquery-ui-1.12.1/jquery-ui.js" type="text/javascript"></script>
 </head>
 
 <body>
+<?php
+include("../../main/html/inc/global_nav.inc.php");
+?>
     <div id="container">
         <div class="header">
             <div class="header_logo">

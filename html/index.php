@@ -1,6 +1,5 @@
 <?php
-require_once "inc/header.inc.php";
-require "../libs/user_jobs.class.inc.php";
+require_once "../libs/user_jobs.class.inc.php";
 require_once "../libs/ui.class.inc.php";
 require_once "../includes/main.inc.php";
 
@@ -9,13 +8,15 @@ $userEmail = "Enter your email address";
 $showJobsTab = false;
 $jobs = array();
 //$analysisJobs = array();
+$IsLoggedIn = false;
 if (functions::is_recent_jobs_enabled() && user_jobs::has_token_cookie()) {
-    $userJobs= new user_jobs();
+    $userJobs = new user_jobs();
     $userJobs->load_jobs($db, user_jobs::get_user_token());
     $jobs = $userJobs->get_jobs();
 //    $analysisJobs = $userJobs->get_analysis_jobs();
     $userEmail = $userJobs->get_email();
     $showJobsTab = count($jobs) > 0; // || count($analysisJobs) > 0;
+    $IsLoggedIn = $userEmail;
 }
 
 $maxSeqNum = functions::get_max_seq();
@@ -26,6 +27,9 @@ $useUniref50 = false;
 $useAdvancedFamilyInputs = functions::option_e_enabled();
 
 $updateMessage = functions::get_update_message();
+
+require_once "inc/header.inc.php";
+
 
 ?>
 
