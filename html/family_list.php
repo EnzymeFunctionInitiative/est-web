@@ -28,7 +28,13 @@ if (isset($_GET["filter"])) {
 }
 
 if ($isPfamClanMap) {
-    $sql = "SELECT C.clan_id, C.pfam_id, P.short_name FROM PFAM_clans AS C JOIN family_info AS P ON C.pfam_id = P.family WHERE C.clan_id <> '' ORDER BY C.clan_id, C.pfam_id";
+    $sql = "
+        SELECT C.clan_id, C.pfam_id, P.short_name, PC.short_name AS clan_short_name
+        FROM PFAM_clans AS C
+            JOIN family_info AS P ON C.pfam_id = P.family 
+            JOIN family_info as PC on C.clan_id = PC.family
+        WHERE C.clan_id <> '' ORDER BY C.clan_id, C.pfam_id
+        ";
     $dbResult = $db->query($sql);
 } else {
     $sql = "SELECT * FROM family_info WHERE family LIKE \"$familyFilter\"";
@@ -79,16 +85,18 @@ if ($isPfamClanMap) { ?>
     $lastClan = "";
     foreach ($dbResult as $row) {
         $theClan = $row["clan_id"];
+        $theClanName = $row["clan_short_name"];
         $rowStyle = "";
         if ($theClan != $lastClan) {
             $lastClan = $theClan;
             $rowStyle = "style=\"border-top: 2px black solid;\"";
         } else {
             $theClan = "";
+            $theClanName = "";
         }
         echo "                    <tr>\n";
         echo "                        <td $rowStyle>" . $theClan . "</td>\n";
-        echo "                        <td $rowStyle></td>\n";
+        echo "                        <td $rowStyle>" . $theClanName . "</td>\n";
         echo "                        <td $rowStyle>" . $row["pfam_id"] . "</td>\n";
         echo "                        <td $rowStyle>" . $row["short_name"] . "</td>\n";
         echo "                    </tr>\n";
